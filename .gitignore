@@ -1,1 +1,19 @@
 .DS_Store
+
+# build
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# env
+.env
+.env.production
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+
+# logs
+npm-debug.log*

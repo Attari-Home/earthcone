@@ -1,0 +1,26 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+    const services = await getCollection('services');
+    return services.map((service) => ({
+        params: { slug: service.id },
+        props: { service },
+    }));
+}
+
+const { service } = Astro.props;
+const { title, summary } = service.data;
+const { Content } = await render(service);
+---
+
+<BaseLayout title={title} description={summary}>
+    <article class="container-page max-w-3xl py-16">
+        <h1 class="text-3xl font-semibold text-[var(--color-ink)]">{title}</h1>
+        <p class="mt-2 text-[var(--color-stone)]">{summary}</p>
+        <div class="prose mt-8 max-w-none">
+            <Content />
+        </div>
+    </article>
+</BaseLayout>

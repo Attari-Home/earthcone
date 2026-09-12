@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+    title="Service Areas"
+    description={`${site.shortName} is licensed to work across all seven Emirates: ${site.emirates.join(', ')}.`}
+>
+    <section class="container-page py-16">
+        <h1 class="text-3xl font-semibold text-[var(--color-ink)]">Where We Work</h1>
+        <p class="mt-4 max-w-2xl text-[var(--color-stone)]">
+            {site.shortName} is headquartered in {site.address.city} and licensed to take on
+            construction and maintenance projects in every Emirate.
+        </p>
+
+        <ul class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {site.emirates.map((emirate) => (
+                <li class="rounded-md border border-[var(--color-sand)] bg-white px-4 py-3 font-medium text-[var(--color-ink)]">
+                    {emirate}
+                </li>
+            ))}
+        </ul>
+    </section>
+</BaseLayout>

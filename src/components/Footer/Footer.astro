@@ -1,0 +1,42 @@
+---
+import { site } from '../../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[var(--color-sand)] bg-[var(--color-charcoal)] text-[var(--color-sand)]">
+    <div class="container-page grid gap-8 py-12 md:grid-cols-3">
+        <div>
+            <p class="font-display text-lg font-semibold text-white">{site.shortName}</p>
+            <p class="mt-2 text-sm text-[var(--color-stone)]">{site.tagline}</p>
+        </div>
+
+        <div>
+            <p class="font-medium text-white">Contact</p>
+            <ul class="mt-2 space-y-1 text-sm text-[var(--color-stone)]">
+                <li>
+                    <a href={`tel:${site.phone}`} class="hover:text-white">
+                        {site.phone}
+                    </a>
+                </li>
+                <li>
+                    <a href={`mailto:${site.email}`} class="hover:text-white">
+                        {site.email}
+                    </a>
+                </li>
+                <li>
+                    {site.address.city}, {site.address.country}
+                </li>
+            </ul>
+        </div>
+
+        <div>
+            <p class="font-medium text-white">Service areas</p>
+            <p class="mt-2 text-sm text-[var(--color-stone)]">{site.emirates.join(' · ')}</p>
+        </div>
+    </div>
+
+    <div class="border-t border-white/10 py-4 text-center text-xs text-[var(--color-stone)]">
+        &copy; {year} {site.name}. All rights reserved.
+    </div>
+</footer>

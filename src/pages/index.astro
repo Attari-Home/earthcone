@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero/Hero.astro';
+import ServiceGrid from '../components/ServiceGrid/ServiceGrid.astro';
+import CtaBand from '../components/CtaBand/CtaBand.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout title={site.shortName} description={site.description}>
+    <Hero />
+
+    <section class="container-page py-16">
+        <div class="mx-auto max-w-2xl text-center">
+            <h2 class="text-3xl font-semibold text-[var(--color-ink)]">What we do</h2>
+            <p class="mt-3 text-[var(--color-stone)]">
+                Full-scope construction and maintenance services, from foundation to finish.
+            </p>
+        </div>
+        <div class="mt-10">
+            <ServiceGrid />
+        </div>
+    </section>
+
+    <CtaBand />
+</BaseLayout>

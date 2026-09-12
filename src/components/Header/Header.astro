@@ -1,0 +1,56 @@
+---
+import { Icon } from 'astro-icon/components';
+import { site } from '../../data/site';
+
+const navLinks = [
+    { href: '/services', label: 'Services' },
+    { href: '/service-areas', label: 'Service Areas' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+];
+---
+
+<header class="border-b border-[var(--color-sand)] bg-[var(--color-cream)]">
+    <div class="container-page flex h-16 items-center justify-between">
+        <a href="/" class="font-display text-lg font-semibold text-[var(--color-ink)]">
+            {site.shortName}
+        </a>
+
+        <nav aria-label="Primary" class="hidden gap-6 md:flex">
+            {navLinks.map((link) => (
+                <a
+                    href={link.href}
+                    class="text-sm font-medium text-[var(--color-charcoal)] hover:text-[var(--color-terracotta)]"
+                >
+                    {link.label}
+                </a>
+            ))}
+        </nav>
+
+        <a href="/contact" class="btn-primary hidden text-sm md:inline-flex">
+            Get a Quote
+        </a>
+
+        <details class="relative md:hidden">
+            <summary
+                class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-md text-[var(--color-ink)] [&::-webkit-details-marker]:hidden"
+                aria-label="Open menu"
+            >
+                <Icon name="ph:list" class="h-6 w-6" />
+            </summary>
+            <nav
+                aria-label="Primary"
+                class="absolute right-0 top-full z-10 mt-2 w-48 rounded-md border border-[var(--color-sand)] bg-white p-2 shadow-lg"
+            >
+                {navLinks.map((link) => (
+                    <a
+                        href={link.href}
+                        class="block rounded px-3 py-2 text-sm font-medium text-[var(--color-charcoal)] hover:bg-[var(--color-sand)]"
+                    >
+                        {link.label}
+                    </a>
+                ))}
+            </nav>
+        </details>
+    </div>
+</header>

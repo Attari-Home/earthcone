@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactForm from '../components/ContactForm/ContactForm.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+    title="Contact"
+    description={`Request a quote from ${site.shortName} for construction, fit-out, or maintenance work anywhere in the UAE.`}
+>
+    <section class="container-page grid gap-12 py-16 lg:grid-cols-2">
+        <div>
+            <h1 class="text-3xl font-semibold text-[var(--color-ink)]">Request a Quote</h1>
+            <p class="mt-4 text-[var(--color-stone)]">
+                Tell us about your project and we'll get back to you.
+            </p>
+            <ul class="mt-6 space-y-2 text-sm text-[var(--color-stone)]">
+                <li>
+                    Phone:{' '}
+                    <a href={`tel:${site.phone}`} class="text-[var(--color-terracotta)]">
+                        {site.phone}
+                    </a>
+                </li>
+                <li>
+                    Email:{' '}
+                    <a href={`mailto:${site.email}`} class="text-[var(--color-terracotta)]">
+                        {site.email}
+                    </a>
+                </li>
+                <li>
+                    Based in {site.address.city}, serving all of {site.address.country}
+                </li>
+            </ul>
+        </div>
+
+        <ContactForm />
+    </section>
+</BaseLayout>

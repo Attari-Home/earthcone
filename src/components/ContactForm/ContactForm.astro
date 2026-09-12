@@ -1,0 +1,54 @@
+---
+// Submits directly to Web3Forms — no backend required. Set WEB3FORMS_KEY in .env
+// and it will be inlined at build time; the form still renders without it, it just
+// won't submit until a key is configured.
+const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
+---
+
+<form action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
+    <input type="hidden" name="access_key" value={accessKey} />
+    <input type="checkbox" name="botcheck" class="hidden" style="display: none" />
+
+    <div>
+        <label for="name" class="block text-sm font-medium text-[var(--color-ink)]">
+            Name
+        </label>
+        <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            class="mt-1 w-full rounded-md border border-[var(--color-sand)] px-3 py-2 focus:border-[var(--color-terracotta)]"
+        />
+    </div>
+
+    <div>
+        <label for="phone" class="block text-sm font-medium text-[var(--color-ink)]">
+            Phone
+        </label>
+        <input
+            id="phone"
+            name="phone"
+            type="tel"
+            required
+            class="mt-1 w-full rounded-md border border-[var(--color-sand)] px-3 py-2 focus:border-[var(--color-terracotta)]"
+        />
+    </div>
+
+    <div>
+        <label for="message" class="block text-sm font-medium text-[var(--color-ink)]">
+            Project details
+        </label>
+        <textarea
+            id="message"
+            name="message"
+            rows="4"
+            required
+            class="mt-1 w-full rounded-md border border-[var(--color-sand)] px-3 py-2 focus:border-[var(--color-terracotta)]"
+        ></textarea>
+    </div>
+
+    <button type="submit" class="btn-primary w-full sm:w-auto">
+        Send Request
+    </button>
+</form>

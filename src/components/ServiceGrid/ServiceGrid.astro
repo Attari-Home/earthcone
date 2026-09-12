@@ -1,0 +1,12 @@
+---
+import { getCollection } from 'astro:content';
+import ServiceCard from '../ServiceCard/ServiceCard.astro';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {services.map((service) => (
+        <ServiceCard service={service} />
+    ))}
+</div>
