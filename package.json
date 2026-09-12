@@ -1,0 +1,36 @@
+{
+    "name": "earthcone",
+    "type": "module",
+    "version": "0.1.0",
+    "description": "Earth Cone Building Contracting — construction, interior fit-out, and maintenance services across the UAE.",
+    "license": "MIT",
+    "engines": {
+        "node": ">=22.12.0"
+    },
+    "scripts": {
+        "dev": "astro dev",
+        "start": "astro dev",
+        "build": "astro check && astro build",
+        "preview": "astro preview",
+        "astro": "astro",
+        "check": "astro check",
+        "format": "prettier --write \"src/**/*.{astro,ts,js,css,md,mdx}\"",
+        "lint": "prettier --check \"src/**/*.{astro,ts,js,css,md,mdx}\""
+    },
+    "dependencies": {
+        "@astrojs/mdx": "^8.0.1",
+        "@astrojs/sitemap": "^3.7.4",
+        "@iconify-json/ph": "^1.2.2",
+        "@tailwindcss/vite": "^4.3.3",
+        "astro": "^7.3.2",
+        "astro-icon": "^1.2.0",
+        "sharp": "^0.35.4",
+        "tailwindcss": "^4.3.3"
+    },
+    "devDependencies": {
+        "@astrojs/check": "^0.9.10",
+        "prettier": "^3.9.6",
+        "prettier-plugin-astro": "^1.0.0",
+        "typescript": "^5.9.3"
+    }
+}

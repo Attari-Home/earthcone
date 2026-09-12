@@ -1,0 +1,20 @@
+# Earth Cone Building Contracting
+
+Earth Cone is a building construction and maintenance contractor headquartered in
+Dubai, licensed to operate across all seven Emirates of the United Arab Emirates
+(Dubai, Abu Dhabi, Sharjah, Ajman, Ras Al Khaimah, Fujairah, Umm Al Quwain).
+
+## Services
+
+- Construction — /services/construction
+- Interior fit-out — /services/interiors
+- Custom kitchens — /services/kitchens
+- Electrical — /services/electrical
+- Water systems (plumbing, tanks, pumps) — /services/water-systems
+
+## Key pages
+
+- Services overview: /services
+- Areas served: /service-areas
+- About: /about
+- Contact / get a quote: /contact

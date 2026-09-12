@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServiceGrid from '../../components/ServiceGrid/ServiceGrid.astro';
+import { site } from '../../data/site';
+---
+
+<BaseLayout
+    title="Services"
+    description={`Construction, interior fit-out, kitchens, electrical, and water-systems services from ${site.shortName}.`}
+>
+    <section class="container-page py-16">
+        <h1 class="text-3xl font-semibold text-[var(--color-ink)]">Our Services</h1>
+        <div class="mt-10">
+            <ServiceGrid />
+        </div>
+    </section>
+</BaseLayout>
