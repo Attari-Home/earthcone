@@ -4,12 +4,26 @@ import { z } from 'astro/zod';
 
 const services = defineCollection({
     loader: glob({ pattern: '**/*.mdx', base: './src/content/services' }),
+    schema: ({ image }) =>
+        z.object({
+            title: z.string(),
+            summary: z.string(),
+            order: z.number(),
+            heroImage: image().optional(),
+        }),
+});
+
+const projects = defineCollection({
+    loader: glob({ pattern: '**/*.mdx', base: './src/content/projects' }),
     schema: z.object({
         title: z.string(),
         summary: z.string(),
         order: z.number(),
-        heroImage: z.string().optional(),
+        // Directory name under src/images/ this category's media lives in.
+        folder: z.string(),
+        // Matching entry id in the `services` collection, for cross-linking.
+        serviceSlug: z.string().optional(),
     }),
 });
 
-export const collections = { services };
+export const collections = { services, projects };

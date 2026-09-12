@@ -1,5 +1,5 @@
 ---
-import { site } from '../../data/site';
+import { site, primaryPhone, primaryEmail } from '../../data/site';
 
 interface Props {
     title: string;
@@ -19,11 +19,11 @@ const jsonLd = {
     '@type': 'GeneralContractor',
     name: site.name,
     description: site.description,
-    telephone: site.phone,
-    email: site.email,
+    telephone: primaryPhone.value,
+    email: primaryEmail.value,
     address: {
         '@type': 'PostalAddress',
-        streetAddress: site.address.street,
+        streetAddress: `${site.address.street}, ${site.address.area}`,
         addressLocality: site.address.city,
         addressCountry: site.address.country,
     },
@@ -31,6 +31,28 @@ const jsonLd = {
         '@type': 'AdministrativeArea',
         name: emirate,
     })),
+    contactPoint: [
+        ...site.contacts.phones.map((phone) => ({
+            '@type': 'ContactPoint',
+            telephone: phone.value,
+            contactType: phone.label,
+            areaServed: 'AE',
+        })),
+        ...site.contacts.whatsapp.map((wa) => ({
+            '@type': 'ContactPoint',
+            telephone: `+${wa.value}`,
+            contactType: 'WhatsApp',
+            areaServed: 'AE',
+        })),
+    ],
+    identifier:
+        site.license.number === 'TODO — confirm with client'
+            ? undefined
+            : {
+                  '@type': 'PropertyValue',
+                  propertyID: 'Trade License Number',
+                  value: site.license.number,
+              },
     url: Astro.site,
 };
 ---

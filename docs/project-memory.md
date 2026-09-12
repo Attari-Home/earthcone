@@ -62,3 +62,13 @@ Use these paths directly in website components. The number distinguishes related
 - Confirmed that all 98 JPEGs were moved out of the `src/images/` root and successfully opened after renaming.
 - Confirmed that all 25 MP4 files were moved out of the `src/images/` root and retained valid MP4 media signatures.
 
+## Video pipeline (added during premium redesign)
+
+All 25 source MP4s in `src/images/` are raw, uncompressed WhatsApp exports (~184MB total) and stay untouched there — they are never served directly. A separate compression pass produces the web-served copies:
+
+- Compressed video: `public/videos/<folder>/<same-basename>.mp4` — `ffmpeg`, `libx264`, `-preset slow -crf 28`, native resolution preserved (no downscale), `-movflags +faststart`, audio re-encoded to AAC 80kbps where present. Result: ~184MB → ~89MB (~52% smaller) at unchanged resolution.
+- Poster frames: `src/images/video-posters/<folder>/<same-basename>.jpeg` — a new category folder, flows through the normal `astro:assets`/`sharp` pipeline like any other photo (unlike `public/videos/`, which is a plain static passthrough). Extracted via `ffmpeg -ss 00:00:01 -frames:v 1`.
+- `src/lib/portfolioMedia.ts` discovers videos from the raw `src/images/<folder>/*.mp4` filenames, then points playback at the corresponding `public/videos/` path and poster at the corresponding `video-posters/` image — so re-running the compression script for a newly added clip is enough to make it appear in the portfolio grid, no code change needed.
+- If a new video is added to `src/images/<folder>/`, re-run the compression pipeline (documented in the redesign plan) to produce its `public/videos/` and `video-posters/` counterparts before it will render on the site.
+- The original raw MP4 blobs remain permanently in `.git` history from the commit that first added them — this was flagged to the client as a separate, explicit sign-off item (history rewrite is destructive and out of scope for routine asset maintenance).
+

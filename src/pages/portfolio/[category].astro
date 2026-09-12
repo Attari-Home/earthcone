@@ -1,0 +1,61 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PortfolioCard from '../../components/PortfolioCard/PortfolioCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs.astro';
+import { getMediaForFolder } from '../../lib/portfolioMedia';
+
+export async function getStaticPaths() {
+    const categories = await getCollection('projects');
+    return categories.map((category) => ({
+        params: { category: category.id },
+        props: { category },
+    }));
+}
+
+const { category } = Astro.props;
+const { title, summary, folder, serviceSlug } = category.data;
+const { Content } = await render(category);
+const items = getMediaForFolder(folder);
+---
+
+<BaseLayout title={title} description={summary}>
+    <Breadcrumbs
+        items={[
+            { label: 'Home', href: '/' },
+            { label: 'Portfolio', href: '/portfolio' },
+            { label: title, href: `/portfolio/${category.id}` },
+        ]}
+    />
+    <section class="container-wide py-section-sm">
+        <div class="reveal">
+            <p class="eyebrow">Portfolio</p>
+            <h1 class="mt-2 text-display-sm font-display font-semibold text-[var(--color-ink)]">
+                {title}
+            </h1>
+            <div class="prose mt-4 max-w-2xl text-[var(--color-stone)]">
+                <Content />
+            </div>
+            {serviceSlug && (
+                <a
+                    href={`/services/${serviceSlug}`}
+                    class="btn-ghost mt-4 text-[var(--color-terracotta)]"
+                >
+                    View {title} service <span class="arrow">&rarr;</span>
+                </a>
+            )}
+        </div>
+    </section>
+
+    <section class="container-wide pb-section-lg">
+        {items.length > 0 ? (
+            <div class="columns-1 gap-6 sm:columns-2 lg:columns-3">
+                {items.map((item) => (
+                    <PortfolioCard item={item} />
+                ))}
+            </div>
+        ) : (
+            <p class="text-[var(--color-stone)]">More work from this category is coming soon.</p>
+        )}
+    </section>
+</BaseLayout>

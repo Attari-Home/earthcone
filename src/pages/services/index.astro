@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ServiceGrid from '../../components/ServiceGrid/ServiceGrid.astro';
+import CtaBand from '../../components/CtaBand/CtaBand.astro';
 import { site } from '../../data/site';
 ---
 
@@ -8,10 +9,17 @@ import { site } from '../../data/site';
     title="Services"
     description={`Construction, interior fit-out, kitchens, electrical, and water-systems services from ${site.shortName}.`}
 >
-    <section class="container-page py-16">
-        <h1 class="text-3xl font-semibold text-[var(--color-ink)]">Our Services</h1>
-        <div class="mt-10">
+    <section class="container-wide py-section-md">
+        <div class="reveal">
+            <p class="eyebrow">Services</p>
+            <h1 class="mt-2 text-display-md font-display font-semibold text-[var(--color-ink)]">
+                Our Services
+            </h1>
+        </div>
+        <div class="mt-14">
             <ServiceGrid />
         </div>
     </section>
+
+    <CtaBand />
 </BaseLayout>

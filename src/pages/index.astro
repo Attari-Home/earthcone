@@ -1,23 +1,107 @@
 ---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero/Hero.astro';
 import ServiceGrid from '../components/ServiceGrid/ServiceGrid.astro';
 import CtaBand from '../components/CtaBand/CtaBand.astro';
+import { getMediaForFolder } from '../lib/portfolioMedia';
 import { site } from '../data/site';
+
+const stats = [
+    { value: '7', label: 'Emirates licensed' },
+    { value: '5', label: 'Trades in-house' },
+    { value: 'Dubai', label: 'Headquartered, UAE-wide' },
+];
+
+const categories = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const teaserTiles = categories.map((category) => {
+    const [first] = getMediaForFolder(category.data.folder);
+    const cover = first ? (first.kind === 'photo' ? first.src : first.poster) : null;
+    return { category, cover };
+});
 ---
 
 <BaseLayout title={site.shortName} description={site.description}>
     <Hero />
 
-    <section class="container-page py-16">
-        <div class="mx-auto max-w-2xl text-center">
-            <h2 class="text-3xl font-semibold text-[var(--color-ink)]">What we do</h2>
-            <p class="mt-3 text-[var(--color-stone)]">
-                Full-scope construction and maintenance services, from foundation to finish.
-            </p>
+    <section class="relative overflow-hidden bg-[var(--color-charcoal)] py-section-sm">
+        <div class="container-wide relative grid gap-10 sm:grid-cols-3">
+            {stats.map((stat, i) => (
+                <div class="reveal text-center" style={`transition-delay: ${i * 0.1}s`}>
+                    <p class="font-display text-display-md font-semibold text-white">
+                        {stat.value}
+                    </p>
+                    <p class="eyebrow mt-2 text-white/70">{stat.label}</p>
+                </div>
+            ))}
         </div>
-        <div class="mt-10">
-            <ServiceGrid />
+    </section>
+
+    <section id="what-we-do" class="relative overflow-hidden py-section-md">
+        <p class="display-word top-4 -left-2" aria-hidden="true">
+            Earth Cone
+        </p>
+        <div class="container-wide relative">
+            <div class="reveal mx-auto max-w-2xl text-center">
+                <p class="eyebrow">What we do</p>
+                <h2 class="mt-2 text-display-sm font-display font-semibold text-[var(--color-ink)]">
+                    Full-scope contracting, start to finish
+                </h2>
+                <p class="mt-3 text-[var(--color-stone)]">
+                    Construction and maintenance services delivered from foundation to finish.
+                </p>
+            </div>
+            <div class="mt-14">
+                <ServiceGrid />
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-[var(--color-ink)] py-section-md">
+        <div class="container-wide">
+            <div class="reveal flex flex-wrap items-end justify-between gap-4">
+                <div>
+                    <p class="eyebrow text-white/80">Portfolio</p>
+                    <h2 class="mt-2 text-display-sm font-display font-semibold text-white">
+                        Recent work
+                    </h2>
+                </div>
+                <a href="/portfolio" class="btn-ghost text-white">
+                    View full portfolio <span class="arrow">&rarr;</span>
+                </a>
+            </div>
+
+            <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-rows-2 sm:[grid-template-columns:repeat(4,1fr)] sm:[grid-auto-rows:14rem] lg:[grid-auto-rows:18rem]">
+                {teaserTiles.map(({ category, cover }, i) => (
+                    <a
+                        href={`/portfolio/${category.id}`}
+                        class:list={[
+                            'media-tile reveal group relative block overflow-hidden',
+                            i === 0 ? 'sm:col-span-2 sm:row-span-2' : '',
+                        ]}
+                        style={`transition-delay: ${i * 0.08}s`}
+                    >
+                        {cover && (
+                            <Image
+                                src={cover}
+                                alt={`${category.data.title} — Earth Cone portfolio`}
+                                widths={[320, 480, 640, 960]}
+                                sizes={
+                                    i === 0
+                                        ? '(min-width: 1024px) 45vw, 100vw'
+                                        : '(min-width: 1024px) 22vw, 50vw'
+                                }
+                                loading="lazy"
+                                class="h-full w-full object-cover"
+                            />
+                        )}
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--color-ink)]/80 to-transparent p-4">
+                            <p class="font-display font-medium text-white">{category.data.title}</p>
+                        </div>
+                    </a>
+                ))}
+            </div>
         </div>
     </section>
 

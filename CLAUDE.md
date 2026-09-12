@@ -38,35 +38,45 @@ Do not introduce a second frontend framework (React/Vue/etc.) unless a specific 
 
 ## 3. Target architecture
 
-The repo currently holds only raw media (`src/images/`) and docs. The Astro app should be scaffolded into this structure:
+Scaffolded and current as of the premium redesign:
 
 ```
-public/                 Static files served as-is (robots.txt, favicon, _headers)
+public/                 Static files served as-is (robots.txt, favicon, llms.txt, videos/)
+  videos/<folder>/       Compressed MP4s (see §6) — never the raw src/images/ sources
 src/
-  assets/                Optimized source images for astro:assets (hero, og, branding)
-  images/                Existing categorized media library (see docs/project-memory.md) — do not rename paths once referenced
-  components/            One folder per component (Header, Footer, ServiceCard, ProjectGallery, ContactForm, SEO, ...)
+  images/                Categorized media library (see docs/project-memory.md) — do not rename paths once referenced
+  images/video-posters/  Poster-frame JPEGs for portfolio video tiles, one subfolder per category
+  components/            One folder per component (Header, Footer, Hero, ServiceCard, ServiceGrid,
+                          PortfolioCard, Breadcrumbs, CtaBand, ContactForm, SEO, ...)
   content/
     services/            One entry per service line (construction, interiors, kitchens, electrical, water-systems)
-    projects/            Portfolio/case-study entries, tagged by service + emirate
-    testimonials/
+    projects/            One entry per portfolio category, schema {title, summary, order, folder, serviceSlug?}
+                          — `folder` maps the category slug to its src/images/ directory name
   data/
-    site.ts              Business data: name, license info, phone, WhatsApp, emails, emirates served, socials
+    site.ts              Business data: name, contacts.{phones,whatsapp,emails} (arrays, each with one
+                          primary: true), address, license, emirates served, socials
+  lib/
+    portfolioMedia.ts     import.meta.glob-based helper: buckets src/images/*/*.jpeg + *.mp4 by folder,
+                          pairs same-stem photo+video into one tile, points video src/poster at
+                          public/videos/ and src/images/video-posters/
   layouts/
     BaseLayout.astro
   pages/
     index.astro
     services/[slug].astro
-    projects/[slug].astro       or  /portfolio/
+    services/index.astro
+    portfolio/index.astro
+    portfolio/[category].astro   Reads the `projects` collection + portfolioMedia.ts
     about.astro
     contact.astro
     service-areas.astro         Single page listing all emirates served (see SEO strategy — avoid thin per-city pages)
     404.astro
   styles/
-    global.css            Design tokens (color, spacing, type scale), reset, shared component styles
+    global.css            Design tokens (color, spacing/type scale, easing), .eyebrow/.bleed/.container-wide/
+                          .media-tile utilities, reset, shared component styles
   content.config.ts
 docs/
-  project-memory.md       Asset naming/organization log — keep maintaining per its own rules
+  project-memory.md       Asset naming/organization log + video pipeline notes — keep maintaining per its own rules
 ```
 
 Keep one component per directory with its `.astro` file; colocate component-specific styles inline (Tailwind) rather than separate CSS files unless truly shared.
@@ -105,10 +115,8 @@ Rules to hit that budget:
 
 - No render-blocking JS; interactivity is progressive enhancement only.
 - All images through `astro:assets` (auto AVIF/WebP, explicit `width`/`height` to avoid CLS, `loading="lazy"` below the fold).
-- **Video is currently a risk**: `src/images/` holds ~193 MB of raw WhatsApp-export MP4s (some 30–40 MB each) committed directly to git. Before using any of them on a page:
-  1. Compress with `ffmpeg`/HandBrake (target ≤ 5 MB per clip, 720p, CRF ~28, `-movflags +faststart`).
-  2. Serve from `public/videos/` (or an external host/CDN) with `preload="none"` or `poster` images, never autoplay a large file.
-  3. Consider Git LFS for `public/videos/`, or hosting large source video outside the repo entirely — a git history full of 40 MB blobs makes clone/CI slow permanently, even if the files are later deleted.
+- **Video**: `src/images/` holds the raw, uncompressed WhatsApp-export MP4 sources (~184 MB, some 30–40 MB each) — these are never served directly. Compressed copies live in `public/videos/<folder>/`, produced with `ffmpeg`, `libx264`, `-preset slow -crf 28`, **native resolution preserved (no downscale — the client explicitly wants quality/resolution kept)**, `-movflags +faststart`. This roughly halves file size (~184 MB → ~89 MB) at unchanged resolution; do not downscale to 720p even though that would compress further. Poster frames live in `src/images/video-posters/<folder>/` and flow through the normal `astro:assets` pipeline. `<video preload="none" poster={...} controls muted playsinline>` — never autoplay. See `docs/project-memory.md` for the full pipeline and re-run instructions when new clips are added.
+  - **Still open**: the original raw MP4 blobs remain permanently in `.git` history from the commit that added them (~170 MB). Purging them requires a destructive history rewrite (BFG/`git-filter-repo`, force-push) — flagged to the client as a separate explicit sign-off, not done as part of routine builds.
 - Self-host fonts (or use `font-display: swap`), subset where practical.
 
 ## 7. Accessibility
@@ -164,7 +172,10 @@ npm run format               # prettier --write
 
 ## 13. Open decisions to confirm with the client before/while building
 
+- ~~Lead-capture channel(s)~~ — resolved: phone, WhatsApp, and email, sourced from the business-card assets in `src/images/branding/` and wired into `src/data/site.ts` as arrays (`contacts.phones`/`.whatsapp`/`.emails`), each with one `primary: true` entry, ready for more contacts later.
+- **Still open**: trade license number/authority — a number is visible on one business card photo but not confidently legible; `site.license` still holds a TODO placeholder. Do not guess it — confirm with the client and update `src/data/site.ts`, then surface it in `Footer`/`about.astro`/`SEO.astro`'s `identifier` field (already wired to pick it up automatically once the TODO string is replaced).
 - Exact list of service pages (is "Maintenance" a standalone service line with its own page, or folded into each service?).
-- Final domain name (update `site` in `astro.config.mjs` and all canonical/OG URLs once confirmed — do not invent one).
-- Lead-capture channel(s): WhatsApp, form, phone — likely all three, mirrored from the sibling project's pattern.
+- Final domain name (update `SITE_URL` in `astro.config.mjs`, `cloudflare/pages-action`'s `projectName` in `.github/workflows/deploy.yml`, and all canonical/OG URLs once confirmed — do not invent one).
 - Whether to pursue dedicated per-Emirate landing pages now or defer until there's real project content per Emirate (see §4).
+- A handful of `src/images/interiors/` files (`interior-design-reference-*.jpeg`, `office-interior-render-*.jpeg`) look like mood-board/render references rather than photos of completed Earth Cone work — currently excluded from the `/portfolio` grid by `src/lib/portfolioMedia.ts`'s `EXCLUDED_BASENAMES` list pending client confirmation either way.
+- Portfolio photo quality varies — some source photos are dim, blurry, or read as work-in-progress site snapshots rather than polished finished-work shots. Worth a client review pass (or professional reshoot) before launch, since the portfolio is the site's main trust-building surface.

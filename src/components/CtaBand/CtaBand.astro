@@ -1,10 +1,11 @@
 ---
-import { site } from '../../data/site';
+import { primaryWhatsapp } from '../../data/site';
 ---
 
-<section class="bg-[var(--color-terracotta)] py-14">
-    <div class="container-page flex flex-col items-center gap-4 text-center text-white">
-        <h2 class="text-2xl font-semibold sm:text-3xl">Have a project in mind?</h2>
+<section class="bg-[var(--color-terracotta)] py-section-sm">
+    <div class="container-page flex flex-col items-center gap-5 text-center text-white">
+        <p class="eyebrow text-white/80">Let's build it</p>
+        <h2 class="text-display-sm font-display font-semibold">Have a project in mind?</h2>
         <p class="max-w-xl text-white/90">
             Tell us about your construction, fit-out, or maintenance project and we'll get back to
             you with a quote.
@@ -17,7 +18,7 @@ import { site } from '../../data/site';
                 Request a Quote
             </a>
             <a
-                href={`https://wa.me/${site.whatsapp.replace('+', '')}`}
+                href={`https://wa.me/${primaryWhatsapp.value}`}
                 class="btn-secondary border-white text-white hover:bg-white/10"
             >
                 WhatsApp Us
