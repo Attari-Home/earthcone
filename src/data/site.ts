@@ -2,6 +2,8 @@
 // (nav, footer, JSON-LD, contact page). Replace remaining TODO values with
 // confirmed details before launch — do not duplicate these elsewhere.
 
+export const LICENSE_PLACEHOLDER = 'TODO — confirm with client';
+
 export interface Contact {
     label: string;
     /** Machine-usable form: E.164 for tel:, digits-only (no +) for wa.me links, raw address for email. */
@@ -54,8 +56,8 @@ export const site = {
     // TODO: confirm real license number with client — business card shows a
     // partial, illegible "NP.05.0700..."-style number. Do not guess it.
     license: {
-        authority: 'TODO — confirm with client',
-        number: 'TODO — confirm with client',
+        authority: LICENSE_PLACEHOLDER,
+        number: LICENSE_PLACEHOLDER,
     },
 
     emirates: [
@@ -76,11 +78,16 @@ export const site = {
 } as const;
 
 function primaryOf(contacts: readonly Contact[]): Contact {
-    const found = contacts.find((c) => c.primary);
-    if (!found) {
-        throw new Error('Expected exactly one primary contact in this list.');
+    const primaries = contacts.filter((c) => c.primary);
+    if (primaries.length === 0) {
+        throw new Error('Expected exactly one primary contact in this list, found none.');
     }
-    return found;
+    if (primaries.length > 1) {
+        throw new Error(
+            `Expected exactly one primary contact in this list, found ${primaries.length}.`,
+        );
+    }
+    return primaries[0];
 }
 
 export const primaryPhone = primaryOf(site.contacts.phones);

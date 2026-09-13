@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand/CtaBand.astro';
-import { site } from '../data/site';
+import { site, LICENSE_PLACEHOLDER } from '../data/site';
 ---
 
 <BaseLayout
@@ -15,7 +15,7 @@ import { site } from '../data/site';
         <div class="container-wide relative">
             <div class="reveal">
                 <p class="eyebrow">About</p>
-                <h1 class="mt-2 max-w-2xl text-display-md font-display font-semibold text-[var(--color-ink)]">
+                <h1 class="mt-2 max-w-2xl text-display-md font-semibold text-[var(--color-ink)]">
                     About {site.shortName}
                 </h1>
                 <p class="mt-6 max-w-2xl text-lg text-[var(--color-stone)]">
@@ -39,10 +39,12 @@ import { site } from '../data/site';
                     <dt class="eyebrow">Coverage</dt>
                     <dd class="mt-2 text-[var(--color-ink)]">All seven Emirates</dd>
                 </div>
-                <div>
-                    <dt class="eyebrow">Trade license</dt>
-                    <dd class="mt-2 text-[var(--color-ink)]">{site.license.number}</dd>
-                </div>
+                {site.license.number !== LICENSE_PLACEHOLDER && (
+                    <div>
+                        <dt class="eyebrow">Trade license</dt>
+                        <dd class="mt-2 text-[var(--color-ink)]">{site.license.number}</dd>
+                    </div>
+                )}
             </dl>
         </div>
     </section>

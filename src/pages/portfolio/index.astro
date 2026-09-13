@@ -22,7 +22,7 @@ const tiles = categories.map((category) => {
     <section class="container-wide py-section-md">
         <div class="reveal">
             <p class="eyebrow">Portfolio</p>
-            <h1 class="mt-2 max-w-2xl text-display-md font-display font-semibold text-[var(--color-ink)]">
+            <h1 class="mt-2 max-w-2xl text-display-md font-semibold text-[var(--color-ink)]">
                 Our work, by category
             </h1>
             <p class="mt-4 max-w-xl text-[var(--color-stone)]">
@@ -34,7 +34,7 @@ const tiles = categories.map((category) => {
             {tiles.map(({ category, cover }, i) => (
                 <a
                     href={`/portfolio/${category.id}`}
-                    class="group media-tile reveal block"
+                    class="group media-tile tilt-card reveal block"
                     style={`transition-delay: ${Math.min(i * 0.08, 0.32)}s`}
                 >
                     <div class="aspect-[4/3] overflow-hidden bg-[var(--color-sand)]">

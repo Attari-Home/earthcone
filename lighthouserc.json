@@ -5,7 +5,9 @@
             "url": [
                 "/index.html",
                 "/services/index.html",
+                "/services/kitchens/index.html",
                 "/portfolio/index.html",
+                "/portfolio/kitchens/index.html",
                 "/contact/index.html"
             ]
         },

@@ -77,25 +77,27 @@ const teaserTiles = categories.map((category) => {
                     <a
                         href={`/portfolio/${category.id}`}
                         class:list={[
-                            'media-tile reveal group relative block overflow-hidden',
+                            'media-tile tilt-card reveal group relative block',
                             i === 0 ? 'sm:col-span-2 sm:row-span-2' : '',
                         ]}
                         style={`transition-delay: ${i * 0.08}s`}
                     >
-                        {cover && (
-                            <Image
-                                src={cover}
-                                alt={`${category.data.title} — Earth Cone portfolio`}
-                                widths={[320, 480, 640, 960]}
-                                sizes={
-                                    i === 0
-                                        ? '(min-width: 1024px) 45vw, 100vw'
-                                        : '(min-width: 1024px) 22vw, 50vw'
-                                }
-                                loading="lazy"
-                                class="h-full w-full object-cover"
-                            />
-                        )}
+                        <div class="absolute inset-0 overflow-hidden">
+                            {cover && (
+                                <Image
+                                    src={cover}
+                                    alt={`${category.data.title} — Earth Cone portfolio`}
+                                    widths={[320, 480, 640, 960]}
+                                    sizes={
+                                        i === 0
+                                            ? '(min-width: 1024px) 45vw, 100vw'
+                                            : '(min-width: 1024px) 22vw, 50vw'
+                                    }
+                                    loading="lazy"
+                                    class="h-full w-full object-cover"
+                                />
+                            )}
+                        </div>
                         <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--color-ink)]/80 to-transparent p-4">
                             <p class="font-display font-medium text-white">{category.data.title}</p>
                         </div>

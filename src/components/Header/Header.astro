@@ -13,10 +13,7 @@ const navLinks = [
 
 <header class="sticky top-0 z-20 border-b border-[var(--color-sand)] bg-[var(--color-cream)]/90 backdrop-blur-md">
     <div class="container-wide flex h-20 items-center justify-between">
-        <a
-            href="/"
-            class="font-display text-lg font-semibold tracking-tight text-[var(--color-ink)]"
-        >
+        <a href="/" class="font-title text-lg font-semibold tracking-tight text-[var(--color-ink)]">
             {site.shortName}
         </a>
 
@@ -35,7 +32,7 @@ const navLinks = [
             Get a Quote
         </a>
 
-        <details class="relative md:hidden">
+        <details id="mobile-nav" class="relative md:hidden">
             <summary
                 class="flex h-10 w-10 cursor-pointer list-none items-center justify-center text-[var(--color-ink)] [&::-webkit-details-marker]:hidden"
                 aria-label="Open menu"
@@ -58,3 +55,13 @@ const navLinks = [
         </details>
     </div>
 </header>
+
+<script>
+    // Header persists across View Transitions (transition:persist), so the mobile <details>
+    // menu's open state would otherwise survive client-side navigations. Force it closed
+    // whenever a new page finishes swapping in.
+    document.addEventListener('astro:page-load', () => {
+        const menu = document.getElementById('mobile-nav');
+        if (menu instanceof HTMLDetailsElement) menu.open = false;
+    });
+</script>

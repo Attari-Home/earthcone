@@ -35,8 +35,69 @@ function parsePath(path: string): ParsedPath {
     return { folder, basename };
 }
 
-function humanize(basename: string): string {
-    return basename.replace(/-\d+$/, '').split('-').join(' ');
+// Descriptive alt-text phrase for each known basename root (basename minus its trailing
+// sequence number). Keeps alt text specific per CLAUDE.md §5's bar ("not 'kitchen1.jpg' —
+// 'custom kitchen cabinetry installation, Dubai villa'") instead of the generic, near-duplicate
+// text a plain word-split of the filename would produce across dozens of same-root photos.
+const SUBJECT_PHRASES: Record<string, string> = {
+    'exterior-paving': 'Exterior paving installation',
+    'foundation-construction': 'Building foundation construction',
+    'masonry-construction': 'Masonry construction work',
+    'outdoor-decking': 'Outdoor decking installation',
+    'site-foundation-work': 'Site foundation work in progress',
+    'villa-construction': 'Villa construction in progress',
+    'villa-facade': 'Villa exterior façade',
+    'bathroom-vanity-installation': 'Bathroom vanity installation',
+    'bedroom-feature-wall': 'Bedroom feature wall finish',
+    'curved-staircase': 'Curved staircase installation',
+    'elevator-lobby': 'Elevator lobby interior finish',
+    'feature-door-installation': 'Feature door installation',
+    'flooring-finish': 'Flooring finish work',
+    'herringbone-flooring': 'Herringbone flooring installation',
+    'herringbone-flooring-installation': 'Herringbone flooring installation',
+    'interior-design-reference': 'Interior design reference',
+    'living-room-tv-wall': 'Living room TV feature wall',
+    'office-interior-render': 'Office interior render',
+    'staircase-railing': 'Staircase railing installation',
+    'wood-finish-detail': 'Wood finish detail work',
+    'wood-flooring': 'Wood flooring installation',
+    'wood-staircase': 'Wood staircase installation',
+    'wood-staircase-detail': 'Wood staircase detail',
+    'custom-kitchen': 'Custom kitchen cabinetry installation',
+    'ceiling-electrical-installation': 'Ceiling electrical conduit installation',
+    'floor-electrical-conduits': 'Floor electrical conduit installation',
+    'plumbing-installation': 'Plumbing installation',
+    'plumbing-manifold': 'Plumbing manifold installation',
+    'rooftop-piping-installation': 'Rooftop piping installation',
+    'rooftop-water-tank': 'Rooftop water tank installation',
+    'water-pump-installation': 'Water pump installation',
+};
+
+// Short location/business context appended to every alt string for the folder's category.
+const FOLDER_LOCATION_CONTEXT: Record<string, string> = {
+    'construction-exteriors': 'Dubai villa construction site',
+    interiors: 'Dubai villa interior fit-out',
+    kitchens: 'Dubai villa',
+    electrical: 'UAE construction site',
+    'water-systems': 'UAE building',
+};
+
+function humanize(basename: string, folder: string): string {
+    const match = basename.match(/^(.*?)(?:-(\d+))?$/);
+    const root = match?.[1] ?? basename;
+    const seq = match?.[2];
+
+    const subject =
+        SUBJECT_PHRASES[root] ??
+        root
+            .split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    const context = FOLDER_LOCATION_CONTEXT[folder];
+
+    let alt = context ? `${subject}, ${context}` : subject;
+    if (seq) alt += ` — photo ${parseInt(seq, 10)}`;
+    return alt;
 }
 
 export interface PhotoItem {
@@ -82,20 +143,26 @@ export function getMediaForFolder(folder: string): MediaItem[] {
     for (const basename of videoBasenames) {
         // Prefer a dedicated poster frame; fall back to the same-stem photo if one exists
         // (a handful of clips ship with a matching jpeg from the same shot).
-        const poster = postersByBasename.get(basename) ?? photosByBasename.get(basename);
+        const dedicatedPoster = postersByBasename.get(basename);
+        const poster = dedicatedPoster ?? photosByBasename.get(basename);
         if (!poster) continue; // no poster generated yet — skip until the video pipeline runs
         items.push({
             kind: 'video',
             basename,
             src: `/videos/${folder}/${basename}.mp4`,
             poster,
-            alt: humanize(basename),
+            alt: humanize(basename, folder),
         });
-        photosByBasename.delete(basename); // don't also show the paired photo standalone
+        // Only drop the photo when it was actually borrowed as the poster above — a dedicated
+        // poster means the same-basename photo is a coincidentally-numbered, unrelated asset
+        // (sequence numbers don't imply a relationship between assets) and must stay visible.
+        if (!dedicatedPoster) {
+            photosByBasename.delete(basename);
+        }
     }
 
     for (const [basename, src] of photosByBasename) {
-        items.push({ kind: 'photo', basename, src, alt: humanize(basename) });
+        items.push({ kind: 'photo', basename, src, alt: humanize(basename, folder) });
     }
 
     return items.sort((a, b) => a.basename.localeCompare(b.basename, undefined, { numeric: true }));

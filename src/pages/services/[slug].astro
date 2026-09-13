@@ -4,6 +4,8 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs.astro';
 import CtaBand from '../../components/CtaBand/CtaBand.astro';
+import PortfolioCard from '../../components/PortfolioCard/PortfolioCard.astro';
+import { getMediaForFolder } from '../../lib/portfolioMedia';
 import { site } from '../../data/site';
 
 export async function getStaticPaths() {
@@ -17,6 +19,13 @@ export async function getStaticPaths() {
 const { service } = Astro.props;
 const { title, summary, heroImage } = service.data;
 const { Content } = await render(service);
+
+// The projects collection holds the portfolio media for each service (matched via
+// serviceSlug) — pull the same gallery in here so completed-work photos show on both
+// the service page and its /portfolio/[category] counterpart, not just one or the other.
+const projectCategories = await getCollection('projects');
+const matchingProject = projectCategories.find((p) => p.data.serviceSlug === service.id);
+const galleryItems = matchingProject ? getMediaForFolder(matchingProject.data.folder) : [];
 
 const serviceJsonLd = {
     '@context': 'https://schema.org',
@@ -63,15 +72,36 @@ const serviceJsonLd = {
         <div class="container-page max-w-3xl py-section-sm">
             <div class="reveal">
                 <p class="eyebrow">Service</p>
-                <h1 class="mt-2 text-display-sm font-display font-semibold text-[var(--color-ink)]">
-                    {title}
-                </h1>
+                <h1 class="mt-2 text-display-sm font-semibold text-[var(--color-ink)]">{title}</h1>
                 <p class="mt-4 text-lg text-[var(--color-stone)]">{summary}</p>
                 <div class="prose mt-8 max-w-none">
                     <Content />
                 </div>
             </div>
         </div>
+
+        {galleryItems.length > 0 && (
+            <div class="container-wide pt-6 pb-section-sm">
+                <div class="reveal flex flex-wrap items-end justify-between gap-4">
+                    <h2 class="text-display-sm font-display font-semibold text-[var(--color-ink)]">
+                        Completed {title.toLowerCase()} work
+                    </h2>
+                    {matchingProject && (
+                        <a
+                            href={`/portfolio/${matchingProject.id}`}
+                            class="btn-ghost text-[var(--color-terracotta)]"
+                        >
+                            View full gallery <span class="arrow">&rarr;</span>
+                        </a>
+                    )}
+                </div>
+                <div class="mt-10 columns-1 gap-6 sm:columns-2 lg:columns-3">
+                    {galleryItems.map((item) => (
+                        <PortfolioCard item={item} />
+                    ))}
+                </div>
+            </div>
+        )}
     </article>
 
     <CtaBand />

@@ -1,19 +1,38 @@
 ---
 import { Image } from 'astro:assets';
-import heroImage from '../../images/construction-exteriors/villa-facade-01.jpeg';
+import villaFacade from '../../images/construction-exteriors/villa-facade-01.jpeg';
+import livingRoom from '../../images/interiors/living-room-tv-wall-01.jpeg';
+import kitchen from '../../images/kitchens/custom-kitchen-01.jpeg';
+import electrical from '../../images/electrical/ceiling-electrical-installation-01.jpeg';
+import waterTank from '../../images/water-systems/rooftop-water-tank-01.jpeg';
 import { site } from '../../data/site';
+
+// Full-bleed hero slideshow: one photo per trade, crossfading on a shared CSS-only loop
+// (see .hero-slide / @keyframes hero-crossfade in global.css) — no JS, so it's free
+// against the performance budget and still degrades to a single static frame under
+// prefers-reduced-motion.
+const slides = [
+    { src: villaFacade, alt: 'Completed villa exterior built by Earth Cone' },
+    { src: livingRoom, alt: 'Interior fit-out living room feature wall, Dubai villa' },
+    { src: kitchen, alt: 'Custom kitchen cabinetry installation, Dubai villa' },
+    { src: electrical, alt: 'Electrical conduit installation, UAE construction site' },
+    { src: waterTank, alt: 'Rooftop water tank installation, UAE building' },
+];
 ---
 
 <section class="relative flex min-h-[92vh] items-end overflow-hidden bg-[var(--color-ink)]">
-    <Image
-        src={heroImage}
-        alt="Completed villa exterior built by Earth Cone"
-        widths={[480, 768, 1280, 1920]}
-        sizes="100vw"
-        loading="eager"
-        fetchpriority="high"
-        class="animate-hero-zoom absolute inset-0 h-full w-full object-cover"
-    />
+    {slides.map((slide, i) => (
+        <Image
+            src={slide.src}
+            alt={slide.alt}
+            widths={[480, 768, 1280, 1920]}
+            sizes="100vw"
+            loading="eager"
+            fetchpriority={i === 0 ? 'high' : undefined}
+            class="hero-slide absolute inset-0 h-full w-full object-cover"
+            style={`animation-delay: ${i * 6}s, 0s`}
+        />
+    ))}
     <div
         class="absolute inset-0 bg-gradient-to-t from-[var(--color-ink)] via-[var(--color-ink)]/55 to-[var(--color-ink)]/10"
         aria-hidden="true"
@@ -22,7 +41,7 @@ import { site } from '../../data/site';
     <div class="container-wide relative pt-40 pb-section-md">
         <p class="reveal eyebrow text-white/80">Est. Dubai · UAE-wide</p>
         <h1
-            class="reveal mt-3 max-w-3xl text-display-xl font-display font-semibold text-white"
+            class="reveal mt-3 max-w-3xl text-display-xl font-semibold text-white"
             style="transition-delay: 0.1s"
         >
             Building and maintaining properties across the UAE

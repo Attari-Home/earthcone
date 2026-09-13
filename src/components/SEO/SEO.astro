@@ -1,5 +1,5 @@
 ---
-import { site, primaryPhone, primaryEmail } from '../../data/site';
+import { site, primaryPhone, primaryEmail, LICENSE_PLACEHOLDER } from '../../data/site';
 
 interface Props {
     title: string;
@@ -35,18 +35,18 @@ const jsonLd = {
         ...site.contacts.phones.map((phone) => ({
             '@type': 'ContactPoint',
             telephone: phone.value,
-            contactType: phone.label,
+            contactType: 'customer service',
             areaServed: 'AE',
         })),
         ...site.contacts.whatsapp.map((wa) => ({
             '@type': 'ContactPoint',
             telephone: `+${wa.value}`,
-            contactType: 'WhatsApp',
+            contactType: 'customer service',
             areaServed: 'AE',
         })),
     ],
     identifier:
-        site.license.number === 'TODO — confirm with client'
+        site.license.number === LICENSE_PLACEHOLDER
             ? undefined
             : {
                   '@type': 'PropertyValue',
