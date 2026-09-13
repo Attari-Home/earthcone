@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../../lib/url';
 
 interface Props {
     service: CollectionEntry<'services'>;
@@ -10,7 +11,7 @@ const { title, summary } = service.data;
 ---
 
 <a
-    href={`/services/${service.id}`}
+    href={withBase(`/services/${service.id}`)}
     class="group block rounded-lg border border-[var(--color-sand)] bg-white p-6 transition-shadow hover:shadow-lg"
 >
     <h3 class="text-lg font-semibold text-[var(--color-ink)] group-hover:text-[var(--color-terracotta)]">
