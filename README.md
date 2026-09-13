@@ -9,7 +9,7 @@ targets, and branch/PR workflow this project follows.
 
 ## Tech stack
 
-Astro 5 (static) · Tailwind CSS v4 · TypeScript · GitHub Pages (temporary, until a domain is purchased — then Cloudflare Pages).
+Astro 5 (static) · Tailwind CSS v4 · TypeScript · Cloudflare (Git-connected deploy, custom domain).
 
 ## Getting started
 
