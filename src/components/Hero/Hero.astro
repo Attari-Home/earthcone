@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import heroImage from '../../images/construction-exteriors/villa-facade-01.jpeg';
 import { site } from '../../data/site';
+import { withBase } from '../../lib/url';
 ---
 
 <section class="relative overflow-hidden">
@@ -24,10 +25,10 @@ import { site } from '../../data/site';
             {site.tagline}. Licensed to work in {site.emirates.join(', ')}.
         </p>
         <div class="mt-8 flex flex-wrap gap-4">
-            <a href="/contact" class="btn-primary">
+            <a href={withBase('/contact')} class="btn-primary">
                 Request a Quote
             </a>
-            <a href="/services" class="btn-secondary bg-white/90">
+            <a href={withBase('/services')} class="btn-secondary bg-white/90">
                 Our Services
             </a>
         </div>
