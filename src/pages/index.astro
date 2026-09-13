@@ -6,6 +6,7 @@ import Hero from '../components/Hero/Hero.astro';
 import ServiceGrid from '../components/ServiceGrid/ServiceGrid.astro';
 import CtaBand from '../components/CtaBand/CtaBand.astro';
 import { getMediaForFolder } from '../lib/portfolioMedia';
+import { withBase } from '../lib/url';
 import { site } from '../data/site';
 
 const stats = [
@@ -67,7 +68,7 @@ const teaserTiles = categories.map((category) => {
                         Recent work
                     </h2>
                 </div>
-                <a href="/portfolio" class="btn-ghost text-white">
+                <a href={withBase('/portfolio')} class="btn-ghost text-white">
                     View full portfolio <span class="arrow">&rarr;</span>
                 </a>
             </div>
@@ -75,7 +76,7 @@ const teaserTiles = categories.map((category) => {
             <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-rows-2 sm:[grid-template-columns:repeat(4,1fr)] sm:[grid-auto-rows:14rem] lg:[grid-auto-rows:18rem]">
                 {teaserTiles.map(({ category, cover }, i) => (
                     <a
-                        href={`/portfolio/${category.id}`}
+                        href={withBase(`/portfolio/${category.id}`)}
                         class:list={[
                             'media-tile tilt-card reveal group relative block',
                             i === 0 ? 'sm:col-span-2 sm:row-span-2' : '',

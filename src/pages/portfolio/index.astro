@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CtaBand from '../../components/CtaBand/CtaBand.astro';
 import { getMediaForFolder } from '../../lib/portfolioMedia';
+import { withBase } from '../../lib/url';
 import { site } from '../../data/site';
 
 const categories = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -33,7 +34,7 @@ const tiles = categories.map((category) => {
         <div class="mt-14 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
             {tiles.map(({ category, cover }, i) => (
                 <a
-                    href={`/portfolio/${category.id}`}
+                    href={withBase(`/portfolio/${category.id}`)}
                     class="group media-tile tilt-card reveal block"
                     style={`transition-delay: ${Math.min(i * 0.08, 0.32)}s`}
                 >

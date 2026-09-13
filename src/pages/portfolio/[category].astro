@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PortfolioCard from '../../components/PortfolioCard/PortfolioCard.astro';
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs.astro';
 import { getMediaForFolder } from '../../lib/portfolioMedia';
+import { withBase } from '../../lib/url';
 
 export async function getStaticPaths() {
     const categories = await getCollection('projects');
@@ -36,7 +37,7 @@ const items = getMediaForFolder(folder);
             </div>
             {serviceSlug && (
                 <a
-                    href={`/services/${serviceSlug}`}
+                    href={withBase(`/services/${serviceSlug}`)}
                     class="btn-ghost mt-4 text-[var(--color-terracotta)]"
                 >
                     View {title} service <span class="arrow">&rarr;</span>

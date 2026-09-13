@@ -6,6 +6,7 @@ import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs.astro';
 import CtaBand from '../../components/CtaBand/CtaBand.astro';
 import PortfolioCard from '../../components/PortfolioCard/PortfolioCard.astro';
 import { getMediaForFolder } from '../../lib/portfolioMedia';
+import { withBase } from '../../lib/url';
 import { site } from '../../data/site';
 
 export async function getStaticPaths() {
@@ -88,7 +89,7 @@ const serviceJsonLd = {
                     </h2>
                     {matchingProject && (
                         <a
-                            href={`/portfolio/${matchingProject.id}`}
+                            href={withBase(`/portfolio/${matchingProject.id}`)}
                             class="btn-ghost text-[var(--color-terracotta)]"
                         >
                             View full gallery <span class="arrow">&rarr;</span>

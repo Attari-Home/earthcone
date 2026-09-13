@@ -1,4 +1,5 @@
 import type { ImageMetadata } from 'astro';
+import { withBase } from './url';
 
 // Single static glob calls — Vite requires these patterns to be literal strings
 // so it can statically analyze and bundle the matched assets.
@@ -149,7 +150,7 @@ export function getMediaForFolder(folder: string): MediaItem[] {
         items.push({
             kind: 'video',
             basename,
-            src: `/videos/${folder}/${basename}.mp4`,
+            src: withBase(`/videos/${folder}/${basename}.mp4`),
             poster,
             alt: humanize(basename, folder),
         });

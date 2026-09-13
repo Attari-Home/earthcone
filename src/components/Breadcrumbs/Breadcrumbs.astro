@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../../lib/url';
+
 export interface Crumb {
     label: string;
     href: string;
@@ -8,7 +10,8 @@ interface Props {
     items: Crumb[];
 }
 
-const { items } = Astro.props;
+const { items: rawItems } = Astro.props;
+const items = rawItems.map((item) => ({ ...item, href: withBase(item.href) }));
 
 const jsonLd = {
     '@context': 'https://schema.org',

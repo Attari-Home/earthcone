@@ -6,6 +6,7 @@ import kitchen from '../../images/kitchens/custom-kitchen-01.jpeg';
 import electrical from '../../images/electrical/ceiling-electrical-installation-01.jpeg';
 import waterTank from '../../images/water-systems/rooftop-water-tank-01.jpeg';
 import { site } from '../../data/site';
+import { withBase } from '../../lib/url';
 
 // Full-bleed hero slideshow: one photo per trade, crossfading on a shared CSS-only loop
 // (see .hero-slide / @keyframes hero-crossfade in global.css) — no JS, so it's free
@@ -53,11 +54,11 @@ const slides = [
             {site.tagline}. Licensed to work in {site.emirates.join(', ')}.
         </p>
         <div class="reveal mt-8 flex flex-wrap gap-4" style="transition-delay: 0.3s">
-            <a href="/contact" class="btn-primary">
+            <a href={withBase('/contact')} class="btn-primary">
                 {' '}
                 Request a Quote{' '}
             </a>
-            <a href="/services" class="btn-secondary bg-white/90">
+            <a href={withBase('/services')} class="btn-secondary bg-white/90">
                 {' '}
                 Our Services{' '}
             </a>

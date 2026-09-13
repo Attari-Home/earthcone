@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { site } from '../../data/site';
+import { withBase } from '../../lib/url';
 
 const navLinks = [
     { href: '/services', label: 'Services' },
@@ -13,14 +14,17 @@ const navLinks = [
 
 <header class="sticky top-0 z-20 border-b border-[var(--color-sand)] bg-[var(--color-cream)]/90 backdrop-blur-md">
     <div class="container-wide flex h-20 items-center justify-between">
-        <a href="/" class="font-title text-lg font-semibold tracking-tight text-[var(--color-ink)]">
+        <a
+            href={withBase('/')}
+            class="font-title text-lg font-semibold tracking-tight text-[var(--color-ink)]"
+        >
             {site.shortName}
         </a>
 
         <nav aria-label="Primary" class="hidden gap-8 md:flex">
             {navLinks.map((link) => (
                 <a
-                    href={link.href}
+                    href={withBase(link.href)}
                     class="link-underline text-sm font-medium text-[var(--color-charcoal)] hover:text-[var(--color-terracotta)]"
                 >
                     {link.label}
@@ -28,7 +32,7 @@ const navLinks = [
             ))}
         </nav>
 
-        <a href="/contact" class="btn-primary hidden text-xs md:inline-flex">
+        <a href={withBase('/contact')} class="btn-primary hidden text-xs md:inline-flex">
             Get a Quote
         </a>
 
@@ -45,7 +49,7 @@ const navLinks = [
             >
                 {navLinks.map((link) => (
                     <a
-                        href={link.href}
+                        href={withBase(link.href)}
                         class="block px-3 py-2 text-sm font-medium text-[var(--color-charcoal)] hover:bg-[var(--color-sand)]"
                     >
                         {link.label}
