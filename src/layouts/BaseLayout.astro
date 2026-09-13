@@ -3,6 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import SEO from '../components/SEO/SEO.astro';
 import Header from '../components/Header/Header.astro';
 import Footer from '../components/Footer/Footer.astro';
+import WhatsAppButton from '../components/WhatsAppButton/WhatsAppButton.astro';
 import { withBase } from '../lib/url';
 import '@fontsource-variable/inter/wght.css';
 import '@fontsource-variable/fraunces/wght.css';
@@ -34,6 +35,10 @@ const { title, description, image } = Astro.props;
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="generator" content={Astro.generator} />
         <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+        <link rel="icon" type="image/png" sizes="32x32" href={withBase('/favicon-32x32.png')} />
+        <link rel="icon" type="image/png" sizes="16x16" href={withBase('/favicon-16x16.png')} />
+        <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+        <meta name="theme-color" content="#191512" />
         <SEO title={title} description={description} image={image} />
         <ClientRouter />
     </head>
@@ -43,6 +48,7 @@ const { title, description, image } = Astro.props;
             <slot />
         </main>
         <Footer transition:persist />
+        <WhatsAppButton transition:persist />
     </body>
 
     <script>

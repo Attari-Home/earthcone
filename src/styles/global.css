@@ -30,7 +30,6 @@
     --color-clay: #8a5a3c;
 
     /* Fluid display type scale — clamps between mobile and wide desktop. */
-    --text-display-xl: clamp(3.25rem, 2rem + 5.5vw, 6.75rem);
     --text-display-lg: clamp(2.75rem, 2rem + 3.2vw, 5rem);
     --text-display-md: clamp(2.25rem, 1.8rem + 2vw, 3.5rem);
     --text-display-sm: clamp(1.75rem, 1.5rem + 1vw, 2.5rem);
@@ -67,6 +66,10 @@
         font-weight: 600;
         letter-spacing: -0.015em;
         text-wrap: balance;
+        /* Safety net: text-wrap:balance only chooses where to break between words — if a
+           single word is ever wider than its container (long word, narrow viewport) it
+           still needs somewhere to break, or it overflows/clips instead of wrapping. */
+        overflow-wrap: break-word;
     }
 
     /* Page-title face: distinct from the h2-h4 display serif above. */
