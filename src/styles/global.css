@@ -6,8 +6,21 @@
     /* Titling face reserved for the brand name and page H1s only — not for h2-h4 body headings. */
     --font-title: 'Castoro Titling', ui-serif, Georgia, serif;
 
-    /* Earth-toned palette: warm terracotta accent on a charcoal/neutral base. */
+    /*
+     * Earth-toned palette: warm terracotta accent on a charcoal/neutral base.
+     *
+     * --color-fg/--color-stone/--color-sand/--color-cream flip between light and dark mode
+     * (see the dark-mode block near the end of this file) — every component just reads
+     * these tokens, so theming needs no per-component changes.
+     *
+     * --color-ink/--color-charcoal/--color-terracotta variants/--color-clay stay FIXED in
+     * both modes. --color-ink specifically is a permanently-dark decorative surface color
+     * (Hero photo overlay, the homepage dark portfolio band, service-page hero overlay) —
+     * it is not the text color, and must never be added to the dark-mode overrides below,
+     * or those overlays invert to a light wash in dark mode instead of staying dark.
+     */
     --color-ink: #191512;
+    --color-fg: #191512;
     --color-charcoal: #2b2521;
     --color-stone: #6b6259;
     --color-sand: #f4efe8;
@@ -40,7 +53,7 @@
 
     body {
         background-color: var(--color-cream);
-        color: var(--color-ink);
+        color: var(--color-fg);
         /* .tilt-card's entrance transform (translateX) can otherwise register as scrollable
            overflow before it settles to rest, opening a stray horizontal scrollbar. */
         overflow-x: hidden;
@@ -92,13 +105,15 @@
         @apply inline-flex items-center justify-center rounded-[2px] bg-[var(--color-terracotta)] px-6 py-3 text-sm font-medium tracking-wide text-white uppercase transition-colors duration-300 hover:bg-[var(--color-terracotta-dark)];
     }
 
+    /* Always used on a white/near-white chip regardless of site theme, so its text is
+       fixed to --color-charcoal (never flips) rather than the adaptive --color-ink. */
     .btn-secondary {
-        @apply inline-flex items-center justify-center rounded-[2px] border border-[var(--color-stone)] px-6 py-3 text-sm font-medium tracking-wide text-[var(--color-ink)] uppercase transition-colors duration-300 hover:bg-[var(--color-sand)];
+        @apply inline-flex items-center justify-center rounded-[2px] border border-[var(--color-stone)] px-6 py-3 text-sm font-medium tracking-wide text-[var(--color-charcoal)] uppercase transition-colors duration-300 hover:bg-[var(--color-sand)];
     }
 
     /* Ghost CTA for card-level links, e.g. "View Project". Arrow glyph translates on hover. */
     .btn-ghost {
-        @apply inline-flex items-center gap-2 text-sm font-medium text-[var(--color-ink)];
+        @apply inline-flex items-center gap-2 text-sm font-medium text-[var(--color-fg)];
     }
 
     .btn-ghost .arrow {
@@ -160,18 +175,36 @@
     }
 
     /*
-     * "Bookshelf" treatment for service/portfolio-category cards: a leaning slide-in on
-     * scroll and a 3D tilt-forward pop on hover. Scoped to desktop with real hover (min-width
-     * + hover:hover/pointer:fine) so touch/mobile visitors keep the plain .reveal fade only —
-     * no tilt, no shadow, nothing that depends on a mouse to look right.
+     * Reserved-space hover reveal for card descriptions: the text block always occupies
+     * its final height (no layout shift, never touches a sibling's box) and just fades/
+     * slides into view on hover — unlike a scale/translate on the whole card, this can
+     * never bleed into a neighboring grid cell's hit-test area.
      */
-    .tilt-card {
-        transform-style: preserve-3d;
+    .reveal-caption {
+        @apply -translate-y-1 opacity-0 transition-[opacity,transform] duration-300;
+        transition-timing-function: var(--ease-premium);
+    }
+
+    .group:hover .reveal-caption,
+    .group:focus-within .reveal-caption {
+        @apply translate-y-0 opacity-100;
+    }
+
+    /* Book-spine accent for portfolio category tiles — the literal bookshelf cue, paired
+       with the leaning .tilt-card scroll-in entrance above. */
+    .book-spine {
+        @apply relative;
+    }
+
+    .book-spine::before {
+        content: '';
+        @apply absolute inset-y-0 left-0 w-1.5;
+        background: linear-gradient(180deg, var(--color-terracotta), var(--color-clay));
     }
 
     /* Oversized decorative background word — sits behind real content as texture, not to be read. */
     .display-word {
-        @apply pointer-events-none absolute font-display font-semibold whitespace-nowrap text-[var(--color-ink)] select-none;
+        @apply pointer-events-none absolute font-display font-semibold whitespace-nowrap text-[var(--color-fg)] select-none;
         font-size: var(--text-display-huge);
         line-height: 1;
         opacity: 0.045;
@@ -229,7 +262,12 @@
     animation: scroll-dot 1.8s ease-in-out infinite;
 }
 
-/* Leaning "shelved book" entrance for .tilt-card grids — desktop only (see comment above). */
+/*
+ * Leaning "shelved book" entrance for .tilt-card grids — desktop only, and this is a
+ * one-shot scroll-in transition that settles to `transform: none` before a visitor can
+ * meaningfully interact with it, so (unlike the old hover effect) it can't bleed into a
+ * neighboring card's clickable area.
+ */
 @media (min-width: 768px) {
     html.js .tilt-card.reveal {
         transform: translateX(-2.5rem) translateY(1rem) rotate(-8deg);
@@ -240,18 +278,49 @@
     }
 }
 
-/* 3D tilt-forward pop, only on inputs that actually have hover (excludes touch entirely). */
-@media (hover: hover) and (pointer: fine) {
-    .tilt-card {
-        transition:
-            transform 0.5s var(--ease-premium),
-            box-shadow 0.5s var(--ease-premium);
+/*
+ * Stacked-deck "What we do" cards: default to overlapping like a hand of cards showing
+ * only their photo (title/description/link hidden — a real poker-style stack, not just
+ * overlapping text), fan out into a plain row on hover, fold back the moment the cursor
+ * leaves the whole group. Desktop + real pointer only (min-width plus hover:hover/
+ * pointer:fine) — below that, or without a mouse, these classes get no rules at all and
+ * it just renders as the plain grid it already was, so mobile/tablet is unaffected.
+ */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+    .stack-group {
+        display: flex;
     }
 
-    .tilt-card:hover {
-        transform: perspective(1000px) rotateX(-4deg) rotateY(2deg) translateY(-0.75rem) scale(1.04);
-        box-shadow: 0 30px 50px -20px rgba(25, 21, 18, 0.45);
-        z-index: 5;
+    .stack-card {
+        flex: 1 1 0%;
+        margin-left: calc(var(--i, 0) * -16%);
+        transform: rotate(calc(var(--i, 0) * -2.5deg)) translateY(calc(var(--i, 0) * 0.35rem));
+        transition:
+            margin-left 0.5s var(--ease-premium),
+            transform 0.5s var(--ease-premium);
+        z-index: calc(10 - var(--i, 0));
+    }
+
+    /* Title/description/link block: invisible while stacked (only the photo shows, like a
+       card's face-down back), fades in once the group fans out. */
+    .stack-text {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s var(--ease-premium);
+    }
+
+    /* :focus-within too, not just :hover — a keyboard user tabbing into a stacked card
+       must also fan the group out, or that card stays focused but visually buried. */
+    .stack-group:hover .stack-card,
+    .stack-group:focus-within .stack-card {
+        margin-left: 0;
+        transform: none;
+    }
+
+    .stack-group:hover .stack-text,
+    .stack-group:focus-within .stack-text {
+        opacity: 1;
+        pointer-events: auto;
     }
 }
 
@@ -266,13 +335,10 @@
     .media-tile video,
     .btn-ghost .arrow,
     .link-underline,
-    .tilt-card {
+    .reveal-caption,
+    .stack-card,
+    .stack-text {
         transition: none;
-    }
-
-    .tilt-card:hover {
-        transform: none;
-        box-shadow: none;
     }
 
     .hero-slide,
@@ -287,4 +353,51 @@
     .hero-slide:first-child {
         opacity: 1;
     }
+}
+
+/*
+ * Dark mode. Follows system preference by default; an explicit toggle (Header's
+ * #theme-toggle button) pins data-theme="dark"/"light" on <html> and always wins over
+ * the system setting, in both directions. Only the four adaptive tokens are redefined here
+ * (--color-fg/--color-stone/--color-sand/--color-cream). --color-ink/--color-charcoal/
+ * --color-terracotta and its variants/--color-clay are left alone on purpose — see the
+ * comment on the palette at the top of this file.
+ */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        --color-fg: #f2ede6;
+        --color-stone: #a89e92;
+        --color-sand: #3a332c;
+        --color-cream: #13100d;
+    }
+}
+
+:root[data-theme='dark'] {
+    --color-fg: #f2ede6;
+    --color-stone: #a89e92;
+    --color-sand: #3a332c;
+    --color-cream: #13100d;
+}
+
+/* Theme-toggle icon swap: shows the icon for the currently-active mode. */
+#theme-toggle .icon-moon {
+    display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) #theme-toggle .icon-sun {
+        display: none;
+    }
+
+    :root:not([data-theme='light']) #theme-toggle .icon-moon {
+        display: block;
+    }
+}
+
+:root[data-theme='dark'] #theme-toggle .icon-sun {
+    display: none;
+}
+
+:root[data-theme='dark'] #theme-toggle .icon-moon {
+    display: block;
 }

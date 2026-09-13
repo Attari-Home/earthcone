@@ -73,7 +73,7 @@ const serviceJsonLd = {
         <div class="container-page max-w-3xl py-section-sm">
             <div class="reveal">
                 <p class="eyebrow">Service</p>
-                <h1 class="mt-2 text-display-sm font-semibold text-[var(--color-ink)]">{title}</h1>
+                <h1 class="mt-2 text-display-sm font-semibold text-[var(--color-fg)]">{title}</h1>
                 <p class="mt-4 text-lg text-[var(--color-stone)]">{summary}</p>
                 <div class="prose mt-8 max-w-none">
                     <Content />
@@ -84,7 +84,7 @@ const serviceJsonLd = {
         {galleryItems.length > 0 && (
             <div class="container-wide pt-6 pb-section-sm">
                 <div class="reveal flex flex-wrap items-end justify-between gap-4">
-                    <h2 class="text-display-sm font-display font-semibold text-[var(--color-ink)]">
+                    <h2 class="text-display-sm font-display font-semibold text-[var(--color-fg)]">
                         Completed {title.toLowerCase()} work
                     </h2>
                     {matchingProject && (

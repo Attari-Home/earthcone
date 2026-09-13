@@ -24,6 +24,11 @@ const { title, description, image } = Astro.props;
     <head>
         <script is:inline>
             document.documentElement.classList.add('js');
+            // Runs synchronously before first paint so there's no flash of the wrong
+            // theme. Falls through to the @media(prefers-color-scheme) CSS when nothing
+            // is stored, i.e. the visitor never explicitly toggled the theme.
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme) document.documentElement.setAttribute('data-theme', storedTheme);
         </script>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
