@@ -21,18 +21,18 @@ Non-negotiable quality bar for every page shipped: **fast, responsive, accessibl
 
 This repo follows the same proven stack as the sibling project [`lailonahar-website`](https://github.com/Attari-Home) (also UAE-wide, also lead-gen, already tuned to near-perfect Lighthouse scores) for consistency across the portfolio and to reuse conventions:
 
-| Layer | Choice | Why |
-| --- | --- | --- |
-| Framework | [Astro 5](https://astro.build/) (static output) | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals |
-| Styling | Tailwind CSS v4 (`@tailwindcss/vite`) | Utility-first, small final CSS, fast iteration |
-| Icons | `astro-icon` + an Iconify set (e.g. `@iconify-json/ph`) | Inlined SVG, no icon font |
-| Images | `astro:assets` + `sharp` | Automatic AVIF/WebP + responsive `srcset` |
-| Content | Astro Content Collections (MDX) | Type-safe service/project/testimonial entries |
-| Routing | Astro View Transitions | SPA-like feel without a JS framework |
-| Forms | Web3Forms (or equivalent) | No backend needed for a static site |
-| Hosting | GitHub Pages *(temporary)* → Cloudflare Pages | Deployed to GitHub Pages for free until a domain is purchased; switch to Cloudflare Pages (matches sibling project) once there's a custom domain to point at it — see §9/§10 |
-| Language | TypeScript (strict) | Type-safe content schemas and utilities |
-| Formatting | Prettier + `prettier-plugin-astro` | One canonical format, enforced in CI |
+| Layer      | Choice                                                   | Why                                                                                                                                                                              |
+| ---------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework  | [Astro 5](https://astro.build/) (static output)          | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals                                                                      |
+| Styling    | Tailwind CSS v4 (`@tailwindcss/vite`)                    | Utility-first, small final CSS, fast iteration                                                                                                                                   |
+| Icons      | `astro-icon` + an Iconify set (e.g. `@iconify-json/ph`)  | Inlined SVG, no icon font                                                                                                                                                        |
+| Images     | `astro:assets` + `sharp`                                 | Automatic AVIF/WebP + responsive `srcset`                                                                                                                                        |
+| Content    | Astro Content Collections (MDX)                          | Type-safe service/project/testimonial entries                                                                                                                                    |
+| Routing    | Astro View Transitions                                   | SPA-like feel without a JS framework                                                                                                                                             |
+| Forms      | Web3Forms (or equivalent)                                | No backend needed for a static site                                                                                                                                              |
+| Hosting    | GitHub Pages _(temporary)_ → Cloudflare Pages            | Deployed to GitHub Pages for free until a domain is purchased; switch to Cloudflare Pages (matches sibling project) once there's a custom domain to point at it — see §9/§10     |
+| Language   | TypeScript (strict)                                      | Type-safe content schemas and utilities                                                                                                                                          |
+| Formatting | Prettier + `prettier-plugin-astro`                       | One canonical format, enforced in CI                                                                                                                                             |
 
 Do not introduce a second frontend framework (React/Vue/etc.) unless a specific interactive feature genuinely requires it — and then use an Astro island, not a full SPA rewrite.
 
@@ -104,19 +104,19 @@ The site should be easy for both search crawlers and AI agents/answer engines (C
 
 Target and enforce via Lighthouse CI (mirror the sibling project's `lighthouserc.json`):
 
-| Category | Minimum score |
-| --- | --- |
-| Performance | 0.95 |
-| Accessibility | 1.0 |
-| Best Practices | 0.95 |
-| SEO | 1.0 |
+| Category       | Minimum score |
+| -------------- | ------------- |
+| Performance    | 0.95          |
+| Accessibility  | 1.0           |
+| Best Practices | 0.95          |
+| SEO            | 1.0           |
 
 Rules to hit that budget:
 
 - No render-blocking JS; interactivity is progressive enhancement only.
 - All images through `astro:assets` (auto AVIF/WebP, explicit `width`/`height` to avoid CLS, `loading="lazy"` below the fold).
 - **Video**: `src/images/` holds the raw, uncompressed WhatsApp-export MP4 sources (~184 MB, some 30–40 MB each) — these are never served directly. Compressed copies live in `public/videos/<folder>/`, produced with `ffmpeg`, `libx264`, `-preset slow -crf 28`, **native resolution preserved (no downscale — the client explicitly wants quality/resolution kept)**, `-movflags +faststart`. This roughly halves file size (~184 MB → ~89 MB) at unchanged resolution; do not downscale to 720p even though that would compress further. Poster frames live in `src/images/video-posters/<folder>/` and flow through the normal `astro:assets` pipeline. `<video preload="none" poster={...} controls muted playsinline>` — never autoplay. See `docs/project-memory.md` for the full pipeline and re-run instructions when new clips are added.
-  - **Still open**: the original raw MP4 blobs remain permanently in `.git` history from the commit that added them (~170 MB). Purging them requires a destructive history rewrite (BFG/`git-filter-repo`, force-push) — flagged to the client as a separate explicit sign-off, not done as part of routine builds.
+    - **Still open**: the original raw MP4 blobs remain permanently in `.git` history from the commit that added them (~170 MB). Purging them requires a destructive history rewrite (BFG/`git-filter-repo`, force-push) — flagged to the client as a separate explicit sign-off, not done as part of routine builds.
 - Self-host fonts (or use `font-display: swap`), subset where practical.
 
 ## 7. Accessibility
@@ -138,14 +138,14 @@ Rules to hit that budget:
 
 - `main` is the production branch, deployed automatically to GitHub Pages (`https://attari-home.github.io/earthcone`) for now — see §10. **`main` is protected: no direct pushes, all changes land via pull request.**
 - Feature branches: `feature/<short-name>`, `fix/<short-name>`, `content/<short-name>`.
-- Commit messages: concise, imperative mood, explain *why* not *what* (e.g. `Fix hero LCP by preloading hero image`, not `update code`).
+- Commit messages: concise, imperative mood, explain _why_ not _what_ (e.g. `Fix hero LCP by preloading hero image`, not `update code`).
 - PRs use `.github/PULL_REQUEST_TEMPLATE.md` (add one mirroring the sibling project: summary, type of change, build/test checklist, screenshots for visual changes).
 - Squash-merge PRs into `main` to keep history linear and readable.
 - The GitHub ruleset enforced on `main` (configured at the repo/org level, not in code):
-  - Require a pull request before merging.
-  - Block force-pushes and branch deletion.
-  - Require the CI status check to pass before merging (once `ci.yml` exists — see below).
-  - See the repo's Settings → Rules → Rulesets for the live configuration.
+    - Require a pull request before merging.
+    - Block force-pushes and branch deletion.
+    - Require the CI status check to pass before merging (once `ci.yml` exists — see below).
+    - See the repo's Settings → Rules → Rulesets for the live configuration.
 
 ## 10. CI/CD
 
@@ -171,7 +171,32 @@ npm run build               # astro check && astro build
 npm run format               # prettier --write
 ```
 
-## 13. Open decisions to confirm with the client before/while building
+## 13. Visual QA workflow (Playwright)
+
+`@playwright/test` is a devDependency (`tests/visual-audit.spec.ts`, `playwright.config.ts`). Use it before shipping any visual/CSS/layout change — `npm run format`/`astro check` catch syntax and type errors, but nothing else in the toolchain actually looks at the rendered page.
+
+**Run it against a production build, never `astro dev`:**
+
+```bash
+npm run build && npx astro preview --background
+npm run test:visual
+npx astro preview stop
+```
+
+Why not dev: Astro's dev server transforms images on demand through a `/_image` endpoint backed by `sharp`, and in this environment that path is flaky under concurrent load — Playwright's parallel workers hitting several image variants at once can make the dev server lose its reference to `sharp` mid-session, after which _every_ image request 500s until the process is restarted (`astro dev stop` / `astro dev --background`). A production build pre-renders every image variant as a static file at build time, so `astro preview` never touches that code path at all. This class of bug is also why the suite includes a standing "no failed network requests or console errors" test — screenshots alone don't make a broken `<img>` obvious (it just renders blank or shows alt text).
+
+**What the suite actually checks** (`tests/visual-audit.spec.ts`):
+
+- Screenshots of light/dark × mobile/desktop to `test-results/screenshots/` — **read them**, a green run only proves the assertions hold, not that the page looks right.
+- The hero's primary CTA button is fully within the initial viewport (first-glance viewport fit).
+- Hero tagline computed color is identical in light and dark mode (catches the class of bug where an adaptive color token gets used on a permanently-dark decorative surface — see the `--color-ink` vs `--color-fg` comment in `global.css`).
+- Favicon and apple-touch-icon links resolve.
+- The floating WhatsApp button is visible without scrolling on every page.
+- Zero failed network requests / console errors on page load.
+
+When adding a new interactive/visual feature, add a targeted assertion here rather than only eyeballing a screenshot once — screenshots catch what you think to look at; a computed-style or bounding-box assertion catches the same regression next time without a human needing to notice it in a diff.
+
+## 14. Open decisions to confirm with the client before/while building
 
 - ~~Lead-capture channel(s)~~ — resolved: phone, WhatsApp, and email, sourced from the business-card assets in `src/images/branding/` and wired into `src/data/site.ts` as arrays (`contacts.phones`/`.whatsapp`/`.emails`), each with one `primary: true` entry, ready for more contacts later.
 - **Still open**: trade license number/authority — a number is visible on one business card photo but not confidently legible; `site.license` still holds a TODO placeholder. Do not guess it — confirm with the client and update `src/data/site.ts`, then surface it in `Footer`/`about.astro`/`SEO.astro`'s `identifier` field (already wired to pick it up automatically once the TODO string is replaced).

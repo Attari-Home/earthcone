@@ -6,16 +6,17 @@ import { withBase } from '../../lib/url';
 interface Props {
     service: CollectionEntry<'services'>;
     delay?: number;
+    index?: number;
 }
 
-const { service, delay = 0 } = Astro.props;
+const { service, delay = 0, index = 0 } = Astro.props;
 const { title, summary, heroImage } = service.data;
 ---
 
 <a
     href={withBase(`/services/${service.id}`)}
-    class="group media-tile tilt-card reveal block"
-    style={`transition-delay: ${delay}s`}
+    class="group media-tile stack-card reveal block"
+    style={`transition-delay: ${delay}s; --i: ${index}`}
 >
     <div class="aspect-[4/3] overflow-hidden bg-[var(--color-sand)]">
         {heroImage && (
@@ -29,11 +30,13 @@ const { title, summary, heroImage } = service.data;
             />
         )}
     </div>
-    <div class="mt-4">
-        <h3 class="text-lg font-semibold text-[var(--color-ink)] group-hover:text-[var(--color-terracotta)]">
+    <div class="stack-text mt-4">
+        <h3 class="text-lg font-semibold text-[var(--color-fg)] group-hover:text-[var(--color-terracotta)]">
             {title}
         </h3>
-        <p class="mt-1 text-sm text-[var(--color-stone)]">{summary}</p>
+        <p class="reveal-caption mt-1 line-clamp-2 min-h-10 text-sm text-[var(--color-stone)]">
+            {summary}
+        </p>
         <span class="btn-ghost mt-3 text-[var(--color-terracotta-dark)]">
             View service <span class="arrow">&rarr;</span>
         </span>

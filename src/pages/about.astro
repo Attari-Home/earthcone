@@ -15,7 +15,7 @@ import { site, LICENSE_PLACEHOLDER } from '../data/site';
         <div class="container-wide relative">
             <div class="reveal">
                 <p class="eyebrow">About</p>
-                <h1 class="mt-2 max-w-2xl text-display-md font-semibold text-[var(--color-ink)]">
+                <h1 class="mt-2 max-w-2xl text-display-md font-semibold text-[var(--color-fg)]">
                     About {site.shortName}
                 </h1>
                 <p class="mt-6 max-w-2xl text-lg text-[var(--color-stone)]">
@@ -31,18 +31,18 @@ import { site, LICENSE_PLACEHOLDER } from '../data/site';
             >
                 <div>
                     <dt class="eyebrow">Headquarters</dt>
-                    <dd class="mt-2 text-[var(--color-ink)]">
+                    <dd class="mt-2 text-[var(--color-fg)]">
                         {site.address.street}, {site.address.area}, {site.address.city}
                     </dd>
                 </div>
                 <div>
                     <dt class="eyebrow">Coverage</dt>
-                    <dd class="mt-2 text-[var(--color-ink)]">All seven Emirates</dd>
+                    <dd class="mt-2 text-[var(--color-fg)]">All seven Emirates</dd>
                 </div>
                 {site.license.number !== LICENSE_PLACEHOLDER && (
                     <div>
                         <dt class="eyebrow">Trade license</dt>
-                        <dd class="mt-2 text-[var(--color-ink)]">{site.license.number}</dd>
+                        <dd class="mt-2 text-[var(--color-fg)]">{site.license.number}</dd>
                     </div>
                 )}
             </dl>

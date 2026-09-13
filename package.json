@@ -15,7 +15,8 @@
         "astro": "astro",
         "check": "astro check",
         "format": "prettier --write \"src/**/*.{astro,ts,js,css,md,mdx}\"",
-        "lint": "prettier --check \"src/**/*.{astro,ts,js,css,md,mdx}\""
+        "lint": "prettier --check \"src/**/*.{astro,ts,js,css,md,mdx}\"",
+        "test:visual": "playwright test"
     },
     "dependencies": {
         "@astrojs/mdx": "^8.0.1",
@@ -32,6 +33,7 @@
     },
     "devDependencies": {
         "@astrojs/check": "^0.9.10",
+        "@playwright/test": "^1.63.0",
         "prettier": "^3.9.6",
         "prettier-plugin-astro": "^1.0.0",
         "typescript": "^5.9.3"

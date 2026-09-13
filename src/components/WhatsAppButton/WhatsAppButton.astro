@@ -1,0 +1,14 @@
+---
+import { Icon } from 'astro-icon/components';
+import { primaryWhatsapp } from '../../data/site';
+---
+
+<a
+    href={`https://wa.me/${primaryWhatsapp.value}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Chat with us on WhatsApp"
+    class="fixed right-5 bottom-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform duration-300 hover:scale-105"
+>
+    <Icon name="ph:whatsapp-logo-fill" class="h-8 w-8" />
+</a>

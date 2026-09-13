@@ -16,7 +16,7 @@ const navLinks = [
     <div class="container-wide flex h-20 items-center justify-between">
         <a
             href={withBase('/')}
-            class="font-title text-lg font-semibold tracking-tight text-[var(--color-ink)]"
+            class="font-title text-lg font-semibold tracking-tight text-[var(--color-fg)]"
         >
             {site.shortName}
         </a>
@@ -25,7 +25,7 @@ const navLinks = [
             {navLinks.map((link) => (
                 <a
                     href={withBase(link.href)}
-                    class="link-underline text-sm font-medium text-[var(--color-charcoal)] hover:text-[var(--color-terracotta)]"
+                    class="link-underline text-sm font-medium text-[var(--color-fg)] hover:text-[var(--color-terracotta)]"
                 >
                     {link.label}
                 </a>
@@ -36,21 +36,31 @@ const navLinks = [
             Get a Quote
         </a>
 
+        <button
+            id="theme-toggle"
+            type="button"
+            aria-label="Toggle dark mode"
+            class="flex h-10 w-10 items-center justify-center text-[var(--color-fg)]"
+        >
+            <Icon name="ph:sun" class="icon-sun h-5 w-5" />
+            <Icon name="ph:moon" class="icon-moon h-5 w-5" />
+        </button>
+
         <details id="mobile-nav" class="relative md:hidden">
             <summary
-                class="flex h-10 w-10 cursor-pointer list-none items-center justify-center text-[var(--color-ink)] [&::-webkit-details-marker]:hidden"
+                class="flex h-10 w-10 cursor-pointer list-none items-center justify-center text-[var(--color-fg)] [&::-webkit-details-marker]:hidden"
                 aria-label="Open menu"
             >
                 <Icon name="ph:list" class="h-6 w-6" />
             </summary>
             <nav
                 aria-label="Primary"
-                class="absolute top-full right-0 z-10 mt-2 w-48 border border-[var(--color-sand)] bg-white p-2 shadow-lg"
+                class="absolute top-full right-0 z-10 mt-2 w-48 border border-[var(--color-sand)] bg-[var(--color-cream)] p-2 shadow-lg"
             >
                 {navLinks.map((link) => (
                     <a
                         href={withBase(link.href)}
-                        class="block px-3 py-2 text-sm font-medium text-[var(--color-charcoal)] hover:bg-[var(--color-sand)]"
+                        class="block px-3 py-2 text-sm font-medium text-[var(--color-fg)] hover:bg-[var(--color-sand)]"
                     >
                         {link.label}
                     </a>
@@ -67,5 +77,17 @@ const navLinks = [
     document.addEventListener('astro:page-load', () => {
         const menu = document.getElementById('mobile-nav');
         if (menu instanceof HTMLDetailsElement) menu.open = false;
+    });
+
+    // Header (and this script) only runs once even across client-side navigations, since
+    // transition:persist keeps the same DOM node — so this listener is bound exactly once,
+    // not re-attached per page-load like the menu-close handler above.
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        const current =
+            document.documentElement.getAttribute('data-theme') ??
+            (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
     });
 </script>
