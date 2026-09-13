@@ -21,18 +21,18 @@ Non-negotiable quality bar for every page shipped: **fast, responsive, accessibl
 
 This repo follows the same proven stack as the sibling project [`lailonahar-website`](https://github.com/Attari-Home) (also UAE-wide, also lead-gen, already tuned to near-perfect Lighthouse scores) for consistency across the portfolio and to reuse conventions:
 
-| Layer      | Choice                                                  | Why                                                                                                        |
-| ---------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Framework  | [Astro 5](https://astro.build/) (static output)         | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals |
-| Styling    | Tailwind CSS v4 (`@tailwindcss/vite`)                   | Utility-first, small final CSS, fast iteration                                                             |
-| Icons      | `astro-icon` + an Iconify set (e.g. `@iconify-json/ph`) | Inlined SVG, no icon font                                                                                  |
-| Images     | `astro:assets` + `sharp`                                | Automatic AVIF/WebP + responsive `srcset`                                                                  |
-| Content    | Astro Content Collections (MDX)                         | Type-safe service/project/testimonial entries                                                              |
-| Routing    | Astro View Transitions                                  | SPA-like feel without a JS framework                                                                       |
-| Forms      | Web3Forms (or equivalent)                               | No backend needed for a static site                                                                        |
-| Hosting    | Cloudflare Pages                                        | Free, fast edge network, matches sibling project                                                           |
-| Language   | TypeScript (strict)                                     | Type-safe content schemas and utilities                                                                    |
-| Formatting | Prettier + `prettier-plugin-astro`                      | One canonical format, enforced in CI                                                                       |
+| Layer      | Choice                                                   | Why                                                                                                                                                                              |
+| ---------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework  | [Astro 5](https://astro.build/) (static output)          | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals                                                                      |
+| Styling    | Tailwind CSS v4 (`@tailwindcss/vite`)                    | Utility-first, small final CSS, fast iteration                                                                                                                                   |
+| Icons      | `astro-icon` + an Iconify set (e.g. `@iconify-json/ph`)  | Inlined SVG, no icon font                                                                                                                                                        |
+| Images     | `astro:assets` + `sharp`                                 | Automatic AVIF/WebP + responsive `srcset`                                                                                                                                        |
+| Content    | Astro Content Collections (MDX)                          | Type-safe service/project/testimonial entries                                                                                                                                    |
+| Routing    | Astro View Transitions                                   | SPA-like feel without a JS framework                                                                                                                                             |
+| Forms      | Web3Forms (or equivalent)                                | No backend needed for a static site                                                                                                                                              |
+| Hosting    | GitHub Pages _(temporary)_ → Cloudflare Pages            | Deployed to GitHub Pages for free until a domain is purchased; switch to Cloudflare Pages (matches sibling project) once there's a custom domain to point at it — see §9/§10     |
+| Language   | TypeScript (strict)                                      | Type-safe content schemas and utilities                                                                                                                                          |
+| Formatting | Prettier + `prettier-plugin-astro`                       | One canonical format, enforced in CI                                                                                                                                             |
 
 Do not introduce a second frontend framework (React/Vue/etc.) unless a specific interactive feature genuinely requires it — and then use an Astro island, not a full SPA rewrite.
 
@@ -136,7 +136,7 @@ Rules to hit that budget:
 
 ## 9. Git workflow & branch protection
 
-- `main` is the production branch, deployed automatically to Cloudflare Pages. **`main` is protected: no direct pushes, all changes land via pull request.**
+- `main` is the production branch, deployed automatically to GitHub Pages (`https://attari-home.github.io/earthcone`) for now — see §10. **`main` is protected: no direct pushes, all changes land via pull request.**
 - Feature branches: `feature/<short-name>`, `fix/<short-name>`, `content/<short-name>`.
 - Commit messages: concise, imperative mood, explain _why_ not _what_ (e.g. `Fix hero LCP by preloading hero image`, not `update code`).
 - PRs use `.github/PULL_REQUEST_TEMPLATE.md` (add one mirroring the sibling project: summary, type of change, build/test checklist, screenshots for visual changes).
@@ -153,12 +153,13 @@ Add these GitHub Actions workflows (mirroring the sibling project) once the app 
 
 - `.github/workflows/ci.yml` — on PR to `main`: install, `astro check`, `astro build`, `prettier --check`. This is the required status check for the branch ruleset.
 - `.github/workflows/lighthouse.yml` — on PR to `main`: build, run Lighthouse CI against the thresholds in §6.
-- `.github/workflows/deploy.yml` — on push to `main`: build and deploy to Cloudflare Pages (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` repo secrets).
+- `.github/workflows/gh-pages.yml` — on push to `main`: build with `GH_PAGES=true` and deploy to GitHub Pages. This is the **only** live deploy target right now — free, no domain or secrets required.
+- **Removed for now**: a Cloudflare Pages `deploy.yml` (`cloudflare/pages-action`, needing `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` secrets) was tried first but had nothing to point at without a purchased domain, and its failing runs were just noise. Re-add it once a domain is purchased — mirror the sibling project's `deploy.yml`, and make sure it builds *without* `GH_PAGES` set (see `astro.config.mjs`) so it gets the real-domain `site`/`base` config, not the GitHub Pages one.
 
 ## 11. Environment & secrets
 
 - Never commit real secrets. Provide `.env.example` documenting required variables (form endpoint key, analytics token, Cloudflare project name) once those integrations are chosen.
-- Repository secrets (Cloudflare, form provider) are configured in GitHub repo settings, not in code.
+- Repository secrets (form provider now; Cloudflare once its deploy workflow is re-added) are configured in GitHub repo settings, not in code. GitHub Pages needs no secrets — it deploys with the repo's built-in `GITHUB_TOKEN`.
 
 ## 12. Getting started (once scaffolded)
 
@@ -200,7 +201,7 @@ When adding a new interactive/visual feature, add a targeted assertion here rath
 - ~~Lead-capture channel(s)~~ — resolved: phone, WhatsApp, and email, sourced from the business-card assets in `src/images/branding/` and wired into `src/data/site.ts` as arrays (`contacts.phones`/`.whatsapp`/`.emails`), each with one `primary: true` entry, ready for more contacts later.
 - **Still open**: trade license number/authority — a number is visible on one business card photo but not confidently legible; `site.license` still holds a TODO placeholder. Do not guess it — confirm with the client and update `src/data/site.ts`, then surface it in `Footer`/`about.astro`/`SEO.astro`'s `identifier` field (already wired to pick it up automatically once the TODO string is replaced).
 - Exact list of service pages (is "Maintenance" a standalone service line with its own page, or folded into each service?).
-- Final domain name (update `SITE_URL` in `astro.config.mjs`, `cloudflare/pages-action`'s `projectName` in `.github/workflows/deploy.yml`, and all canonical/OG URLs once confirmed — do not invent one).
+- Final domain name — once purchased: update `SITE_URL` in `astro.config.mjs`, re-add a Cloudflare Pages `deploy.yml` (see §10), and confirm all canonical/OG URLs. Do not invent a domain before it's confirmed.
 - Whether to pursue dedicated per-Emirate landing pages now or defer until there's real project content per Emirate (see §4).
 - A handful of `src/images/interiors/` files (`interior-design-reference-*.jpeg`, `office-interior-render-*.jpeg`) look like mood-board/render references rather than photos of completed Earth Cone work — currently excluded from the `/portfolio` grid by `src/lib/portfolioMedia.ts`'s `EXCLUDED_BASENAMES` list pending client confirmation either way.
 - Portfolio photo quality varies — some source photos are dim, blurry, or read as work-in-progress site snapshots rather than polished finished-work shots. Worth a client review pass (or professional reshoot) before launch, since the portfolio is the site's main trust-building surface.

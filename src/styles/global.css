@@ -100,12 +100,16 @@
     }
 
     /* Small tracked-out label used above section headings (Hero, portfolio, service intros). */
+    /* terracotta-dark, not terracotta: plain terracotta text on the cream background used
+       everywhere this class appears fails WCAG AA contrast (~4:1, needs 4.5:1). */
     .eyebrow {
-        @apply text-xs font-medium tracking-[0.15em] text-[var(--color-terracotta)] uppercase;
+        @apply text-xs font-medium tracking-[0.15em] text-[var(--color-terracotta-dark)] uppercase;
     }
 
+    /* terracotta-dark, not terracotta: white text on plain terracotta fails WCAG AA
+       contrast (~4.2:1, needs 4.5:1). */
     .btn-primary {
-        @apply inline-flex items-center justify-center rounded-[2px] bg-[var(--color-terracotta)] px-6 py-3 text-sm font-medium tracking-wide text-white uppercase transition-colors duration-300 hover:bg-[var(--color-terracotta-dark)];
+        @apply inline-flex items-center justify-center rounded-[2px] bg-[var(--color-terracotta-dark)] px-6 py-3 text-sm font-medium tracking-wide text-white uppercase transition-colors duration-300 hover:bg-[var(--color-ink)];
     }
 
     /* Always used on a white/near-white chip regardless of site theme, so its text is

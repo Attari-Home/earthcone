@@ -3,6 +3,7 @@
 # build
 dist/
 .astro/
+.lighthouseci/
 
 # playwright
 test-results/
