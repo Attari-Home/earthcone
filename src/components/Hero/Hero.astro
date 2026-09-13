@@ -29,7 +29,7 @@ const slides = [
             widths={[480, 768, 1280, 1920]}
             sizes="100vw"
             loading="eager"
-            fetchpriority={i === 0 ? 'high' : undefined}
+            fetchpriority={i === 0 ? 'high' : 'low'}
             class="hero-slide absolute inset-0 h-full w-full object-cover"
             style={`animation-delay: ${i * 6}s, 0s`}
         />
