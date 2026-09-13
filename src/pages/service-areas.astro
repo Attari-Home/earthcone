@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand/CtaBand.astro';
 import { site } from '../data/site';
 ---
 
@@ -7,19 +8,29 @@ import { site } from '../data/site';
     title="Service Areas"
     description={`${site.shortName} is licensed to work across all seven Emirates: ${site.emirates.join(', ')}.`}
 >
-    <section class="container-page py-16">
-        <h1 class="text-3xl font-semibold text-[var(--color-ink)]">Where We Work</h1>
-        <p class="mt-4 max-w-2xl text-[var(--color-stone)]">
-            {site.shortName} is headquartered in {site.address.city} and licensed to take on
-            construction and maintenance projects in every Emirate.
-        </p>
+    <section class="container-wide py-section-md">
+        <div class="reveal">
+            <p class="eyebrow">Service Areas</p>
+            <h1 class="mt-2 max-w-2xl text-display-md font-semibold text-[var(--color-ink)]">
+                Where we work
+            </h1>
+            <p class="mt-6 max-w-2xl text-lg text-[var(--color-stone)]">
+                {site.shortName} is headquartered in {site.address.city} and licensed to take on
+                construction and maintenance projects in every Emirate.
+            </p>
+        </div>
 
-        <ul class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {site.emirates.map((emirate) => (
-                <li class="rounded-md border border-[var(--color-sand)] bg-white px-4 py-3 font-medium text-[var(--color-ink)]">
+        <ul class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {site.emirates.map((emirate, i) => (
+                <li
+                    class="reveal border-t border-[var(--color-sand)] py-4 font-display text-lg font-medium text-[var(--color-ink)]"
+                    style={`transition-delay: ${i * 0.05}s`}
+                >
                     {emirate}
                 </li>
             ))}
         </ul>
     </section>
+
+    <CtaBand />
 </BaseLayout>

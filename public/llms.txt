@@ -12,9 +12,20 @@ Dubai, licensed to operate across all seven Emirates of the United Arab Emirates
 - Electrical — /services/electrical
 - Water systems (plumbing, tanks, pumps) — /services/water-systems
 
+## Portfolio
+
+Photo and video galleries of completed work, organized by category:
+
+- Construction — /portfolio/construction
+- Interiors — /portfolio/interiors
+- Kitchens — /portfolio/kitchens
+- Electrical — /portfolio/electrical
+- Water systems — /portfolio/water-systems
+
 ## Key pages
 
 - Services overview: /services
+- Portfolio overview: /portfolio
 - Areas served: /service-areas
 - About: /about
 - Contact / get a quote: /contact

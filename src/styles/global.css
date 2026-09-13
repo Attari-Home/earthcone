@@ -1,8 +1,10 @@
 @import 'tailwindcss';
 
 @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-    --font-display: 'Sora', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-display: 'Fraunces Variable', ui-serif, Georgia, 'Times New Roman', serif;
+    /* Titling face reserved for the brand name and page H1s only — not for h2-h4 body headings. */
+    --font-title: 'Castoro Titling', ui-serif, Georgia, serif;
 
     /* Earth-toned palette: warm terracotta accent on a charcoal/neutral base. */
     --color-ink: #191512;
@@ -13,6 +15,21 @@
     --color-terracotta: #c1602e;
     --color-terracotta-dark: #9c4a22;
     --color-clay: #8a5a3c;
+
+    /* Fluid display type scale — clamps between mobile and wide desktop. */
+    --text-display-xl: clamp(3.25rem, 2rem + 5.5vw, 6.75rem);
+    --text-display-lg: clamp(2.75rem, 2rem + 3.2vw, 5rem);
+    --text-display-md: clamp(2.25rem, 1.8rem + 2vw, 3.5rem);
+    --text-display-sm: clamp(1.75rem, 1.5rem + 1vw, 2.5rem);
+    /* Oversized decorative background typography (see .display-word). */
+    --text-display-huge: clamp(6rem, 3rem + 14vw, 16rem);
+
+    /* Section rhythm — consistent vertical spacing across the site. */
+    --spacing-section-sm: clamp(3rem, 2.5rem + 2vw, 4.5rem);
+    --spacing-section-md: clamp(4rem, 3rem + 4vw, 7rem);
+    --spacing-section-lg: clamp(5rem, 3.5rem + 6vw, 9rem);
+
+    --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
@@ -24,6 +41,9 @@
     body {
         background-color: var(--color-cream);
         color: var(--color-ink);
+        /* .tilt-card's entrance transform (translateX) can otherwise register as scrollable
+           overflow before it settles to rest, opening a stray horizontal scrollbar. */
+        overflow-x: hidden;
     }
 
     h1,
@@ -32,7 +52,13 @@
     h4 {
         font-family: var(--font-display);
         font-weight: 600;
-        letter-spacing: -0.01em;
+        letter-spacing: -0.015em;
+        text-wrap: balance;
+    }
+
+    /* Page-title face: distinct from the h2-h4 display serif above. */
+    h1 {
+        font-family: var(--font-title);
     }
 
     :focus-visible {
@@ -46,11 +72,219 @@
         @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
     }
 
+    /* Wider canvas for media-heavy sections (portfolio grids, banners). */
+    .container-wide {
+        @apply mx-auto w-full max-w-[90rem] px-4 sm:px-6 lg:px-8;
+    }
+
+    /* True edge-to-edge: escapes any parent container to span the viewport. */
+    .bleed {
+        width: 100vw;
+        margin-inline: calc(50% - 50vw);
+    }
+
+    /* Small tracked-out label used above section headings (Hero, portfolio, service intros). */
+    .eyebrow {
+        @apply text-xs font-medium tracking-[0.15em] text-[var(--color-terracotta)] uppercase;
+    }
+
     .btn-primary {
-        @apply inline-flex items-center justify-center rounded-md bg-[var(--color-terracotta)] px-5 py-3 font-medium text-white transition-colors hover:bg-[var(--color-terracotta-dark)];
+        @apply inline-flex items-center justify-center rounded-[2px] bg-[var(--color-terracotta)] px-6 py-3 text-sm font-medium tracking-wide text-white uppercase transition-colors duration-300 hover:bg-[var(--color-terracotta-dark)];
     }
 
     .btn-secondary {
-        @apply inline-flex items-center justify-center rounded-md border border-[var(--color-stone)] px-5 py-3 font-medium text-[var(--color-ink)] transition-colors hover:bg-[var(--color-sand)];
+        @apply inline-flex items-center justify-center rounded-[2px] border border-[var(--color-stone)] px-6 py-3 text-sm font-medium tracking-wide text-[var(--color-ink)] uppercase transition-colors duration-300 hover:bg-[var(--color-sand)];
+    }
+
+    /* Ghost CTA for card-level links, e.g. "View Project". Arrow glyph translates on hover. */
+    .btn-ghost {
+        @apply inline-flex items-center gap-2 text-sm font-medium text-[var(--color-ink)];
+    }
+
+    .btn-ghost .arrow {
+        @apply inline-block transition-transform duration-300;
+        transition-timing-function: var(--ease-premium);
+    }
+
+    .btn-ghost:hover .arrow {
+        transform: translateX(0.25rem);
+    }
+
+    /* Underline-reveal nav/text links — CSS-only, no JS. */
+    .link-underline {
+        background-image: linear-gradient(currentColor, currentColor);
+        background-position: 0 100%;
+        background-repeat: no-repeat;
+        background-size: 0% 1px;
+        transition: background-size 0.3s var(--ease-premium);
+    }
+
+    .link-underline:hover {
+        background-size: 100% 1px;
+    }
+
+    /* Image tile hover treatment for portfolio/service cards: subtle zoom + desaturate-to-color. */
+    .media-tile img,
+    .media-tile video {
+        @apply transition-[transform,filter] duration-700;
+        transition-timing-function: var(--ease-premium);
+        filter: grayscale(12%);
+    }
+
+    .media-tile:hover img,
+    .media-tile:hover video {
+        transform: scale(1.045);
+        filter: grayscale(0%);
+    }
+
+    /*
+     * Scroll-triggered reveal, toggled by the tiny IntersectionObserver in BaseLayout.
+     * Content is visible by default (.reveal alone) so it never depends on JS to be readable —
+     * the hidden-then-fade-in state only applies once html.js confirms the observer is running.
+     */
+    .reveal {
+        opacity: 1;
+    }
+
+    html.js .reveal {
+        opacity: 0;
+        transform: translateY(1.25rem);
+        transition:
+            opacity 0.7s var(--ease-premium),
+            transform 0.7s var(--ease-premium);
+    }
+
+    html.js .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /*
+     * "Bookshelf" treatment for service/portfolio-category cards: a leaning slide-in on
+     * scroll and a 3D tilt-forward pop on hover. Scoped to desktop with real hover (min-width
+     * + hover:hover/pointer:fine) so touch/mobile visitors keep the plain .reveal fade only —
+     * no tilt, no shadow, nothing that depends on a mouse to look right.
+     */
+    .tilt-card {
+        transform-style: preserve-3d;
+    }
+
+    /* Oversized decorative background word — sits behind real content as texture, not to be read. */
+    .display-word {
+        @apply pointer-events-none absolute font-display font-semibold whitespace-nowrap text-[var(--color-ink)] select-none;
+        font-size: var(--text-display-huge);
+        line-height: 1;
+        opacity: 0.045;
+    }
+}
+
+/*
+ * Hero background slideshow: each .hero-slide layer sits absolutely stacked on the others
+ * and shares this one 30s loop, staggered 6s apart per layer via inline animation-delay
+ * (see Hero.astro) — pure CSS, so it costs nothing against the JS/performance budget.
+ * Percentages are fractions of the 30s cycle: ~1s fade in, ~5s hold, ~1s fade out per slide.
+ */
+@keyframes hero-crossfade {
+    0%,
+    100% {
+        opacity: 0;
+    }
+    3%,
+    17% {
+        opacity: 1;
+    }
+    20% {
+        opacity: 0;
+    }
+}
+
+@keyframes hero-zoom-slow {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.08);
+    }
+}
+
+.hero-slide {
+    animation:
+        hero-crossfade 30s linear infinite,
+        hero-zoom-slow 24s ease-in-out infinite alternate;
+}
+
+@keyframes scroll-dot {
+    0%,
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(10px);
+        opacity: 0.3;
+    }
+}
+
+.animate-scroll-dot {
+    animation: scroll-dot 1.8s ease-in-out infinite;
+}
+
+/* Leaning "shelved book" entrance for .tilt-card grids — desktop only (see comment above). */
+@media (min-width: 768px) {
+    html.js .tilt-card.reveal {
+        transform: translateX(-2.5rem) translateY(1rem) rotate(-8deg);
+    }
+
+    html.js .tilt-card.reveal.is-visible {
+        transform: none;
+    }
+}
+
+/* 3D tilt-forward pop, only on inputs that actually have hover (excludes touch entirely). */
+@media (hover: hover) and (pointer: fine) {
+    .tilt-card {
+        transition:
+            transform 0.5s var(--ease-premium),
+            box-shadow 0.5s var(--ease-premium);
+    }
+
+    .tilt-card:hover {
+        transform: perspective(1000px) rotateX(-4deg) rotateY(2deg) translateY(-0.75rem) scale(1.04);
+        box-shadow: 0 30px 50px -20px rgba(25, 21, 18, 0.45);
+        z-index: 5;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.js .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .media-tile img,
+    .media-tile video,
+    .btn-ghost .arrow,
+    .link-underline,
+    .tilt-card {
+        transition: none;
+    }
+
+    .tilt-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .hero-slide,
+    .animate-scroll-dot {
+        animation: none;
+    }
+
+    .hero-slide:not(:first-child) {
+        opacity: 0;
+    }
+
+    .hero-slide:first-child {
+        opacity: 1;
     }
 }

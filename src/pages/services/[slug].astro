@@ -1,6 +1,13 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs.astro';
+import CtaBand from '../../components/CtaBand/CtaBand.astro';
+import PortfolioCard from '../../components/PortfolioCard/PortfolioCard.astro';
+import { getMediaForFolder } from '../../lib/portfolioMedia';
+import { withBase } from '../../lib/url';
+import { site } from '../../data/site';
 
 export async function getStaticPaths() {
     const services = await getCollection('services');
@@ -11,16 +18,92 @@ export async function getStaticPaths() {
 }
 
 const { service } = Astro.props;
-const { title, summary } = service.data;
+const { title, summary, heroImage } = service.data;
 const { Content } = await render(service);
+
+// The projects collection holds the portfolio media for each service (matched via
+// serviceSlug) — pull the same gallery in here so completed-work photos show on both
+// the service page and its /portfolio/[category] counterpart, not just one or the other.
+const projectCategories = await getCollection('projects');
+const matchingProject = projectCategories.find((p) => p.data.serviceSlug === service.id);
+const galleryItems = matchingProject ? getMediaForFolder(matchingProject.data.folder) : [];
+
+const serviceJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: title,
+    description: summary,
+    serviceType: title,
+    areaServed: site.emirates.map((emirate) => ({
+        '@type': 'AdministrativeArea',
+        name: emirate,
+    })),
+    provider: {
+        '@type': 'GeneralContractor',
+        name: site.name,
+        url: Astro.site,
+    },
+};
 ---
 
 <BaseLayout title={title} description={summary}>
-    <article class="container-page max-w-3xl py-16">
-        <h1 class="text-3xl font-semibold text-[var(--color-ink)]">{title}</h1>
-        <p class="mt-2 text-[var(--color-stone)]">{summary}</p>
-        <div class="prose mt-8 max-w-none">
-            <Content />
+    <script type="application/ld+json" set:html={JSON.stringify(serviceJsonLd)} is:inline></script>
+    <Breadcrumbs
+        items={[
+            { label: 'Home', href: '/' },
+            { label: 'Services', href: '/services' },
+            { label: title, href: `/services/${service.id}` },
+        ]}
+    />
+    <article>
+        {heroImage && (
+            <div class="bleed relative h-[45vh] min-h-[320px] overflow-hidden">
+                <Image
+                    src={heroImage}
+                    alt={`${title} — completed Earth Cone project work`}
+                    widths={[768, 1280, 1920]}
+                    sizes="100vw"
+                    loading="eager"
+                    class="h-full w-full object-cover"
+                />
+                <div class="absolute inset-0 bg-[var(--color-ink)]/40" aria-hidden="true"></div>
+            </div>
+        )}
+
+        <div class="container-page max-w-3xl py-section-sm">
+            <div class="reveal">
+                <p class="eyebrow">Service</p>
+                <h1 class="mt-2 text-display-sm font-semibold text-[var(--color-ink)]">{title}</h1>
+                <p class="mt-4 text-lg text-[var(--color-stone)]">{summary}</p>
+                <div class="prose mt-8 max-w-none">
+                    <Content />
+                </div>
+            </div>
         </div>
+
+        {galleryItems.length > 0 && (
+            <div class="container-wide pt-6 pb-section-sm">
+                <div class="reveal flex flex-wrap items-end justify-between gap-4">
+                    <h2 class="text-display-sm font-display font-semibold text-[var(--color-ink)]">
+                        Completed {title.toLowerCase()} work
+                    </h2>
+                    {matchingProject && (
+                        <a
+                            href={withBase(`/portfolio/${matchingProject.id}`)}
+                            class="btn-ghost text-[var(--color-terracotta)]"
+                        >
+                            View full gallery <span class="arrow">&rarr;</span>
+                        </a>
+                    )}
+                </div>
+                <div class="mt-10 columns-1 gap-6 sm:columns-2 lg:columns-3">
+                    {galleryItems.map((item) => (
+                        <PortfolioCard item={item} />
+                    ))}
+                </div>
+            </div>
+        )}
     </article>
+
+    <CtaBand />
 </BaseLayout>

@@ -1,5 +1,5 @@
----
-// Submits directly to Web3Forms — no backend required. Set WEB3FORMS_KEY in .env
+﻿---
+// Submits directly to Web3Forms â€” no backend required. Set WEB3FORMS_KEY in .env
 // and it will be inlined at build time; the form still renders without it, it just
 // won't submit until a key is configured.
 const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
@@ -18,7 +18,7 @@ const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
             name="name"
             type="text"
             required
-            class="mt-1 w-full rounded-md border border-[var(--color-sand)] px-3 py-2 focus:border-[var(--color-terracotta)]"
+            class="mt-1 w-full rounded-[2px] border border-[var(--color-sand)] px-3 py-2 focus:border-[var(--color-terracotta)]"
         />
     </div>
 
@@ -31,7 +31,7 @@ const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
             name="phone"
             type="tel"
             required
-            class="mt-1 w-full rounded-md border border-[var(--color-sand)] px-3 py-2 focus:border-[var(--color-terracotta)]"
+            class="mt-1 w-full rounded-[2px] border border-[var(--color-sand)] px-3 py-2 focus:border-[var(--color-terracotta)]"
         />
     </div>
 
@@ -44,7 +44,7 @@ const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
             name="message"
             rows="4"
             required
-            class="mt-1 w-full rounded-md border border-[var(--color-sand)] px-3 py-2 focus:border-[var(--color-terracotta)]"
+            class="mt-1 w-full rounded-[2px] border border-[var(--color-sand)] px-3 py-2 focus:border-[var(--color-terracotta)]"
         ></textarea>
     </div>
 

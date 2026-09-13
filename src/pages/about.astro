@@ -1,18 +1,53 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { site } from '../data/site';
+import CtaBand from '../components/CtaBand/CtaBand.astro';
+import { site, LICENSE_PLACEHOLDER } from '../data/site';
 ---
 
 <BaseLayout
     title="About"
     description={`${site.name} is headquartered in Dubai and licensed to operate across the UAE.`}
 >
-    <section class="container-page py-16">
-        <h1 class="text-3xl font-semibold text-[var(--color-ink)]">About {site.shortName}</h1>
-        <p class="mt-4 max-w-2xl text-[var(--color-stone)]">
-            {site.description} We handle construction, interior fit-out, custom kitchens,
-            electrical, and water-systems work for residential and commercial clients across
-            {site.emirates.join(', ')}.
+    <section class="relative overflow-hidden py-section-md">
+        <p class="display-word top-0 -left-4" aria-hidden="true">
+            About
         </p>
+        <div class="container-wide relative">
+            <div class="reveal">
+                <p class="eyebrow">About</p>
+                <h1 class="mt-2 max-w-2xl text-display-md font-semibold text-[var(--color-ink)]">
+                    About {site.shortName}
+                </h1>
+                <p class="mt-6 max-w-2xl text-lg text-[var(--color-stone)]">
+                    {site.description} We handle construction, interior fit-out, custom kitchens,
+                    electrical, and water-systems work for residential and commercial clients across
+                    {site.emirates.join(', ')}.
+                </p>
+            </div>
+
+            <dl
+                class="reveal mt-14 grid gap-8 border-t border-[var(--color-sand)] pt-10 sm:grid-cols-3"
+                style="transition-delay: 0.15s"
+            >
+                <div>
+                    <dt class="eyebrow">Headquarters</dt>
+                    <dd class="mt-2 text-[var(--color-ink)]">
+                        {site.address.street}, {site.address.area}, {site.address.city}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="eyebrow">Coverage</dt>
+                    <dd class="mt-2 text-[var(--color-ink)]">All seven Emirates</dd>
+                </div>
+                {site.license.number !== LICENSE_PLACEHOLDER && (
+                    <div>
+                        <dt class="eyebrow">Trade license</dt>
+                        <dd class="mt-2 text-[var(--color-ink)]">{site.license.number}</dd>
+                    </div>
+                )}
+            </dl>
+        </div>
     </section>
+
+    <CtaBand />
 </BaseLayout>

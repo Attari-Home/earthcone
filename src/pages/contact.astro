@@ -8,31 +8,57 @@ import { site } from '../data/site';
     title="Contact"
     description={`Request a quote from ${site.shortName} for construction, fit-out, or maintenance work anywhere in the UAE.`}
 >
-    <section class="container-page grid gap-12 py-16 lg:grid-cols-2">
-        <div>
-            <h1 class="text-3xl font-semibold text-[var(--color-ink)]">Request a Quote</h1>
+    <section class="container-wide grid gap-12 py-section-md lg:grid-cols-2">
+        <div class="reveal">
+            <p class="eyebrow">Contact</p>
+            <h1 class="mt-2 text-display-sm font-semibold text-[var(--color-ink)]">
+                Request a Quote
+            </h1>
             <p class="mt-4 text-[var(--color-stone)]">
                 Tell us about your project and we'll get back to you.
             </p>
-            <ul class="mt-6 space-y-2 text-sm text-[var(--color-stone)]">
-                <li>
-                    Phone:{' '}
-                    <a href={`tel:${site.phone}`} class="text-[var(--color-terracotta)]">
-                        {site.phone}
-                    </a>
-                </li>
-                <li>
-                    Email:{' '}
-                    <a href={`mailto:${site.email}`} class="text-[var(--color-terracotta)]">
-                        {site.email}
-                    </a>
-                </li>
+            <ul class="mt-8 space-y-3 text-sm text-[var(--color-stone)]">
+                {site.contacts.phones.map((phone) => (
+                    <li>
+                        {phone.label}:{' '}
+                        <a
+                            href={`tel:${phone.value}`}
+                            class="link-underline text-[var(--color-terracotta)]"
+                        >
+                            {phone.display ?? phone.value}
+                        </a>
+                    </li>
+                ))}
+                {site.contacts.whatsapp.map((wa) => (
+                    <li>
+                        WhatsApp:{' '}
+                        <a
+                            href={`https://wa.me/${wa.value}`}
+                            class="link-underline text-[var(--color-terracotta)]"
+                        >
+                            {wa.display ?? wa.value}
+                        </a>
+                    </li>
+                ))}
+                {site.contacts.emails.map((email) => (
+                    <li>
+                        {email.label}:{' '}
+                        <a
+                            href={`mailto:${email.value}`}
+                            class="link-underline text-[var(--color-terracotta)]"
+                        >
+                            {email.display ?? email.value}
+                        </a>
+                    </li>
+                ))}
                 <li>
                     Based in {site.address.city}, serving all of {site.address.country}
                 </li>
             </ul>
         </div>
 
-        <ContactForm />
+        <div class="reveal" style="transition-delay: 0.15s">
+            <ContactForm />
+        </div>
     </section>
 </BaseLayout>

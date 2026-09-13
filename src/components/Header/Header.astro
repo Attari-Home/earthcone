@@ -5,48 +5,52 @@ import { withBase } from '../../lib/url';
 
 const navLinks = [
     { href: '/services', label: 'Services' },
+    { href: '/portfolio', label: 'Portfolio' },
     { href: '/service-areas', label: 'Service Areas' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
 ];
 ---
 
-<header class="border-b border-[var(--color-sand)] bg-[var(--color-cream)]">
-    <div class="container-page flex h-16 items-center justify-between">
-        <a href={withBase('/')} class="font-display text-lg font-semibold text-[var(--color-ink)]">
+<header class="sticky top-0 z-20 border-b border-[var(--color-sand)] bg-[var(--color-cream)]/90 backdrop-blur-md">
+    <div class="container-wide flex h-20 items-center justify-between">
+        <a
+            href={withBase('/')}
+            class="font-title text-lg font-semibold tracking-tight text-[var(--color-ink)]"
+        >
             {site.shortName}
         </a>
 
-        <nav aria-label="Primary" class="hidden gap-6 md:flex">
+        <nav aria-label="Primary" class="hidden gap-8 md:flex">
             {navLinks.map((link) => (
                 <a
                     href={withBase(link.href)}
-                    class="text-sm font-medium text-[var(--color-charcoal)] hover:text-[var(--color-terracotta)]"
+                    class="link-underline text-sm font-medium text-[var(--color-charcoal)] hover:text-[var(--color-terracotta)]"
                 >
                     {link.label}
                 </a>
             ))}
         </nav>
 
-        <a href={withBase('/contact')} class="btn-primary hidden text-sm md:inline-flex">
+        <a href={withBase('/contact')} class="btn-primary hidden text-xs md:inline-flex">
             Get a Quote
         </a>
 
-        <details class="relative md:hidden">
+        <details id="mobile-nav" class="relative md:hidden">
             <summary
-                class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-md text-[var(--color-ink)] [&::-webkit-details-marker]:hidden"
+                class="flex h-10 w-10 cursor-pointer list-none items-center justify-center text-[var(--color-ink)] [&::-webkit-details-marker]:hidden"
                 aria-label="Open menu"
             >
                 <Icon name="ph:list" class="h-6 w-6" />
             </summary>
             <nav
                 aria-label="Primary"
-                class="absolute right-0 top-full z-10 mt-2 w-48 rounded-md border border-[var(--color-sand)] bg-white p-2 shadow-lg"
+                class="absolute top-full right-0 z-10 mt-2 w-48 border border-[var(--color-sand)] bg-white p-2 shadow-lg"
             >
                 {navLinks.map((link) => (
                     <a
                         href={withBase(link.href)}
-                        class="block rounded px-3 py-2 text-sm font-medium text-[var(--color-charcoal)] hover:bg-[var(--color-sand)]"
+                        class="block px-3 py-2 text-sm font-medium text-[var(--color-charcoal)] hover:bg-[var(--color-sand)]"
                     >
                         {link.label}
                     </a>
@@ -55,3 +59,13 @@ const navLinks = [
         </details>
     </div>
 </header>
+
+<script>
+    // Header persists across View Transitions (transition:persist), so the mobile <details>
+    // menu's open state would otherwise survive client-side navigations. Force it closed
+    // whenever a new page finishes swapping in.
+    document.addEventListener('astro:page-load', () => {
+        const menu = document.getElementById('mobile-nav');
+        if (menu instanceof HTMLDetailsElement) menu.open = false;
+    });
+</script>

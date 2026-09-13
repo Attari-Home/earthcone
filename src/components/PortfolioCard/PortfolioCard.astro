@@ -1,0 +1,39 @@
+---
+import { Image, getImage } from 'astro:assets';
+import type { MediaItem } from '../../lib/portfolioMedia';
+
+interface Props {
+    item: MediaItem;
+}
+
+const { item } = Astro.props;
+
+const posterImage =
+    item.kind === 'video' ? await getImage({ src: item.poster, width: 800, format: 'webp' }) : null;
+---
+
+<figure class="media-tile group mb-6 block break-inside-avoid overflow-hidden">
+    {item.kind === 'photo' ? (
+        <Image
+            src={item.src}
+            alt={item.alt}
+            widths={[320, 480, 640, 768]}
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            loading="lazy"
+            class="h-auto w-full"
+        />
+    ) : (
+        <video
+            preload="none"
+            poster={posterImage?.src}
+            width={item.poster.width}
+            height={item.poster.height}
+            controls
+            muted
+            playsinline
+            class="h-auto w-full bg-[var(--color-charcoal)]"
+        >
+            <source src={item.src} type="video/mp4" />
+        </video>
+    )}
+</figure>

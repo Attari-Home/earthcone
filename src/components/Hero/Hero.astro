@@ -1,36 +1,86 @@
 ---
 import { Image } from 'astro:assets';
-import heroImage from '../../images/construction-exteriors/villa-facade-01.jpeg';
+import villaFacade from '../../images/construction-exteriors/villa-facade-01.jpeg';
+import livingRoom from '../../images/interiors/living-room-tv-wall-01.jpeg';
+import kitchen from '../../images/kitchens/custom-kitchen-01.jpeg';
+import electrical from '../../images/electrical/ceiling-electrical-installation-01.jpeg';
+import waterTank from '../../images/water-systems/rooftop-water-tank-01.jpeg';
 import { site } from '../../data/site';
 import { withBase } from '../../lib/url';
+
+// Full-bleed hero slideshow: one photo per trade, crossfading on a shared CSS-only loop
+// (see .hero-slide / @keyframes hero-crossfade in global.css) — no JS, so it's free
+// against the performance budget and still degrades to a single static frame under
+// prefers-reduced-motion.
+const slides = [
+    { src: villaFacade, alt: 'Completed villa exterior built by Earth Cone' },
+    { src: livingRoom, alt: 'Interior fit-out living room feature wall, Dubai villa' },
+    { src: kitchen, alt: 'Custom kitchen cabinetry installation, Dubai villa' },
+    { src: electrical, alt: 'Electrical conduit installation, UAE construction site' },
+    { src: waterTank, alt: 'Rooftop water tank installation, UAE building' },
+];
 ---
 
-<section class="relative overflow-hidden">
-    <Image
-        src={heroImage}
-        alt="Completed villa exterior built by Earth Cone"
-        widths={[480, 768, 1280, 1920]}
-        sizes="100vw"
-        loading="eager"
-        fetchpriority="high"
-        class="absolute inset-0 h-full w-full object-cover"
-    />
-    <div class="absolute inset-0 bg-[var(--color-ink)]/60" aria-hidden="true"></div>
+<section class="relative flex min-h-[92vh] items-end overflow-hidden bg-[var(--color-ink)]">
+    {slides.map((slide, i) => (
+        <Image
+            src={slide.src}
+            alt={slide.alt}
+            widths={[480, 768, 1280, 1920]}
+            sizes="100vw"
+            loading="eager"
+            fetchpriority={i === 0 ? 'high' : undefined}
+            class="hero-slide absolute inset-0 h-full w-full object-cover"
+            style={`animation-delay: ${i * 6}s, 0s`}
+        />
+    ))}
+    <div
+        class="absolute inset-0 bg-gradient-to-t from-[var(--color-ink)] via-[var(--color-ink)]/55 to-[var(--color-ink)]/10"
+        aria-hidden="true"
+    ></div>
 
-    <div class="container-page relative py-28 sm:py-36">
-        <h1 class="max-w-2xl text-4xl font-semibold text-white sm:text-5xl">
+    <div class="container-wide relative pt-40 pb-section-md">
+        <p class="reveal eyebrow text-white/80">Est. Dubai · UAE-wide</p>
+        <h1
+            class="reveal mt-3 max-w-3xl text-display-xl font-semibold text-white"
+            style="transition-delay: 0.1s"
+        >
             Building and maintaining properties across the UAE
         </h1>
-        <p class="mt-4 max-w-xl text-lg text-[var(--color-sand)]">
+        <p
+            class="reveal mt-6 max-w-xl text-lg text-[var(--color-sand)]"
+            style="transition-delay: 0.2s"
+        >
             {site.tagline}. Licensed to work in {site.emirates.join(', ')}.
         </p>
-        <div class="mt-8 flex flex-wrap gap-4">
+        <div class="reveal mt-8 flex flex-wrap gap-4" style="transition-delay: 0.3s">
             <a href={withBase('/contact')} class="btn-primary">
-                Request a Quote
+                {' '}
+                Request a Quote{' '}
             </a>
             <a href={withBase('/services')} class="btn-secondary bg-white/90">
-                Our Services
+                {' '}
+                Our Services{' '}
             </a>
         </div>
     </div>
+
+    <a
+        href="#what-we-do"
+        aria-label="Scroll to content"
+        class="absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-white/70 transition-colors hover:text-white sm:block"
+    >
+        <svg width="20" height="32" viewBox="0 0 20 32" fill="none" aria-hidden="true">
+            <rect
+                x="1"
+                y="1"
+                width="18"
+                height="30"
+                rx="9"
+                stroke="currentColor"
+                stroke-width="1.5"
+            />
+            <circle class="animate-scroll-dot" cx="10" cy="10" r="2" fill="currentColor" />
+        </svg>
+    </a>
 </section>
