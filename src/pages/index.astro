@@ -5,7 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero/Hero.astro';
 import ServiceGrid from '../components/ServiceGrid/ServiceGrid.astro';
 import CtaBand from '../components/CtaBand/CtaBand.astro';
-import { getMediaForFolder } from '../lib/portfolioMedia';
+import { getCoverForFolder } from '../lib/portfolioMedia';
 import { withBase } from '../lib/url';
 import { site } from '../data/site';
 import signboard from '../images/branding/earth-cone-signboard-01.jpeg';
@@ -19,17 +19,10 @@ const stats = [
 ];
 
 const categories = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const teaserTiles = categories.map((category) => {
-    const media = getMediaForFolder(category.data.folder);
-    // Prefer the curated `cover` basename; fall back to the first photo (never a video's
-    // frame-grab poster, which reads noticeably blurrier than an actual photo) if unset.
-    const chosen =
-        media.find((item) => item.basename === category.data.cover) ??
-        media.find((item) => item.kind === 'photo') ??
-        media[0];
-    const cover = chosen ? (chosen.kind === 'photo' ? chosen.src : chosen.poster) : null;
-    return { category, cover };
-});
+const teaserTiles = categories.map((category) => ({
+    category,
+    cover: getCoverForFolder(category.data.folder, category.data.cover),
+}));
 ---
 
 <BaseLayout title={site.shortName} description={site.description}>

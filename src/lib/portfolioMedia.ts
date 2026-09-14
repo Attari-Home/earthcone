@@ -179,3 +179,18 @@ export function getMediaForFolder(folder: string): MediaItem[] {
 
     return items.sort((a, b) => a.basename.localeCompare(b.basename, undefined, { numeric: true }));
 }
+
+/**
+ * Picks the tile image for one portfolio category: the curated `cover` basename if set,
+ * else the first photo (never a video's frame-grab poster, which reads noticeably blurrier
+ * than an actual photo), else whatever's first. Shared by the homepage teaser and the
+ * portfolio grid so their covers for the same category always match.
+ */
+export function getCoverForFolder(folder: string, cover?: string): ImageMetadata | null {
+    const media = getMediaForFolder(folder);
+    const chosen =
+        media.find((item) => item.basename === cover) ??
+        media.find((item) => item.kind === 'photo') ??
+        media[0];
+    return chosen ? (chosen.kind === 'photo' ? chosen.src : chosen.poster) : null;
+}
