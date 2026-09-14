@@ -1,10 +1,10 @@
 ---
 import { Image } from 'astro:assets';
-import villaFacade from '../../images/construction-exteriors/villa-facade-01.jpeg';
-import livingRoom from '../../images/interiors/living-room-tv-wall-01.jpeg';
-import kitchen from '../../images/kitchens/custom-kitchen-01.jpeg';
-import electrical from '../../images/electrical/ceiling-electrical-installation-01.jpeg';
-import waterTank from '../../images/water-systems/rooftop-water-tank-01.jpeg';
+import heroConstruction from '../../images/hero/hero-construction.jpeg';
+import heroInteriors from '../../images/hero/hero-interiors.jpeg';
+import heroKitchens from '../../images/hero/hero-kitchens.jpeg';
+import heroElectrical from '../../images/hero/hero-electrical.jpeg';
+import heroWaterSystems from '../../images/hero/hero-water-systems.jpeg';
 import { site } from '../../data/site';
 import { withBase } from '../../lib/url';
 
@@ -12,12 +12,19 @@ import { withBase } from '../../lib/url';
 // (see .hero-slide / @keyframes hero-crossfade in global.css) — no JS, so it's free
 // against the performance budget and still degrades to a single static frame under
 // prefers-reduced-motion.
+//
+// These are curated crops (src/images/hero/), not the raw portfolio photos directly:
+// most source shots are portrait/phone-camera framed, and object-cover center-crop of a
+// portrait image inside this wide banner showed an arbitrary, often unflattering sliver
+// (e.g. the water-systems shot centered on plain tile instead of the mashrabiya panel).
+// Each hero-*.jpeg is hand-cropped to the actual subject at roughly the banner's aspect
+// ratio — see docs/project-memory.md for the source photo + crop window per slide.
 const slides = [
-    { src: villaFacade, alt: 'Completed villa exterior built by Earth Cone' },
-    { src: livingRoom, alt: 'Interior fit-out living room feature wall, Dubai villa' },
-    { src: kitchen, alt: 'Custom kitchen cabinetry installation, Dubai villa' },
-    { src: electrical, alt: 'Electrical conduit installation, UAE construction site' },
-    { src: waterTank, alt: 'Rooftop water tank installation, UAE building' },
+    { src: heroConstruction, alt: 'Completed villa exterior built by Earth Cone' },
+    { src: heroInteriors, alt: 'Marble feature wall interior fit-out, Dubai villa' },
+    { src: heroKitchens, alt: 'Custom kitchen cabinetry installation, Dubai villa' },
+    { src: heroElectrical, alt: 'Electrical conduit installation, UAE construction site' },
+    { src: heroWaterSystems, alt: 'Ablution area washroom fixture installation, UAE building' },
 ];
 ---
 
@@ -42,7 +49,7 @@ const slides = [
     <div class="container-wide relative pt-24 pb-12 sm:pt-28 md:pb-16">
         <p class="reveal eyebrow text-white/80">Est. Dubai · UAE-wide</p>
         <h1
-            class="reveal mt-3 max-w-3xl text-display-lg font-semibold text-white"
+            class="hero-headline reveal mt-3 max-w-3xl text-display-lg font-semibold text-white"
             style="transition-delay: 0.1s"
         >
             Building and maintaining properties across the UAE

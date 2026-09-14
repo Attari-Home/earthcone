@@ -7,6 +7,8 @@ const navLinks = [
     { href: '/services', label: 'Services' },
     { href: '/portfolio', label: 'Portfolio' },
     { href: '/service-areas', label: 'Service Areas' },
+    { href: '/recognition', label: 'Recognition' },
+    { href: '/faq', label: 'FAQ' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
 ];
@@ -16,23 +18,24 @@ const navLinks = [
     <div class="container-wide flex h-20 items-center justify-between">
         <a
             href={withBase('/')}
-            class="font-title text-lg font-semibold tracking-tight text-[var(--color-fg)]"
+            class="flex items-center gap-2.5 font-title text-lg font-semibold tracking-tight text-[var(--color-fg)]"
         >
+            <img src={withBase('/logo-mark.png')} alt="" width="36" height="36" class="h-9 w-9" />
             {site.shortName}
         </a>
 
-        <nav aria-label="Primary" class="hidden gap-8 md:flex">
+        <nav aria-label="Primary" class="hidden gap-5 xl:gap-7 lg:flex">
             {navLinks.map((link) => (
                 <a
                     href={withBase(link.href)}
-                    class="link-underline text-sm font-medium text-[var(--color-fg)] hover:text-[var(--color-terracotta)]"
+                    class="link-underline text-sm font-medium text-nowrap text-[var(--color-fg)] hover:text-[var(--color-terracotta)]"
                 >
                     {link.label}
                 </a>
             ))}
         </nav>
 
-        <a href={withBase('/contact')} class="btn-primary hidden text-xs md:inline-flex">
+        <a href={withBase('/contact')} class="btn-primary hidden text-xs lg:inline-flex">
             Get a Quote
         </a>
 
@@ -46,7 +49,7 @@ const navLinks = [
             <Icon name="ph:moon" class="icon-moon h-5 w-5" />
         </button>
 
-        <details id="mobile-nav" class="relative md:hidden">
+        <details id="mobile-nav" class="relative lg:hidden">
             <summary
                 class="flex h-10 w-10 cursor-pointer list-none items-center justify-center text-[var(--color-fg)] [&::-webkit-details-marker]:hidden"
                 aria-label="Open menu"
@@ -79,10 +82,15 @@ const navLinks = [
         if (menu instanceof HTMLDetailsElement) menu.open = false;
     });
 
-    // Header (and this script) only runs once even across client-side navigations, since
-    // transition:persist keeps the same DOM node — so this listener is bound exactly once,
-    // not re-attached per page-load like the menu-close handler above.
-    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    // Delegated on `document` (which is never replaced) rather than bound directly to the
+    // button: `transition:persist` on <Header> does not keep the same button node across a
+    // client-side navigation here, so a listener attached to that specific element stops
+    // receiving clicks after the first page. This script itself still only runs once —
+    // Astro dedupes non-inline <script> tags across navigations — so delegation is both
+    // the fix and doesn't need re-binding on astro:page-load.
+    document.addEventListener('click', (event) => {
+        const button = event.target instanceof Element && event.target.closest('#theme-toggle');
+        if (!button) return;
         const current =
             document.documentElement.getAttribute('data-theme') ??
             (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');

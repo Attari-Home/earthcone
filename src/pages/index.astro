@@ -5,22 +5,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero/Hero.astro';
 import ServiceGrid from '../components/ServiceGrid/ServiceGrid.astro';
 import CtaBand from '../components/CtaBand/CtaBand.astro';
-import { getMediaForFolder } from '../lib/portfolioMedia';
+import { getCoverForFolder } from '../lib/portfolioMedia';
 import { withBase } from '../lib/url';
 import { site } from '../data/site';
+import signboard from '../images/branding/earth-cone-signboard-01.jpeg';
+import certificateFlat from '../images/branding/earth-cone-certificate-01-flat.jpeg';
+import award from '../images/branding/earth-cone-award-01.jpeg';
 
 const stats = [
-    { value: '7', label: 'Emirates licensed' },
-    { value: '5', label: 'Trades in-house' },
-    { value: 'Dubai', label: 'Headquartered, UAE-wide' },
+    { value: '7', countTo: 7, label: 'Emirates licensed' },
+    { value: '5', countTo: 5, label: 'Trades in-house' },
+    { value: 'Dubai', countTo: null, label: 'Headquartered, UAE-wide' },
 ];
 
 const categories = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const teaserTiles = categories.map((category) => {
-    const [first] = getMediaForFolder(category.data.folder);
-    const cover = first ? (first.kind === 'photo' ? first.src : first.poster) : null;
-    return { category, cover };
-});
+const teaserTiles = categories.map((category) => ({
+    category,
+    cover: getCoverForFolder(category.data.folder, category.data.cover),
+}));
 ---
 
 <BaseLayout title={site.shortName} description={site.description}>
@@ -30,8 +32,11 @@ const teaserTiles = categories.map((category) => {
         <div class="container-wide relative grid gap-10 sm:grid-cols-3">
             {stats.map((stat, i) => (
                 <div class="reveal text-center" style={`transition-delay: ${i * 0.1}s`}>
-                    <p class="font-display text-display-md font-semibold text-white">
-                        {stat.value}
+                    <p
+                        class="font-display text-display-md font-semibold text-white"
+                        data-count-to={stat.countTo ?? undefined}
+                    >
+                        {stat.countTo ? '0' : stat.value}
                     </p>
                     <p class="eyebrow mt-2 text-white/70">{stat.label}</p>
                 </div>
@@ -106,5 +111,224 @@ const teaserTiles = categories.map((category) => {
         </div>
     </section>
 
+    <section class="overflow-hidden py-section-md">
+        <div class="container-wide grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+            <div class="reveal slide-in-left order-2 lg:order-1">
+                <p class="eyebrow">About</p>
+                <h2 class="mt-2 text-display-sm font-display font-semibold text-[var(--color-fg)]">
+                    Built by a team that shows up
+                </h2>
+                <p class="mt-4 text-[var(--color-stone)]">
+                    {site.description} Construction, interior fit-out, custom kitchens, electrical,
+                    and water-systems work — one crew, one point of contact, from foundation to
+                    finish.
+                </p>
+                <a
+                    href={withBase('/about')}
+                    class="btn-ghost mt-6 text-[var(--color-terracotta-dark)]"
+                >
+                    More about us <span class="arrow">&rarr;</span>
+                </a>
+            </div>
+            <div class="reveal slide-in-right order-1 lg:order-2" style="transition-delay: 0.1s">
+                <div class="aspect-[4/3] overflow-hidden rounded-[2px] bg-[var(--color-sand)]">
+                    <Image
+                        src={signboard}
+                        alt={`${site.name} site signboard, Dubai`}
+                        widths={[480, 640, 860]}
+                        sizes="(min-width: 1024px) 50vw, 100vw"
+                        loading="lazy"
+                        class="h-full w-full object-cover"
+                    />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="overflow-hidden bg-[var(--color-charcoal)] py-section-md">
+        <div class="container-wide grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+            <div class="reveal slide-in-left">
+                <p class="eyebrow text-white/80">Coverage</p>
+                <h2 class="mt-2 text-display-sm font-display font-semibold text-white">
+                    Licensed across all seven Emirates
+                </h2>
+                <p class="mt-4 text-white/70">
+                    One contractor for the whole country — no need to bring in a different crew per
+                    Emirate. Every block below is a live link.
+                </p>
+                <a href={withBase('/service-areas')} class="btn-ghost mt-6 text-white">
+                    See service areas <span class="arrow">&rarr;</span>
+                </a>
+            </div>
+
+            <div
+                class="reveal slide-in-right grid aspect-[4/3] grid-cols-4 grid-rows-6 gap-2"
+                style="transition-delay: 0.1s"
+                aria-label="The seven Emirates Earth Cone is licensed to work in — schematic, not to scale"
+            >
+                {[
+                    { name: 'Ras Al Khaimah', class: 'col-start-1 col-span-2 row-start-1' },
+                    { name: 'Fujairah', class: 'col-start-3 col-span-2 row-start-1 row-span-3' },
+                    { name: 'Umm Al Quwain', class: 'col-start-1 row-start-2' },
+                    { name: 'Ajman', class: 'col-start-2 row-start-2' },
+                    { name: 'Sharjah', class: 'col-start-1 col-span-2 row-start-3' },
+                    { name: 'Dubai', class: 'col-start-1 col-span-2 row-start-4' },
+                    { name: 'Abu Dhabi', class: 'col-start-1 col-span-4 row-start-5 row-span-2' },
+                ].map((emirate) => (
+                    <a
+                        href={withBase('/service-areas')}
+                        class={`group flex items-center justify-center rounded-[2px] border border-white/15 bg-white/[0.04] p-2 text-center text-xs font-medium text-nowrap text-white/70 transition-colors duration-300 hover:border-[var(--color-terracotta)] hover:bg-[var(--color-terracotta)] hover:text-white sm:text-sm ${emirate.class}`}
+                    >
+                        {emirate.name}
+                    </a>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <section class="overflow-hidden py-section-md">
+        <div class="container-wide">
+            <div class="reveal mx-auto max-w-2xl text-center">
+                <p class="eyebrow">Process</p>
+                <h2 class="mt-2 text-display-sm font-display font-semibold text-[var(--color-fg)]">
+                    How we work
+                </h2>
+                <p class="mt-4 text-[var(--color-stone)]">
+                    From first message to handover — the same five steps for every job, in every
+                    Emirate.
+                </p>
+            </div>
+
+            <ol class="mt-16 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-5">
+                {[
+                    {
+                        step: '01',
+                        title: 'Enquiry',
+                        body: 'Call, WhatsApp, or the quote form — tell us what you need built or fixed.',
+                    },
+                    {
+                        step: '02',
+                        title: 'Site visit',
+                        body: 'We walk the site, take measurements, and scope the work in person.',
+                    },
+                    {
+                        step: '03',
+                        title: 'Quote',
+                        body: 'A written quote covering materials, labor, and timeline — no surprises later.',
+                    },
+                    {
+                        step: '04',
+                        title: 'Build',
+                        body: 'Our own crew handles the trade work, start to finish, with one point of contact.',
+                    },
+                    {
+                        step: '05',
+                        title: 'Handover',
+                        body: 'A final walkthrough with you before we call the job done.',
+                    },
+                ].map((item, i) => (
+                    <li class="reveal" style={`transition-delay: ${i * 0.08}s`}>
+                        <p class="font-display text-display-sm font-semibold text-[var(--color-sand)]">
+                            {item.step}
+                        </p>
+                        <h3 class="mt-2 font-display text-lg font-semibold text-[var(--color-fg)]">
+                            {item.title}
+                        </h3>
+                        <p class="mt-2 text-sm text-[var(--color-stone)]">{item.body}</p>
+                    </li>
+                ))}
+            </ol>
+        </div>
+    </section>
+
+    <section class="overflow-hidden py-section-md">
+        <div class="container-wide grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+            <div class="reveal slide-in-left">
+                <p class="eyebrow">Recognition</p>
+                <h2 class="mt-2 text-display-sm font-display font-semibold text-[var(--color-fg)]">
+                    Recognized across the industry
+                </h2>
+                <p class="mt-4 text-[var(--color-stone)]">
+                    Credentials {site.shortName} has earned working across the Emirates it serves,
+                    from the Chamber of Commerce News in UAE and the World Magazine.
+                </p>
+                <a
+                    href={withBase('/recognition')}
+                    class="btn-ghost mt-6 text-[var(--color-terracotta-dark)]"
+                >
+                    View recognition <span class="arrow">&rarr;</span>
+                </a>
+            </div>
+            <div
+                class="reveal slide-in-right grid grid-cols-2 gap-4"
+                style="transition-delay: 0.1s"
+            >
+                <div class="flex aspect-[3/4] items-center justify-center rounded-[2px] border border-[var(--color-sand)] bg-white p-4">
+                    <Image
+                        src={certificateFlat}
+                        alt="Earth Cone Certificate of Appreciation"
+                        widths={[240, 360, 480]}
+                        sizes="(min-width: 1024px) 25vw, 45vw"
+                        loading="lazy"
+                        class="max-h-full max-w-full object-contain"
+                    />
+                </div>
+                <div class="flex aspect-[3/4] items-center justify-center rounded-[2px] border border-[var(--color-sand)] bg-white p-4">
+                    <Image
+                        src={award}
+                        alt="Earth Cone Award of Appreciation"
+                        widths={[240, 360, 480]}
+                        sizes="(min-width: 1024px) 25vw, 45vw"
+                        loading="lazy"
+                        class="max-h-full max-w-full object-contain"
+                    />
+                </div>
+            </div>
+        </div>
+    </section>
+
     <CtaBand />
 </BaseLayout>
+
+<script>
+    // Count-up for the numeric stats in the band under the hero. Re-initialized on every
+    // astro:page-load (not just once): a non-inline <script> only ever executes once across
+    // the whole site, but this page's DOM is fully replaced on every visit (not persisted),
+    // so without this a second visit to "/" would show a stuck "0" instead of animating.
+    function animateCount(el: Element) {
+        const target = Number(el.getAttribute('data-count-to'));
+        if (!target || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            el.textContent = String(target);
+            return;
+        }
+        const duration = 1200;
+        const start = performance.now();
+        function tick(now: number) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = String(Math.round(eased * target));
+            if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+
+    function initCounters() {
+        const counters = document.querySelectorAll('[data-count-to]:not([data-counted])');
+        if (!counters.length) return;
+        const countObserver = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (!entry.isIntersecting) continue;
+                    entry.target.setAttribute('data-counted', 'true');
+                    animateCount(entry.target);
+                    countObserver.unobserve(entry.target);
+                }
+            },
+            { threshold: 0.5 },
+        );
+        counters.forEach((el) => countObserver.observe(el));
+    }
+
+    initCounters();
+    document.addEventListener('astro:page-load', initCounters);
+</script>

@@ -23,6 +23,10 @@ const projects = defineCollection({
         folder: z.string(),
         // Matching entry id in the `services` collection, for cross-linking.
         serviceSlug: z.string().optional(),
+        // Basename (within `folder`) of the media item to use as this category's homepage
+        // teaser cover — curated so the cover is always a sharp photo, never whichever file
+        // happens to sort first alphabetically (which can land on a blurry video-frame poster).
+        cover: z.string().optional(),
     }),
 });
 

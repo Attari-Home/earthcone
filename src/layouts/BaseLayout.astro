@@ -4,6 +4,7 @@ import SEO from '../components/SEO/SEO.astro';
 import Header from '../components/Header/Header.astro';
 import Footer from '../components/Footer/Footer.astro';
 import WhatsAppButton from '../components/WhatsAppButton/WhatsAppButton.astro';
+import Lightbox from '../components/Lightbox/Lightbox.astro';
 import { withBase } from '../lib/url';
 import '@fontsource-variable/inter/wght.css';
 import '@fontsource-variable/fraunces/wght.css';
@@ -27,8 +28,17 @@ const { title, description, image } = Astro.props;
             // Runs synchronously before first paint so there's no flash of the wrong
             // theme. Falls through to the @media(prefers-color-scheme) CSS when nothing
             // is stored, i.e. the visitor never explicitly toggled the theme.
-            const storedTheme = localStorage.getItem('theme');
-            if (storedTheme) document.documentElement.setAttribute('data-theme', storedTheme);
+            function applyStoredTheme() {
+                const storedTheme = localStorage.getItem('theme');
+                if (storedTheme) document.documentElement.setAttribute('data-theme', storedTheme);
+            }
+            applyStoredTheme();
+            // astro:after-swap fires right after a client-side navigation swaps in the new
+            // page, before paint — a plain <script is:inline> only ever runs once (on the
+            // very first load), so without this the theme attribute this sets is lost on
+            // the new document and every page after the first one silently reverts to the
+            // OS-preferred theme rather than the visitor's saved choice.
+            document.addEventListener('astro:after-swap', applyStoredTheme);
         </script>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -48,6 +58,7 @@ const { title, description, image } = Astro.props;
         </main>
         <Footer transition:persist />
         <WhatsAppButton transition:persist />
+        <Lightbox />
     </body>
 
     <script>

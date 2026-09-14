@@ -14,14 +14,21 @@ const posterImage =
 
 <figure class="media-tile group mb-6 block break-inside-avoid overflow-hidden">
     {item.kind === 'photo' ? (
-        <Image
-            src={item.src}
-            alt={item.alt}
-            widths={[320, 480, 640, 768]}
-            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-            loading="lazy"
-            class="h-auto w-full"
-        />
+        <button
+            type="button"
+            data-lightbox
+            aria-label={`Open larger view: ${item.alt}`}
+            class="block w-full cursor-zoom-in"
+        >
+            <Image
+                src={item.src}
+                alt={item.alt}
+                widths={[320, 480, 640, 768, 1280]}
+                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                loading="lazy"
+                class="h-auto w-full"
+            />
+        </button>
     ) : (
         <video
             preload="none"

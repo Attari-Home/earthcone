@@ -17,6 +17,10 @@ const rawVideoPaths = Object.keys(import.meta.glob('/src/images/*/*.mp4', { eage
 const EXCLUDED_BASENAMES = new Set([
     'interior-design-reference-01',
     'interior-design-reference-02',
+    'interior-design-reference-03',
+    'interior-design-reference-04',
+    'interior-design-reference-05',
+    'interior-design-reference-06',
     'office-interior-render-01',
     'office-interior-render-02',
 ]);
@@ -72,6 +76,13 @@ const SUBJECT_PHRASES: Record<string, string> = {
     'rooftop-piping-installation': 'Rooftop piping installation',
     'rooftop-water-tank': 'Rooftop water tank installation',
     'water-pump-installation': 'Water pump installation',
+    'wardrobe-installation': 'Wardrobe installation',
+    'bookshelf-cabinetry': 'Custom bookshelf cabinetry',
+    'marble-shower-wall': 'Marble shower wall finish',
+    'living-room-finish': 'Living room interior finish',
+    'stone-material-supply': 'Natural stone material supply',
+    'ablution-area-installation': 'Ablution area installation',
+    'electrical-panel-installation': 'Electrical panel installation',
 };
 
 // Short location/business context appended to every alt string for the folder's category.
@@ -167,4 +178,19 @@ export function getMediaForFolder(folder: string): MediaItem[] {
     }
 
     return items.sort((a, b) => a.basename.localeCompare(b.basename, undefined, { numeric: true }));
+}
+
+/**
+ * Picks the tile image for one portfolio category: the curated `cover` basename if set,
+ * else the first photo (never a video's frame-grab poster, which reads noticeably blurrier
+ * than an actual photo), else whatever's first. Shared by the homepage teaser and the
+ * portfolio grid so their covers for the same category always match.
+ */
+export function getCoverForFolder(folder: string, cover?: string): ImageMetadata | null {
+    const media = getMediaForFolder(folder);
+    const chosen =
+        media.find((item) => item.basename === cover) ??
+        media.find((item) => item.kind === 'photo') ??
+        media[0];
+    return chosen ? (chosen.kind === 'photo' ? chosen.src : chosen.poster) : null;
 }

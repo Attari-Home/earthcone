@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand/CtaBand.astro';
 import { site } from '../data/site';
+import { withBase } from '../lib/url';
 ---
 
 <BaseLayout
@@ -23,13 +24,25 @@ import { site } from '../data/site';
         <ul class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {site.emirates.map((emirate, i) => (
                 <li
-                    class="reveal border-t border-[var(--color-sand)] py-4 font-display text-lg font-medium text-[var(--color-fg)]"
+                    class="reveal border-t border-[var(--color-sand)] py-5 font-display text-lg font-medium text-[var(--color-fg)]"
                     style={`transition-delay: ${i * 0.05}s`}
                 >
                     {emirate}
                 </li>
             ))}
         </ul>
+
+        <div class="reveal mt-16 flex flex-wrap gap-x-10 gap-y-4 border-t border-[var(--color-sand)] pt-8">
+            <a
+                href={withBase('/recognition')}
+                class="btn-ghost text-[var(--color-terracotta-dark)]"
+            >
+                Recognition <span class="arrow">&rarr;</span>
+            </a>
+            <a href={withBase('/faq')} class="btn-ghost text-[var(--color-terracotta-dark)]">
+                Frequently asked questions <span class="arrow">&rarr;</span>
+            </a>
+        </div>
     </section>
 
     <CtaBand />

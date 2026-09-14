@@ -12,13 +12,31 @@ All original `WhatsApp Image ...` and `WhatsApp Video ...` filenames were replac
 
 | Folder | JPEG images | MP4 videos | Primary subject |
 | --- | ---: | ---: | --- |
-| `src/images/branding/` | 2 | 0 | Earth Cone business-card branding |
-| `src/images/construction-exteriors/` | 11 | 5 | Villas, facades, foundations, paving, decking |
-| `src/images/electrical/` | 3 | 0 | Electrical conduit and ceiling installation |
-| `src/images/interiors/` | 13 | 20 | Finished interiors, flooring, TV walls, stairs, doors, vanities |
-| `src/images/kitchens/` | 41 | 0 | Custom kitchen projects |
-| `src/images/water-systems/` | 28 | 0 | Rooftop tanks, piping, manifolds, water pumps |
-| **Total** | **98** | **25** | **123 media files** |
+| `src/images/branding/` | 9 | 0 | Earth Cone business cards, site signboard, awards/certificates, company vehicle |
+| `src/images/construction-exteriors/` | 20 | 8 | Villas, facades, foundations, paving, decking, stone material supply |
+| `src/images/electrical/` | 3 | 2 | Electrical conduit, ceiling installation, panel installation |
+| `src/images/interiors/` | 55 | 35 | Finished interiors, flooring, TV walls, stairs, doors, vanities, wardrobes, bookshelves, marble shower walls |
+| `src/images/kitchens/` | 46 | 0 | Custom kitchen projects |
+| `src/images/water-systems/` | 30 | 2 | Rooftop tanks, piping, manifolds, water pumps, ablution area, plumbing install |
+| **Total** | **163** | **47** | **210 media files** |
+
+A second WhatsApp export batch (`new_images_Videos/`, 72 images + 31 videos) was categorized and merged into the library above on 2026-09-14. 7 exact-duplicate images and 9 exact-duplicate videos (identical bytes, re-sent under a different WhatsApp filename) were identified by hash and discarded rather than imported twice — see "Duplicate detection" below. One further duplicate (`earth-cone-business-cards-03.jpeg`, byte-identical to the pre-existing `earth-cone-business-cards-02.jpeg`) slipped through that pass because it was only hashed against other new-batch files, not the full existing library — caught and removed the same day; **hash new imports against the full library, not just against each other, next time.**
+
+`earth-cone-certificate-01-flat.jpeg` is a derived asset, not a raw import: a perspective-corrected ("deskewed"), contrast-boosted crop of a high-res certificate rescan (client-supplied PDF, not the original WhatsApp photo — the PDF scan was sharper and closer to front-on, giving a much cleaner result), produced with Python/Pillow (`Image.transform(..., Image.QUAD, ...)`) so it reads as a flat scanned document instead of a photo of a framed object on a wall. `earth-cone-certificate-framed.jpeg` is a second, separate client-supplied rescan of the same certificate while still framed/on-wall (used as-is, only cropped+sharpened — that photo was already near-frontal, no perspective correction needed). Both live on `/recognition` alongside the award photo. Source photos untouched; keep this pattern (derive a named variant rather than overwriting) if more framed/angled documents show up.
+
+`public/logo-mark.png` is a derived asset too: the building-icon mark cropped out of the business-card render (`earth-cone-business-cards-02.jpeg`) and made transparent via a luminance-based chroma-key in Pillow (background is a flat white/near-white in that render, so a simple whiteness threshold + Gaussian-blurred alpha edge was enough — no need for a real background-removal model). Used in the site header next to the wordmark. If a better/official logo file ever arrives from the client, replace this file directly rather than re-deriving it.
+
+Hero slideshow images (`src/images/hero/hero-*.jpeg`) got a signature typography treatment on the homepage: one word ("properties") renders in Fraunces' own italic SOFT/opsz variable axis (not a separate script font) — see the `.hero-cursive` comment in `global.css` and the `full-italic.css` import in `Hero.astro`. Deliberate choice: same type family as the rest of the display type, different voice, rather than bolting on an unrelated script font that would clash with the site's established serif identity.
+
+## Homepage v2 (2026-09-14 follow-up)
+
+The landing page grew substantially in the same session: About/Coverage/"How we work" sections added after Recent Work, animated stat counters on the existing stats band, and the Coverage section's emirate list became a clickable 7-block "blueprint" grid (`index.astro`, CSS grid with hand-placed `col-start`/`row-start` per emirate — deliberately abstract/schematic, not a geographic map, specifically to avoid using a copyrighted (CC-BY-SA, share-alike) map dataset on a commercial client site).
+
+`src/components/BeforeAfterSlider/BeforeAfterSlider.astro` was built (drag-to-compare, keyboard accessible via a range input) but is **not wired into any page** — the asset library has no confirmed genuine before/after pair (same room, two points in time); every "in-progress vs finished" pairing I checked turned out to be two different rooms. Do not populate this component with a guessed pairing — wait for the client to confirm two photos of the same space, or ask them directly.
+
+`src/components/Header/Header.astro`: nav grew from 5 to 7 items (added Recognition, FAQ) and the full-nav breakpoint moved from `md:` (768px) to `lg:` (1024px) so it doesn't overflow at tablet widths — the mobile hamburger now covers a wider range.
+
+Testing note: this session's embedded Browser pane had `element.scrollIntoView()` / `window.scrollTo()` (JS-driven scroll) silently no-op — `window.scrollY` never changed. The tool's own `computer` action `scroll_to` (ref-based) worked correctly and did trigger the real IntersectionObserver reveals. If a future session sees "reveal never fires" while scrolled programmatically via JS, try the dedicated scroll tool action before assuming a real bug.
 
 ## Naming convention
 
@@ -42,12 +60,28 @@ Use these paths directly in website components. The number distinguishes related
 
 ## Content grouping notes
 
-- `branding`: brand collateral only; appropriate for About, Contact, and brand-story sections.
-- `construction-exteriors`: exterior construction progress and completed villa façades; appropriate for portfolio or construction-services sections.
-- `electrical`: installation-process images; appropriate for electrical-services sections.
-- `interiors`: interior finish work and video showcases. The videos cover herringbone flooring, TV walls, doors, bathroom vanities, staircase details, and flooring finishes.
+- `branding`: brand collateral only; appropriate for About, Contact, and brand-story sections. Not wired into any `projects` content-collection entry, so nothing in this folder appears in the public `/portfolio` grid — safe home for internal/promotional assets (awards, certificates, signboard, company vehicle) that aren't "completed project" shots.
+- `construction-exteriors`: exterior construction progress and completed villa façades, plus raw stone material stockyard photos; appropriate for portfolio or construction-services sections.
+- `electrical`: installation-process images and videos (conduits, ceiling runs, distribution panels); appropriate for electrical-services sections.
+- `interiors`: interior finish work and video showcases. Subjects include herringbone flooring, TV feature walls, doors, bathroom vanities, marble shower walls, staircase details, wardrobes, custom bookshelf cabinetry, elevator lobbies, and general flooring finishes.
 - `kitchens`: completed custom kitchens; suitable for a kitchen gallery or service page.
-- `water-systems`: rooftop water tanks, plumbing manifolds, piping, and pumps; suitable for plumbing or water-system services.
+- `water-systems`: rooftop water tanks, plumbing manifolds, piping, pumps, general plumbing installation, and mosque/majlis-style ablution (wudu) area fixtures; suitable for plumbing or water-system services.
+
+### New subjects introduced in the second batch (2026-09-14)
+
+Added to `SUBJECT_PHRASES` in `src/lib/portfolioMedia.ts` so alt text stays descriptive per CLAUDE.md §5:
+
+- `wardrobe-installation` (interiors) — fitted wardrobe/closet installs.
+- `bookshelf-cabinetry` (interiors) — open-shelf wood-slat bookshelf/storage units.
+- `marble-shower-wall` (interiors) — bookmatched marble shower wall/niche finishes.
+- `living-room-finish` (interiors) — general finished/handover living room shots without a specific TV-wall or flooring focus.
+- `stone-material-supply` (construction-exteriors) — palletized natural stone stock photographed at a supplier yard.
+- `ablution-area-installation` (water-systems) — mosque/majlis-style wudu (ablution) washroom fixture rows.
+- `electrical-panel-installation` (electrical) — distribution panel/wiring installs.
+
+### Duplicate detection
+
+The second export batch had the same content re-sent multiple times under different WhatsApp timestamps (e.g. the site signboard and awards were exported once around 8:40 PM and again around 8:42 PM). Before importing, every file was hashed with `md5sum`; byte-identical duplicates were dropped, keeping only the earliest-timestamped copy. If a future batch shows the same pattern, hash first — don't assume distinct filenames mean distinct content.
 
 ## Maintenance rules
 

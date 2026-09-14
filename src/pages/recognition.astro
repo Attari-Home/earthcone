@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs.astro';
+import CtaBand from '../components/CtaBand/CtaBand.astro';
+import { site } from '../data/site';
+import award from '../images/branding/earth-cone-award-01.jpeg';
+import certificate from '../images/branding/earth-cone-certificate-01-flat.jpeg';
+import certificateFramed from '../images/branding/earth-cone-certificate-framed.jpeg';
+
+const credentials = [
+    {
+        src: certificate,
+        alt: 'Earth Cone Certificate of Appreciation from the Chamber of Commerce News in UAE and the World Magazine',
+        caption: 'Certificate of Appreciation',
+        detail: 'Chamber of Commerce News in UAE and the World Magazine, UAE National Day recognition',
+    },
+    {
+        src: certificateFramed,
+        alt: 'Framed Earth Cone Certificate of Appreciation on display',
+        caption: 'Certificate of Appreciation, framed',
+        detail: 'Chamber of Commerce News in UAE and the World Magazine, UAE National Day recognition',
+    },
+    {
+        src: award,
+        alt: 'Earth Cone Award of Appreciation trophy from the Chamber of Commerce News in UAE and the World Magazine',
+        caption: 'Award of Appreciation',
+        detail: 'Chamber of Commerce News in UAE and the World Magazine',
+    },
+];
+---
+
+<BaseLayout
+    title="Recognition"
+    description={`Credentials ${site.shortName} has earned working across the Emirates it serves.`}
+>
+    <Breadcrumbs
+        items={[
+            { label: 'Home', href: '/' },
+            { label: 'Service Areas', href: '/service-areas' },
+            { label: 'Recognition', href: '/recognition' },
+        ]}
+    />
+
+    <section class="container-wide py-section-md">
+        <div class="reveal max-w-2xl">
+            <p class="eyebrow">Recognition</p>
+            <h1 class="mt-2 text-display-md font-semibold text-[var(--color-fg)]">
+                Recognized across the industry
+            </h1>
+            <p class="mt-6 text-lg text-[var(--color-stone)]">
+                Credentials {site.shortName} has earned working across the Emirates it serves.
+            </p>
+        </div>
+
+        <div class="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {credentials.map((item, i) => (
+                <div
+                    class="reveal group flex flex-col overflow-hidden rounded-[2px] border border-[var(--color-sand)] bg-[var(--color-cream)] shadow-sm transition-shadow duration-300 hover:shadow-md"
+                    style={`transition-delay: ${i * 0.08}s`}
+                >
+                    <button
+                        type="button"
+                        data-lightbox
+                        aria-label={`Open larger view: ${item.alt}`}
+                        class="flex h-64 cursor-zoom-in items-center justify-center overflow-hidden bg-white p-6"
+                    >
+                        <Image
+                            src={item.src}
+                            alt={item.alt}
+                            widths={[320, 480, 640, 900]}
+                            sizes="(min-width: 640px) 40vw, 90vw"
+                            loading="lazy"
+                            class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+                        />
+                    </button>
+                    <div class="border-t border-[var(--color-sand)] p-6">
+                        <p class="font-display font-medium text-[var(--color-fg)]">
+                            {item.caption}
+                        </p>
+                        <p class="mt-1 text-sm text-[var(--color-stone)]">{item.detail}</p>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </section>
+
+    <CtaBand />
+</BaseLayout>
