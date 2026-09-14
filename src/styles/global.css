@@ -254,28 +254,59 @@
     }
 }
 
-/* Layers a blur-to-sharp resolve onto the shared .reveal fade/translate for the hero
-   headline specifically — the one orchestrated moment on this page, left off every other
-   .reveal element so it doesn't become a scattered, repeated effect. */
-html.js .hero-headline {
-    filter: blur(10px);
-    transition:
-        opacity 0.9s var(--ease-premium),
-        transform 0.9s var(--ease-premium),
-        filter 0.9s var(--ease-premium);
+/*
+ * Hero content entrance: deliberately NOT the shared .reveal/IntersectionObserver system
+ * below — the hero is always fully inside the initial viewport (nothing to scroll to), so
+ * gating it behind scroll-triggered reveal was a bug: on a near-full-height hero the CTA
+ * row sits closest to the bottom edge, right where the observer's `rootMargin:
+ * '0px 0px -10% 0px'` excludes it from the very first intersection check — it only ever
+ * appeared after the first scroll re-triggered that check. Plays via `animation` on load
+ * instead, so it doesn't depend on JS or scrolling at all.
+ */
+@keyframes hero-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(1.25rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-html.js .hero-headline.is-visible {
-    filter: blur(0);
+.hero-reveal {
+    opacity: 0;
+    animation: hero-fade-up 0.7s var(--ease-premium) both;
+}
+
+/* Same fade-up, plus the blur-to-sharp resolve reserved for the hero headline specifically
+   — the one orchestrated moment on this page, left off every other hero-reveal element so
+   it doesn't become a scattered, repeated effect. */
+@keyframes hero-headline-in {
+    from {
+        opacity: 0;
+        transform: translateY(1.25rem);
+        filter: blur(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+.hero-headline {
+    opacity: 0;
+    animation: hero-headline-in 0.9s var(--ease-premium) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    /* Matches the base rule's exact selector (html.js .hero-headline) rather than just
-       .hero-headline — otherwise the base rule's higher specificity would win the cascade
-       regardless of this media query, and the blur would incorrectly persist. */
-    html.js .hero-headline {
+    .hero-reveal,
+    .hero-headline {
+        opacity: 1;
+        transform: none;
         filter: none;
-        transition: none;
+        animation: none;
     }
 }
 
