@@ -374,52 +374,6 @@ html.js .slide-in-right.is-visible {
     transform: none;
 }
 
-/*
- * Stacked-deck "What we do" cards: default to overlapping like a hand of cards showing
- * only their photo (title/description/link hidden — a real poker-style stack, not just
- * overlapping text), fan out into a plain row on hover, fold back the moment the cursor
- * leaves the whole group. Desktop + real pointer only (min-width plus hover:hover/
- * pointer:fine) — below that, or without a mouse, these classes get no rules at all and
- * it just renders as the plain grid it already was, so mobile/tablet is unaffected.
- */
-@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-    .stack-group {
-        display: flex;
-    }
-
-    .stack-card {
-        flex: 1 1 0%;
-        margin-left: calc(var(--i, 0) * -16%);
-        transform: rotate(calc(var(--i, 0) * -2.5deg)) translateY(calc(var(--i, 0) * 0.35rem));
-        transition:
-            margin-left 0.5s var(--ease-premium),
-            transform 0.5s var(--ease-premium);
-        z-index: calc(10 - var(--i, 0));
-    }
-
-    /* Title/description/link block: invisible while stacked (only the photo shows, like a
-       card's face-down back), fades in once the group fans out. */
-    .stack-text {
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s var(--ease-premium);
-    }
-
-    /* :focus-within too, not just :hover — a keyboard user tabbing into a stacked card
-       must also fan the group out, or that card stays focused but visually buried. */
-    .stack-group:hover .stack-card,
-    .stack-group:focus-within .stack-card {
-        margin-left: 0;
-        transform: none;
-    }
-
-    .stack-group:hover .stack-text,
-    .stack-group:focus-within .stack-text {
-        opacity: 1;
-        pointer-events: auto;
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
     html.js .reveal,
     html.js .tilt-card.reveal,
@@ -434,9 +388,7 @@ html.js .slide-in-right.is-visible {
     .media-tile video,
     .btn-ghost .arrow,
     .link-underline,
-    .reveal-caption,
-    .stack-card,
-    .stack-text {
+    .reveal-caption {
         transition: none;
     }
 

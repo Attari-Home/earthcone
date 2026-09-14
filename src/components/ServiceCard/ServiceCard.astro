@@ -6,17 +6,16 @@ import { withBase } from '../../lib/url';
 interface Props {
     service: CollectionEntry<'services'>;
     delay?: number;
-    index?: number;
 }
 
-const { service, delay = 0, index = 0 } = Astro.props;
+const { service, delay = 0 } = Astro.props;
 const { title, summary, heroImage } = service.data;
 ---
 
 <a
     href={withBase(`/services/${service.id}`)}
-    class="group media-tile stack-card reveal block"
-    style={`transition-delay: ${delay}s; --i: ${index}`}
+    class="group media-tile tilt-card reveal block"
+    style={`transition-delay: ${delay}s`}
 >
     <div class="aspect-[4/3] overflow-hidden bg-[var(--color-sand)]">
         {heroImage && (
@@ -30,7 +29,7 @@ const { title, summary, heroImage } = service.data;
             />
         )}
     </div>
-    <div class="stack-text mt-4">
+    <div class="mt-4">
         <h3 class="text-lg font-semibold text-[var(--color-fg)] group-hover:text-[var(--color-terracotta)]">
             {title}
         </h3>
