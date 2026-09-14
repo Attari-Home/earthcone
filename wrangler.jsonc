@@ -1,0 +1,12 @@
+{
+    // Tells Cloudflare's Workers static-assets deploy (`npx wrangler deploy`, configured
+    // in the dashboard's Build settings) where the built site actually is. Without this,
+    // Cloudflare had nothing to package: the Worker itself deployed (a few hundred bytes),
+    // but none of dist/ — images, videos, fonts, everything — went with it.
+    "name": "earthcone",
+    "compatibility_date": "2026-09-13",
+    "assets": {
+        "directory": "./dist",
+        "not_found_handling": "404-page"
+    }
+}

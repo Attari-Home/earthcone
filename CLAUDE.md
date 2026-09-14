@@ -30,7 +30,7 @@ This repo follows the same proven stack as the sibling project [`lailonahar-webs
 | Content    | Astro Content Collections (MDX)                          | Type-safe service/project/testimonial entries                                                                                                                                    |
 | Routing    | Astro View Transitions                                   | SPA-like feel without a JS framework                                                                                                                                             |
 | Forms      | Web3Forms (or equivalent)                                | No backend needed for a static site                                                                                                                                              |
-| Hosting    | GitHub Pages _(temporary)_ → Cloudflare Pages            | Deployed to GitHub Pages for free until a domain is purchased; switch to Cloudflare Pages (matches sibling project) once there's a custom domain to point at it — see §9/§10     |
+| Hosting    | Cloudflare (Workers/Pages, Git-connected)            | `earthconecontracting.com`, purchased and hosted on Cloudflare — deploys straight from the Cloudflare dashboard's own Git integration, not GitHub Actions — see §9/§10     |
 | Language   | TypeScript (strict)                                      | Type-safe content schemas and utilities                                                                                                                                          |
 | Formatting | Prettier + `prettier-plugin-astro`                       | One canonical format, enforced in CI                                                                                                                                             |
 
@@ -136,7 +136,7 @@ Rules to hit that budget:
 
 ## 9. Git workflow & branch protection
 
-- `main` is the production branch, deployed automatically to GitHub Pages (`https://attari-home.github.io/earthcone`) for now — see §10. **`main` is protected: no direct pushes, all changes land via pull request.**
+- `main` is the production branch, deployed automatically to Cloudflare (custom domain `https://earthconecontracting.com`) — see §10. **`main` is protected: no direct pushes, all changes land via pull request.**
 - Feature branches: `feature/<short-name>`, `fix/<short-name>`, `content/<short-name>`.
 - Commit messages: concise, imperative mood, explain _why_ not _what_ (e.g. `Fix hero LCP by preloading hero image`, not `update code`).
 - PRs use `.github/PULL_REQUEST_TEMPLATE.md` (add one mirroring the sibling project: summary, type of change, build/test checklist, screenshots for visual changes).
@@ -153,13 +153,15 @@ Add these GitHub Actions workflows (mirroring the sibling project) once the app 
 
 - `.github/workflows/ci.yml` — on PR to `main`: install, `astro check`, `astro build`, `prettier --check`. This is the required status check for the branch ruleset.
 - `.github/workflows/lighthouse.yml` — on PR to `main`: build, run Lighthouse CI against the thresholds in §6.
-- `.github/workflows/gh-pages.yml` — on push to `main`: build with `GH_PAGES=true` and deploy to GitHub Pages. This is the **only** live deploy target right now — free, no domain or secrets required.
-- **Removed for now**: a Cloudflare Pages `deploy.yml` (`cloudflare/pages-action`, needing `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` secrets) was tried first but had nothing to point at without a purchased domain, and its failing runs were just noise. Re-add it once a domain is purchased — mirror the sibling project's `deploy.yml`, and make sure it builds *without* `GH_PAGES` set (see `astro.config.mjs`) so it gets the real-domain `site`/`base` config, not the GitHub Pages one.
+- **Deployment is not a GitHub Actions workflow.** The domain `earthconecontracting.com` was purchased through Cloudflare and the repo is connected directly to a Cloudflare Workers/Pages project via Cloudflare's own Git integration — Cloudflare builds (`npm run build`) and deploys (`npx wrangler deploy`) on every push to `main` from its own side, independent of anything in `.github/workflows/`. There is nothing to configure in this repo for that (no `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` secrets needed); changes to the build happen in the Cloudflare dashboard for that project.
+- `wrangler.jsonc` at the repo root is required for that deploy to actually work: Cloudflare's Workers platform (unlike its older Pages product) has no framework-preset auto-detection, so without an explicit `assets.directory` pointing at `dist`, `wrangler deploy` uploads only a near-empty Worker shell — none of the actual site (images, videos, fonts included) goes with it. Do not delete this file.
+- **Known gap**: pushing to `main` has not reliably auto-triggered a Cloudflare build in practice — deploys have needed a manual trigger from the Cloudflare dashboard (Deployments → Builds → Retry build, or New deployment). Worth checking the GitHub App/webhook connection under the Cloudflare project's Git repository settings if this keeps happening.
+- **Retired**: GitHub Pages (`gh-pages.yml`) was the temporary deploy target before a domain existed. Removed once Cloudflare + the custom domain went live, to avoid two different live URLs for the same site.
 
 ## 11. Environment & secrets
 
-- Never commit real secrets. Provide `.env.example` documenting required variables (form endpoint key, analytics token, Cloudflare project name) once those integrations are chosen.
-- Repository secrets (form provider now; Cloudflare once its deploy workflow is re-added) are configured in GitHub repo settings, not in code. GitHub Pages needs no secrets — it deploys with the repo's built-in `GITHUB_TOKEN`.
+- Never commit real secrets. Provide `.env.example` documenting required variables (form endpoint key, analytics token) once those integrations are chosen.
+- Cloudflare deploys need no repo secrets — Cloudflare's own Git-connected build handles it (see §10). Repository secrets in GitHub are only for things GitHub Actions itself needs (currently none beyond the built-in `GITHUB_TOKEN`).
 
 ## 12. Getting started (once scaffolded)
 
@@ -201,7 +203,7 @@ When adding a new interactive/visual feature, add a targeted assertion here rath
 - ~~Lead-capture channel(s)~~ — resolved: phone, WhatsApp, and email, sourced from the business-card assets in `src/images/branding/` and wired into `src/data/site.ts` as arrays (`contacts.phones`/`.whatsapp`/`.emails`), each with one `primary: true` entry, ready for more contacts later.
 - **Still open**: trade license number/authority — a number is visible on one business card photo but not confidently legible; `site.license` still holds a TODO placeholder. Do not guess it — confirm with the client and update `src/data/site.ts`, then surface it in `Footer`/`about.astro`/`SEO.astro`'s `identifier` field (already wired to pick it up automatically once the TODO string is replaced).
 - Exact list of service pages (is "Maintenance" a standalone service line with its own page, or folded into each service?).
-- Final domain name — once purchased: update `SITE_URL` in `astro.config.mjs`, re-add a Cloudflare Pages `deploy.yml` (see §10), and confirm all canonical/OG URLs. Do not invent a domain before it's confirmed.
+- ~~Final domain name~~ — resolved: `earthconecontracting.com`, purchased through Cloudflare. `SITE_URL` in `astro.config.mjs` and all canonical/OG URLs already point at it.
 - Whether to pursue dedicated per-Emirate landing pages now or defer until there's real project content per Emirate (see §4).
 - A handful of `src/images/interiors/` files (`interior-design-reference-*.jpeg`, `office-interior-render-*.jpeg`) look like mood-board/render references rather than photos of completed Earth Cone work — currently excluded from the `/portfolio` grid by `src/lib/portfolioMedia.ts`'s `EXCLUDED_BASENAMES` list pending client confirmation either way.
 - Portfolio photo quality varies — some source photos are dim, blurry, or read as work-in-progress site snapshots rather than polished finished-work shots. Worth a client review pass (or professional reshoot) before launch, since the portfolio is the site's main trust-building surface.
