@@ -254,23 +254,6 @@
     }
 }
 
-/*
- * Hero headline signature: one word ("properties") breaks from the display serif into
- * Fraunces' own italic SOFT axis — the same type family, a different voice, rather than
- * bolting on an unrelated script font. Needs the full-axis italic file (imported in
- * Hero.astro, scoped to just that page) since the sitewide wght.css / wght-italic.css
- * subsets don't carry the opsz/SOFT/WONK axes this leans on.
- */
-.hero-cursive {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-weight: 420;
-    font-variation-settings:
-        'opsz' 144,
-        'SOFT' 100,
-        'WONK' 1;
-}
-
 /* Layers a blur-to-sharp resolve onto the shared .reveal fade/translate for the hero
    headline specifically — the one orchestrated moment on this page, left off every other
    .reveal element so it doesn't become a scattered, repeated effect. */
