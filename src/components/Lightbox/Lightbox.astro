@@ -1,0 +1,52 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<dialog
+    id="lightbox"
+    class="relative m-auto max-h-[90vh] max-w-[92vw] border-0 bg-transparent p-0 backdrop:bg-[var(--color-ink)]/85 open:flex"
+>
+    <button
+        id="lightbox-close"
+        type="button"
+        aria-label="Close"
+        class="absolute top-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-ink)]/70 text-white transition-colors hover:bg-[var(--color-ink)]"
+    >
+        <Icon name="ph:x" class="h-5 w-5" />
+    </button>
+    <img id="lightbox-img" src="" alt="" class="max-h-[90vh] max-w-[92vw] object-contain" />
+</dialog>
+
+<script>
+    // Delegated on `document` (never replaced) and looks up #lightbox fresh on every click
+    // rather than binding to a captured node reference — see the theme-toggle fix in
+    // Header.astro for why: transition:persist does not reliably keep the same DOM node
+    // across a client-side navigation in this project, so anything bound once to a specific
+    // element stops working after the first page. Delegation sidesteps that entirely.
+    document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+
+        const closeTrigger = target.closest('#lightbox-close');
+        const dialog = document.getElementById('lightbox');
+        if (dialog instanceof HTMLDialogElement) {
+            if (closeTrigger || target === dialog) {
+                dialog.close();
+                return;
+            }
+        }
+
+        const opener = target.closest('[data-lightbox]');
+        if (!opener || !(dialog instanceof HTMLDialogElement)) return;
+        const img = opener.querySelector('img');
+        const lightboxImg = document.getElementById('lightbox-img');
+        if (!img || !(lightboxImg instanceof HTMLImageElement)) return;
+        event.preventDefault();
+        // currentSrc is whichever responsive srcset candidate the browser already
+        // downloaded for the grid thumbnail — reusing it opens the lightbox instantly
+        // with no extra network request, and it's plenty sharp at modal size.
+        lightboxImg.src = img.currentSrc || img.src;
+        lightboxImg.alt = img.alt;
+        dialog.showModal();
+    });
+</script>

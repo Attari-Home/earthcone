@@ -10,8 +10,15 @@ import { site } from '../../data/site';
 const categories = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 
 const tiles = categories.map((category) => {
-    const [first] = getMediaForFolder(category.data.folder);
-    const cover = first ? (first.kind === 'photo' ? first.src : first.poster) : null;
+    const media = getMediaForFolder(category.data.folder);
+    // Prefer the curated `cover` basename; fall back to the first photo (never a video's
+    // frame-grab poster, which reads noticeably blurrier than an actual photo) if unset —
+    // same rule as the homepage teaser in index.astro, so covers match between the two.
+    const chosen =
+        media.find((item) => item.basename === category.data.cover) ??
+        media.find((item) => item.kind === 'photo') ??
+        media[0];
+    const cover = chosen ? (chosen.kind === 'photo' ? chosen.src : chosen.poster) : null;
     return { category, cover };
 });
 ---

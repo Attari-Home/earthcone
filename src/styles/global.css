@@ -99,6 +99,13 @@
         margin-inline: calc(50% - 50vw);
     }
 
+    /* Safari ignores `list-style: none` on <summary> and still draws its native disclosure
+       triangle — only ::-webkit-details-marker actually removes it there. Used by the
+       service-areas FAQ accordion, which draws its own +/rotate indicator instead. */
+    summary::-webkit-details-marker {
+        display: none;
+    }
+
     /* Small tracked-out label used above section headings (Hero, portfolio, service intros). */
     /* terracotta-dark, not terracotta: plain terracotta text on the cream background used
        everywhere this class appears fails WCAG AA contrast (~4:1, needs 4.5:1). */
@@ -247,9 +254,55 @@
     }
 }
 
+/*
+ * Hero headline signature: one word ("properties") breaks from the display serif into
+ * Fraunces' own italic SOFT axis — the same type family, a different voice, rather than
+ * bolting on an unrelated script font. Needs the full-axis italic file (imported in
+ * Hero.astro, scoped to just that page) since the sitewide wght.css / wght-italic.css
+ * subsets don't carry the opsz/SOFT/WONK axes this leans on.
+ */
+.hero-cursive {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 420;
+    font-variation-settings:
+        'opsz' 144,
+        'SOFT' 100,
+        'WONK' 1;
+}
+
+/* Layers a blur-to-sharp resolve onto the shared .reveal fade/translate for the hero
+   headline specifically — the one orchestrated moment on this page, left off every other
+   .reveal element so it doesn't become a scattered, repeated effect. */
+html.js .hero-headline {
+    filter: blur(10px);
+    transition:
+        opacity 0.9s var(--ease-premium),
+        transform 0.9s var(--ease-premium),
+        filter 0.9s var(--ease-premium);
+}
+
+html.js .hero-headline.is-visible {
+    filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* Matches the base rule's exact selector (html.js .hero-headline) rather than just
+       .hero-headline — otherwise the base rule's higher specificity would win the cascade
+       regardless of this media query, and the blur would incorrectly persist. */
+    html.js .hero-headline {
+        filter: none;
+        transition: none;
+    }
+}
+
 .hero-slide {
+    /* backwards: hold each layer's 0% (opacity:0) state during its animation-delay instead
+       of the browser's implicit opacity:1 default — without this, every not-yet-started
+       slide renders fully opaque and the LAST slide in the DOM (highest paint order) covers
+       all the others until its own delay elapses, so visitors see the final slide first. */
     animation:
-        hero-crossfade 30s linear infinite,
+        hero-crossfade 30s linear infinite backwards,
         hero-zoom-slow 24s ease-in-out infinite alternate;
 }
 
@@ -283,6 +336,28 @@
     html.js .tilt-card.reveal.is-visible {
         transform: none;
     }
+}
+
+/*
+ * Wide slide-in for full section blocks (homepage About/Service-Areas/Recognition teasers) —
+ * distinct from .tilt-card, which is a tight diagonal lean built for small grid tiles. Same
+ * .reveal-layering technique as .hero-headline: adds transform only, so opacity/timing still
+ * come from the shared .reveal rule.
+ */
+html.js .slide-in-left {
+    transform: translateX(-3.5rem);
+}
+
+html.js .slide-in-left.is-visible {
+    transform: none;
+}
+
+html.js .slide-in-right {
+    transform: translateX(3.5rem);
+}
+
+html.js .slide-in-right.is-visible {
+    transform: none;
 }
 
 /*
@@ -332,7 +407,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    html.js .reveal {
+    html.js .reveal,
+    html.js .tilt-card.reveal,
+    html.js .slide-in-left,
+    html.js .slide-in-right {
         opacity: 1;
         transform: none;
         transition: none;

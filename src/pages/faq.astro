@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs.astro';
+import CtaBand from '../components/CtaBand/CtaBand.astro';
+import { site } from '../data/site';
+
+const faqs = [
+    {
+        question: 'Which Emirates does Earth Cone operate in?',
+        answer: `Earth Cone is licensed to take on construction and maintenance projects in all seven Emirates — ${site.emirates.join(', ')} — dispatched from our Dubai head office.`,
+    },
+    {
+        question: 'Do I need to hire a separate contractor for each Emirate?',
+        answer: 'No. Earth Cone can run your construction, interior fit-out, kitchen, electrical, or water-systems project in any Emirate with the same crew and the same point of contact throughout, instead of bringing in a different local contractor per project.',
+    },
+    {
+        question: 'Does Earth Cone handle both construction and maintenance?',
+        answer: "Yes — alongside new-build construction and interior fit-out, Earth Cone's teams handle ongoing building maintenance work across every Emirate it serves.",
+    },
+    {
+        question: 'Where is Earth Cone based?',
+        answer: `Earth Cone is headquartered at ${site.address.street}, ${site.address.area}, ${site.address.city}, and dispatches crews to project sites across all seven Emirates from there.`,
+    },
+];
+
+const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+        },
+    })),
+};
+---
+
+<BaseLayout
+    title="FAQ"
+    description={`Common questions about ${site.shortName}'s construction and maintenance work across the UAE.`}
+>
+    <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} is:inline></script>
+    <Breadcrumbs
+        items={[
+            { label: 'Home', href: '/' },
+            { label: 'Service Areas', href: '/service-areas' },
+            { label: 'FAQ', href: '/faq' },
+        ]}
+    />
+
+    <section class="container-wide py-section-md">
+        <div class="reveal max-w-2xl">
+            <p class="eyebrow">FAQ</p>
+            <h1 class="mt-2 text-display-md font-semibold text-[var(--color-fg)]">
+                Common questions
+            </h1>
+        </div>
+
+        <div class="mt-14 max-w-3xl divide-y divide-[var(--color-sand)] border-t border-[var(--color-sand)]">
+            {faqs.map((faq, i) => (
+                <details class="reveal group py-6" style={`transition-delay: ${i * 0.06}s`}>
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-medium text-[var(--color-fg)] marker:content-none">
+                        {faq.question}
+                        <span
+                            class="shrink-0 text-[var(--color-terracotta-dark)] transition-transform duration-300 group-open:rotate-45"
+                            aria-hidden="true"
+                        >
+                            +
+                        </span>
+                    </summary>
+                    <p class="mt-3 max-w-2xl text-[var(--color-stone)]">{faq.answer}</p>
+                </details>
+            ))}
+        </div>
+    </section>
+
+    <CtaBand />
+</BaseLayout>
