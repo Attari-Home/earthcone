@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import heroConstruction from '../../images/hero/frames-for-your-heart-_KP6mk2Iz8k-unsplash.jpg';
 import heroInteriors from '../../images/hero/aalo-lens-UlIj_qKpgCw-unsplash.jpg';
 import heroKitchens from '../../images/hero/brian-zajac-n8wF-38dASg-unsplash.jpg';
@@ -38,9 +38,28 @@ const slides = [
         alt: 'Modern kitchen with integrated plumbing fixtures and sleek cabinetry, Earth Cone water systems',
     },
 ];
+
+// Preloaded separately from the <Image> below: fetchpriority="high" alone still leaves the
+// browser to discover this URL only once it parses the srcset, which on Slow-4G-throttled
+// Lighthouse runs pushed LCP past the 0.95 performance budget. A preload resource hint (valid
+// in <body> per the WHATWG "body-ok" flag on rel=preload) starts the fetch during the initial
+// HTML parse instead.
+const lcpImage = await getImage({
+    src: heroConstruction,
+    widths: [480, 768, 1280, 1920],
+    format: 'webp',
+});
 ---
 
 <section class="relative flex h-[calc(100vh-5rem)] min-h-[560px] items-end overflow-hidden bg-[var(--color-ink)]">
+    <link
+        rel="preload"
+        as="image"
+        href={lcpImage.src}
+        imagesrcset={lcpImage.srcSet.attribute}
+        imagesizes="100vw"
+        fetchpriority="high"
+    />
     {slides.map((slide, i) => (
         <Image
             src={slide.src}
