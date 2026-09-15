@@ -1,10 +1,6 @@
 ---
-import { Image, getImage } from 'astro:assets';
-import heroConstruction from '../../images/hero/frames-for-your-heart-_KP6mk2Iz8k-unsplash.jpg';
-import heroInteriors from '../../images/hero/aalo-lens-UlIj_qKpgCw-unsplash.jpg';
-import heroKitchens from '../../images/hero/brian-zajac-n8wF-38dASg-unsplash.jpg';
-import heroElectrical from '../../images/hero/pexels-ranamatloob567-35189704.jpg';
-import heroWaterSystems from '../../images/hero/shoham-avisrur-Kskxj4M8jmI-unsplash.jpg';
+import { Image } from 'astro:assets';
+import { heroSlides, HERO_IMAGE_OPTS } from './heroSlides';
 import { site } from '../../data/site';
 import { withBase } from '../../lib/url';
 
@@ -15,56 +11,20 @@ import { withBase } from '../../lib/url';
 //
 // Images sourced from Unsplash and Pexels — see docs/project-memory.md for full
 // attribution and original URLs per slide. All images processed through astro:assets
-// for automatic AVIF/WebP conversion and responsive srcset generation.
-const slides = [
-    {
-        src: heroConstruction,
-        alt: 'Luxury modern villa exterior with palm trees, completed by Earth Cone Contracting',
-    },
-    {
-        src: heroInteriors,
-        alt: 'High-end marble and dark wood interior fit-out with gold accents, Dubai villa',
-    },
-    {
-        src: heroKitchens,
-        alt: 'Custom white and gold luxury kitchen with marble island, designed and installed by Earth Cone',
-    },
-    {
-        src: heroElectrical,
-        alt: 'Premium kitchen featuring designer ring LED chandelier and luxury electrical fit-out, UAE',
-    },
-    {
-        src: heroWaterSystems,
-        alt: 'Modern kitchen with integrated plumbing fixtures and sleek cabinetry, Earth Cone water systems',
-    },
-];
-
-// Preloaded separately from the <Image> below: fetchpriority="high" alone still leaves the
-// browser to discover this URL only once it parses the srcset, which on Slow-4G-throttled
-// Lighthouse runs pushed LCP past the 0.95 performance budget. A preload resource hint (valid
-// in <body> per the WHATWG "body-ok" flag on rel=preload) starts the fetch during the initial
-// HTML parse instead.
-const lcpImage = await getImage({
-    src: heroConstruction,
-    widths: [480, 768, 1280, 1920],
-    format: 'webp',
-});
+// for automatic AVIF/WebP conversion and responsive srcset generation. slides[0] is also
+// preloaded from <head> — see index.astro — using the same HERO_IMAGE_OPTS so it resolves
+// to the identical generated file instead of a second, wasted variant.
+const slides = heroSlides;
 ---
 
 <section class="relative flex h-[calc(100vh-5rem)] min-h-[560px] items-end overflow-hidden bg-[var(--color-ink)]">
-    <link
-        rel="preload"
-        as="image"
-        href={lcpImage.src}
-        imagesrcset={lcpImage.srcSet.attribute}
-        imagesizes="100vw"
-        fetchpriority="high"
-    />
     {slides.map((slide, i) => (
         <Image
             src={slide.src}
             alt={slide.alt}
-            widths={[480, 768, 1280, 1920]}
+            widths={HERO_IMAGE_OPTS.widths}
+            format={HERO_IMAGE_OPTS.format}
+            quality={HERO_IMAGE_OPTS.quality}
             sizes="100vw"
             loading="eager"
             fetchpriority={i === 0 ? 'high' : 'low'}
