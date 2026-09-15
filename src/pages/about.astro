@@ -2,6 +2,15 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand/CtaBand.astro';
 import { site, LICENSE_PLACEHOLDER } from '../data/site';
+import { withBase } from '../lib/url';
+
+const trades = [
+    { name: 'Construction', href: '/services/construction' },
+    { name: 'Interior Fit-Out', href: '/services/interiors' },
+    { name: 'Custom Kitchens', href: '/services/kitchens' },
+    { name: 'Electrical', href: '/services/electrical' },
+    { name: 'Water Systems', href: '/services/water-systems' },
+];
 ---
 
 <BaseLayout
@@ -20,10 +29,28 @@ import { site, LICENSE_PLACEHOLDER } from '../data/site';
                 </h1>
                 <p class="mt-6 max-w-2xl text-lg text-[var(--color-stone)]">
                     {site.description} We handle construction, interior fit-out, custom kitchens,
-                    electrical, and water-systems work for residential and commercial clients across
+                    electrical, and water-systems work for residential and commercial clients across{' '}
                     {site.emirates.join(', ')}.
                 </p>
+                <p class="mt-4 max-w-2xl text-[var(--color-stone)]">
+                    Every trade below is run by Earth Cone's own crew rather than subcontracted out,
+                    so the same team — and the same point of contact — stays on a project from the
+                    first site visit to handover, whichever Emirate it's in.
+                </p>
             </div>
+
+            <ul class="reveal mt-10 flex flex-wrap gap-3" style="transition-delay: 0.1s">
+                {trades.map((trade) => (
+                    <li>
+                        <a
+                            href={withBase(trade.href)}
+                            class="inline-block rounded-full border border-[var(--color-sand)] px-4 py-2 text-sm font-medium text-[var(--color-fg)] transition-colors duration-300 hover:border-[var(--color-terracotta-dark)] hover:text-[var(--color-terracotta-dark)]"
+                        >
+                            {trade.name}
+                        </a>
+                    </li>
+                ))}
+            </ul>
 
             <dl
                 class="reveal mt-14 grid gap-8 border-t border-[var(--color-sand)] pt-10 sm:grid-cols-3"

@@ -21,6 +21,18 @@ const { service } = Astro.props;
 const { title, summary, heroImage } = service.data;
 const { Content } = await render(service);
 
+// Service-plus-location phrasing for the <title>/OG tag (what people actually search —
+// "kitchen installation Dubai", not just "kitchens") without cluttering the on-page <h1>,
+// which stays the clean service name.
+const seoTitles: Record<string, string> = {
+    construction: 'Construction Services in Dubai & the UAE',
+    interiors: 'Interior Fit-Out Services in Dubai & the UAE',
+    kitchens: 'Custom Kitchen Design & Installation in the UAE',
+    electrical: 'Electrical Installation Services in Dubai & the UAE',
+    'water-systems': 'Plumbing & Water Systems Installation in the UAE',
+};
+const pageTitle = seoTitles[service.id] ?? title;
+
 // The projects collection holds the portfolio media for each service (matched via
 // serviceSlug) — pull the same gallery in here so completed-work photos show on both
 // the service page and its /portfolio/[category] counterpart, not just one or the other.
@@ -46,7 +58,7 @@ const serviceJsonLd = {
 };
 ---
 
-<BaseLayout title={title} description={summary}>
+<BaseLayout title={pageTitle} description={summary}>
     <script type="application/ld+json" set:html={JSON.stringify(serviceJsonLd)} is:inline></script>
     <Breadcrumbs
         items={[

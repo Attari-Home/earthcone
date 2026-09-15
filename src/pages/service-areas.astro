@@ -3,6 +3,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CtaBand from '../components/CtaBand/CtaBand.astro';
 import { site } from '../data/site';
 import { withBase } from '../lib/url';
+
+// Short, genuine per-Emirate context rather than separate thin "service in [city]" pages —
+// see CLAUDE.md §4: one substantial page naming every Emirate beats duplicate-content doorway
+// pages. Deliberately factual (no invented project counts or testimonials per Emirate).
+const emirateNotes: Record<string, string> = {
+    Dubai: "Earth Cone's head office — most site visits and project starts happen here.",
+    'Abu Dhabi': 'Villa and property work across the capital, dispatched from Dubai.',
+    Sharjah: 'Construction, fit-out, and maintenance for residential and commercial properties.',
+    Ajman: 'Full-trade coverage — construction, interiors, kitchens, electrical, and plumbing.',
+    'Ras Al Khaimah': 'Villa construction and maintenance work, run by the same Dubai-based crew.',
+    Fujairah: "The UAE's east-coast Emirate — reached by the same licensed crew as the rest.",
+    'Umm Al Quwain':
+        'Construction and maintenance projects, scoped with the same site-visit process.',
+};
 ---
 
 <BaseLayout
@@ -17,17 +31,20 @@ import { withBase } from '../lib/url';
             </h1>
             <p class="mt-6 max-w-2xl text-lg text-[var(--color-stone)]">
                 {site.shortName} is headquartered in {site.address.city} and licensed to take on
-                construction and maintenance projects in every Emirate.
+                construction and maintenance projects in every Emirate — construction, interior
+                fit-out, custom kitchens, electrical, and water systems, run by the same in-house
+                crew wherever the job is.
             </p>
         </div>
 
-        <ul class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {site.emirates.map((emirate, i) => (
                 <li
-                    class="reveal border-t border-[var(--color-sand)] py-5 font-display text-lg font-medium text-[var(--color-fg)]"
+                    class="reveal border-t border-[var(--color-sand)] py-5"
                     style={`transition-delay: ${i * 0.05}s`}
                 >
-                    {emirate}
+                    <p class="font-display text-lg font-medium text-[var(--color-fg)]">{emirate}</p>
+                    <p class="mt-1 text-sm text-[var(--color-stone)]">{emirateNotes[emirate]}</p>
                 </li>
             ))}
         </ul>

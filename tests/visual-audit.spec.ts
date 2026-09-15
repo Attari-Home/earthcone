@@ -46,7 +46,11 @@ for (const themeName of ['light', 'dark'] as const) {
 
             const h1 = page.locator('section h1').first();
             await expect(h1).toBeVisible();
-            const tagline = page.locator('section p.reveal').nth(1);
+            // .hero-reveal, not .reveal: the hero's own entrance-animation class, decoupled
+            // from the scroll-triggered .reveal system elsewhere on the page (see the
+            // .hero-reveal comment in global.css) — nth(1) is the eyebrow's sibling, the
+            // tagline paragraph, since <h1> between them carries .hero-headline instead.
+            const tagline = page.locator('section p.hero-reveal').nth(1);
             await expect(tagline).toBeVisible();
 
             // First-glance viewport fit: the primary CTA button must be fully within the
@@ -69,7 +73,7 @@ test('hero tagline stays the same color in light and dark mode', async ({ page }
         await page.goto(BASE_URL);
         await setTheme(page, theme);
         await page.reload();
-        const tagline = page.locator('section p.reveal').nth(1);
+        const tagline = page.locator('section p.hero-reveal').nth(1);
         return tagline.evaluate((el) => getComputedStyle(el).color);
     }
 
