@@ -28,6 +28,27 @@ A second WhatsApp export batch (`new_images_Videos/`, 72 images + 31 videos) was
 
 Hero slideshow images (`src/images/hero/hero-*.jpeg`) got a signature typography treatment on the homepage: one word ("properties") renders in Fraunces' own italic SOFT/opsz variable axis (not a separate script font) — see the `.hero-cursive` comment in `global.css` and the `full-italic.css` import in `Hero.astro`. Deliberate choice: same type family as the rest of the display type, different voice, rather than bolting on an unrelated script font that would clash with the site's established serif identity.
 
+## Hero image upgrade (2026-09-15)
+
+Replaced all 5 original phone-camera hero images with professional high-resolution images sourced from Unsplash and Pexels. All images are licensed under the Unsplash License or Pexels License (free for commercial use, no attribution required, no modification restrictions). The original `hero-*.jpeg` files remain in `src/images/hero/` as archived originals but are no longer imported by `Hero.astro`.
+
+| Slide | Service | File | Source | Description |
+| --- | --- | --- | --- | --- |
+| 0 | Construction | `frames-for-your-heart-_KP6mk2Iz8k-unsplash.jpg` | Unsplash — Frames For Your Heart | Modern white villa exterior with palm trees and garden hedge, landscape orientation, natural daylight |
+| 1 | Interiors | `aalo-lens-UlIj_qKpgCw-unsplash.jpg` | Unsplash — Aalo Lens | Luxury dark interior with marble island, gold pendant lamp, wood-panelled walls, open dining area beyond |
+| 2 | Kitchens | `brian-zajac-n8wF-38dASg-unsplash.jpg` | Unsplash — Brian Zajac | Wide all-white luxury kitchen, gold accents, calacatta marble island + floor, overhead shot — best landscape kitchen frame |
+| 3 | Electrical | `pexels-ranamatloob567-35189704.jpg` | Pexels — Rana Matloob | Contemporary luxury kitchen with dramatic multi-ring gold LED chandelier, champagne gloss cabinetry, marble floor — showcases premium lighting/electrical design |
+| 4 | Water systems | `shoham-avisrur-Kskxj4M8jmI-unsplash.jpg` | Unsplash — Shoham Avisrur | Modern taupe matte kitchen with integrated plumbing fixtures, concrete-look island, pendant lights — sleek, understated, plumbing-adjacent |
+
+### Images downloaded but not used (available as alternates)
+
+| File | Why not used |
+| --- | --- |
+| `brecht-corbeel-F5cdYZAarbo-unsplash.jpg` | Portrait orientation crops awkwardly in wide hero banner; good close-up kitchen detail but loses context |
+| `brian-zajac-ynVu56fpbN8-unsplash.jpg` | High-quality white+gold kitchen (overhead angle) — very similar to `n8wF-38dASg`; use as a replacement if a slightly different kitchen composition is preferred |
+| `franco-debartolo-3x365ToKOK8-unsplash.jpg` | Dark, moody kitchen counter close-up with decorative vessels — dramatic atmosphere but portrait and too abstract for a hero |
+| `marina-nazina-bhV15497Nr8-unsplash.jpg` | All-black kitchen with marble backsplash (portrait) — striking but orientation and extreme darkness work against the hero overlay text |
+
 ## Homepage v2 (2026-09-14 follow-up)
 
 The landing page grew substantially in the same session: About/Coverage/"How we work" sections added after Recent Work, animated stat counters on the existing stats band, and the Coverage section's emirate list became a clickable 7-block "blueprint" grid (`index.astro`, CSS grid with hand-placed `col-start`/`row-start` per emirate — deliberately abstract/schematic, not a geographic map, specifically to avoid using a copyrighted (CC-BY-SA, share-alike) map dataset on a commercial client site).

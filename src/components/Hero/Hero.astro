@@ -1,10 +1,10 @@
 ---
 import { Image } from 'astro:assets';
-import heroConstruction from '../../images/hero/hero-construction.jpeg';
-import heroInteriors from '../../images/hero/hero-interiors.jpeg';
-import heroKitchens from '../../images/hero/hero-kitchens.jpeg';
-import heroElectrical from '../../images/hero/hero-electrical.jpeg';
-import heroWaterSystems from '../../images/hero/hero-water-systems.jpeg';
+import heroConstruction from '../../images/hero/frames-for-your-heart-_KP6mk2Iz8k-unsplash.jpg';
+import heroInteriors from '../../images/hero/aalo-lens-UlIj_qKpgCw-unsplash.jpg';
+import heroKitchens from '../../images/hero/brian-zajac-n8wF-38dASg-unsplash.jpg';
+import heroElectrical from '../../images/hero/pexels-ranamatloob567-35189704.jpg';
+import heroWaterSystems from '../../images/hero/shoham-avisrur-Kskxj4M8jmI-unsplash.jpg';
 import { site } from '../../data/site';
 import { withBase } from '../../lib/url';
 
@@ -13,18 +13,15 @@ import { withBase } from '../../lib/url';
 // against the performance budget and still degrades to a single static frame under
 // prefers-reduced-motion.
 //
-// These are curated crops (src/images/hero/), not the raw portfolio photos directly:
-// most source shots are portrait/phone-camera framed, and object-cover center-crop of a
-// portrait image inside this wide banner showed an arbitrary, often unflattering sliver
-// (e.g. the water-systems shot centered on plain tile instead of the mashrabiya panel).
-// Each hero-*.jpeg is hand-cropped to the actual subject at roughly the banner's aspect
-// ratio — see docs/project-memory.md for the source photo + crop window per slide.
+// Images sourced from Unsplash and Pexels — see docs/project-memory.md for full
+// attribution and original URLs per slide. All images processed through astro:assets
+// for automatic AVIF/WebP conversion and responsive srcset generation.
 const slides = [
-    { src: heroConstruction, alt: 'Completed villa exterior built by Earth Cone' },
-    { src: heroInteriors, alt: 'Marble feature wall interior fit-out, Dubai villa' },
-    { src: heroKitchens, alt: 'Custom kitchen cabinetry installation, Dubai villa' },
-    { src: heroElectrical, alt: 'Electrical conduit installation, UAE construction site' },
-    { src: heroWaterSystems, alt: 'Ablution area washroom fixture installation, UAE building' },
+    { src: heroConstruction, alt: 'Luxury modern villa exterior with palm trees, completed by Earth Cone Contracting' },
+    { src: heroInteriors, alt: 'High-end marble and dark wood interior fit-out with gold accents, Dubai villa' },
+    { src: heroKitchens, alt: 'Custom white and gold luxury kitchen with marble island, designed and installed by Earth Cone' },
+    { src: heroElectrical, alt: 'Premium kitchen featuring designer ring LED chandelier and luxury electrical fit-out, UAE' },
+    { src: heroWaterSystems, alt: 'Modern kitchen with integrated plumbing fixtures and sleek cabinetry, Earth Cone water systems' },
 ];
 ---
 
