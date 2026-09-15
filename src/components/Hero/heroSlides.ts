@@ -10,7 +10,7 @@ import heroWaterSystems from '../../images/hero/shoham-avisrur-Kskxj4M8jmI-unspl
 export const HERO_IMAGE_OPTS = {
     widths: [480, 768, 1280, 1920] as number[],
     format: 'webp' as const,
-    quality: 75,
+    quality: 68,
 };
 
 export const heroSlides = [
