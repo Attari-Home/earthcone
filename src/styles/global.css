@@ -106,6 +106,13 @@
         display: none;
     }
 
+    /* MDX body copy (service/portfolio-category descriptions). Not the @tailwindcss/typography
+       plugin — this repo doesn't pull it in for one class — just enough to stop Tailwind's
+       preflight (which zeroes every element's margin) from running paragraphs together. */
+    .prose p + p {
+        @apply mt-4;
+    }
+
     /* Small tracked-out label used above section headings (Hero, portfolio, service intros). */
     /* terracotta-dark, not terracotta: plain terracotta text on the cream background used
        everywhere this class appears fails WCAG AA contrast (~4:1, needs 4.5:1). */
