@@ -1,10 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import heroConstruction from '../../images/hero/hero-construction.jpeg';
-import heroInteriors from '../../images/hero/hero-interiors.jpeg';
-import heroKitchens from '../../images/hero/hero-kitchens.jpeg';
-import heroElectrical from '../../images/hero/hero-electrical.jpeg';
-import heroWaterSystems from '../../images/hero/hero-water-systems.jpeg';
+import { heroSlides, HERO_IMAGE_OPTS } from './heroSlides';
 import { site } from '../../data/site';
 import { withBase } from '../../lib/url';
 
@@ -13,19 +9,12 @@ import { withBase } from '../../lib/url';
 // against the performance budget and still degrades to a single static frame under
 // prefers-reduced-motion.
 //
-// These are curated crops (src/images/hero/), not the raw portfolio photos directly:
-// most source shots are portrait/phone-camera framed, and object-cover center-crop of a
-// portrait image inside this wide banner showed an arbitrary, often unflattering sliver
-// (e.g. the water-systems shot centered on plain tile instead of the mashrabiya panel).
-// Each hero-*.jpeg is hand-cropped to the actual subject at roughly the banner's aspect
-// ratio — see docs/project-memory.md for the source photo + crop window per slide.
-const slides = [
-    { src: heroConstruction, alt: 'Completed villa exterior built by Earth Cone' },
-    { src: heroInteriors, alt: 'Marble feature wall interior fit-out, Dubai villa' },
-    { src: heroKitchens, alt: 'Custom kitchen cabinetry installation, Dubai villa' },
-    { src: heroElectrical, alt: 'Electrical conduit installation, UAE construction site' },
-    { src: heroWaterSystems, alt: 'Ablution area washroom fixture installation, UAE building' },
-];
+// Images sourced from Unsplash and Pexels — see docs/project-memory.md for full
+// attribution and original URLs per slide. All images processed through astro:assets
+// for automatic AVIF/WebP conversion and responsive srcset generation. slides[0] is also
+// preloaded from <head> — see index.astro — using the same HERO_IMAGE_OPTS so it resolves
+// to the identical generated file instead of a second, wasted variant.
+const slides = heroSlides;
 ---
 
 <section class="relative flex h-[calc(100vh-5rem)] min-h-[560px] items-end overflow-hidden bg-[var(--color-ink)]">
@@ -33,7 +22,9 @@ const slides = [
         <Image
             src={slide.src}
             alt={slide.alt}
-            widths={[480, 768, 1280, 1920]}
+            widths={HERO_IMAGE_OPTS.widths}
+            format={HERO_IMAGE_OPTS.format}
+            quality={HERO_IMAGE_OPTS.quality}
             sizes="100vw"
             loading="eager"
             fetchpriority={i === 0 ? 'high' : 'low'}
