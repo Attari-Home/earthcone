@@ -23,7 +23,7 @@ This repo follows the same proven stack as the sibling project [`lailonahar-webs
 
 | Layer      | Choice                                                   | Why                                                                                                                                                                              |
 | ---------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Framework  | [Astro 5](https://astro.build/) (static output)          | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals                                                                      |
+| Framework  | [Astro 7](https://astro.build/) (static output)          | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals                                                                      |
 | Styling    | Tailwind CSS v4 (`@tailwindcss/vite`)                    | Utility-first, small final CSS, fast iteration                                                                                                                                   |
 | Icons      | `astro-icon` + an Iconify set (e.g. `@iconify-json/ph`)  | Inlined SVG, no icon font                                                                                                                                                        |
 | Images     | `astro:assets` + `sharp`                                 | Automatic AVIF/WebP + responsive `srcset`                                                                                                                                        |
@@ -42,8 +42,15 @@ Scaffolded and current as of the premium redesign:
 
 ```
 public/                 Static files served as-is (robots.txt, favicon, llms.txt, videos/)
+  favicon.svg            Source favicon — a simplified vector of the logo-mark.png towers-and-roof mark, legible
+                          at 16px. favicon-16x16/32x32.png are rasterized from it; apple-touch-icon.png is the
+                          full logo on opaque white (iOS renders transparency as black). Bump the ?v= on the icon
+                          links in BaseLayout.astro whenever these change, or browsers keep the cached old icon.
   videos/<folder>/       Compressed MP4s (see §6) — never the raw src/images/ sources
 src/
+  icons/services/        Custom duotone scope illustrations used by ServiceCard (astro-icon local icons, iconDir
+                          src/icons). Drawn on a 48px grid, 1.25 stroke, currentColor + 18% fill accents, so hover
+                          color changes need no per-icon CSS
   images/                Categorized media library (see docs/project-memory.md) — do not rename paths once referenced
   images/video-posters/  Poster-frame JPEGs for portfolio video tiles, one subfolder per category
   components/            One folder per component (Header, Footer, Hero, ServiceCard, ServiceGrid,
