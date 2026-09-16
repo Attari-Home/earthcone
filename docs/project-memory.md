@@ -40,6 +40,18 @@ Replaced all 5 original phone-camera hero images with professional high-resoluti
 | 3 | Electrical | `pexels-ranamatloob567-35189704.jpg` | Pexels — Rana Matloob | Contemporary luxury kitchen with dramatic multi-ring gold LED chandelier, champagne gloss cabinetry, marble floor — showcases premium lighting/electrical design |
 | 4 | Water systems | `shoham-avisrur-Kskxj4M8jmI-unsplash.jpg` | Unsplash — Shoham Avisrur | Modern taupe matte kitchen with integrated plumbing fixtures, concrete-look island, pendant lights — sleek, understated, plumbing-adjacent |
 
+### Social share image (2026-09-16)
+
+`public/og-image.jpg` (1200×630, ~91 KB) is the link-preview thumbnail WhatsApp, Facebook, LinkedIn, and X show when the site is shared. It replaced `og-default.jpg`, a phone photo of a finished yellow villa that the client felt undercut the site's premium look. The client asked for "attractive and industrial construction work" instead.
+
+| File | Source | Description |
+| --- | --- | --- |
+| `src/images/hero/tye-doring-a7xke_rxZRs-unsplash.jpg` (2400×1663 source) | Unsplash — Tye Doring, [three tower cranes](https://unsplash.com/photos/three-tower-cranes-a7xke_rxZRs), Unsplash License | Three tower cranes silhouetted against a warm sunset over a building under construction |
+
+The share image is a bottom-anchored cover crop of that source (`sharp`, mozjpeg q90, 4:4:4 chroma so the gradient sky doesn't band). Bottom-anchored keeps the building silhouettes and the warm band and drops the cooler teal upper sky. Its dimensions and alt text are declared as `og:image:width/height/alt` in `SEO.astro`. If the image is ever swapped, give it a new filename: link-preview caches (Facebook, LinkedIn, Cloudflare's edge) key on the image URL.
+
+Two other free candidates were shortlisted and not used: Etienne Girardet's "two men working" (`sgYamIzhAhg`), a rebar deck from above, very widely reused stock; and Abhishek Kirloskar's workers silhouetted in steel at dusk (`ncqwTBV5qCA`), which is too busy at thumbnail size.
+
 ### Images downloaded but not used (available as alternates)
 
 | File | Why not used |

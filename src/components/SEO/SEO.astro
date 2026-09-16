@@ -16,7 +16,20 @@ interface Props {
     image?: string;
 }
 
-const { title, description, ogDescription = description, image = '/og-default.jpg' } = Astro.props;
+const DEFAULT_OG_IMAGE = {
+    src: '/og-image.jpg',
+    width: 1200,
+    height: 630,
+    alt: 'Tower cranes silhouetted against a warm sunset sky over a building under construction',
+};
+
+const {
+    title,
+    description,
+    ogDescription = description,
+    image = DEFAULT_OG_IMAGE.src,
+} = Astro.props;
+const isDefaultImage = image === DEFAULT_OG_IMAGE.src;
 
 const pageTitle = title.includes(site.shortName) ? title : `${title} | ${site.shortName}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -74,6 +87,15 @@ const jsonLd = {
 <meta property="og:description" content={ogDescription} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:image" content={ogImageURL} />
+{isDefaultImage && (
+    <>
+        <meta property="og:image:width" content={String(DEFAULT_OG_IMAGE.width)} />
+        <meta property="og:image:height" content={String(DEFAULT_OG_IMAGE.height)} />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:alt" content={DEFAULT_OG_IMAGE.alt} />
+        <meta name="twitter:image:alt" content={DEFAULT_OG_IMAGE.alt} />
+    </>
+)}
 <meta property="og:site_name" content={site.name} />
 
 <meta name="twitter:card" content="summary_large_image" />

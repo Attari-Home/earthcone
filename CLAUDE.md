@@ -46,6 +46,9 @@ public/                 Static files served as-is (robots.txt, favicon, llms.txt
                           at 16px. favicon-16x16/32x32.png are rasterized from it; apple-touch-icon.png is the
                           full logo on opaque white (iOS renders transparency as black). Bump the ?v= on the icon
                           links in BaseLayout.astro whenever these change, or browsers keep the cached old icon.
+  og-image.jpg           1200×630 social link-preview image (tower cranes at sunset, Unsplash — source and crop
+                          notes in docs/project-memory.md). SEO.astro declares its width/height/alt; use a new
+                          filename if it is ever replaced so preview caches refetch it
   videos/<folder>/       Compressed MP4s (see §6) — never the raw src/images/ sources
 src/
   icons/services/        Custom duotone scope illustrations used by ServiceCard (astro-icon local icons, iconDir
