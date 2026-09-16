@@ -11,16 +11,13 @@ interface Props {
 const { service, delay = 0 } = Astro.props;
 const { title, summary } = service.data;
 
-// Icon-led card on purpose: this is a capability list ("what we do"), deliberately not a
-// photo grid, so it reads distinct from the photo-driven Portfolio tiles (ServiceGrid and
-// the homepage portfolio teaser used to share the same media-tile treatment, which read as
-// duplicate sections).
+// Custom scope illustrations, not stock glyphs: an armchair/cooking pot misread as furniture/catering.
 const SERVICE_ICONS: Record<string, string> = {
-    construction: 'ph:hard-hat',
-    interiors: 'ph:armchair',
-    kitchens: 'ph:cooking-pot',
-    electrical: 'ph:lightning',
-    'water-systems': 'ph:drop',
+    construction: 'services/construction',
+    interiors: 'services/interiors',
+    kitchens: 'services/kitchens',
+    electrical: 'services/electrical',
+    'water-systems': 'services/water-systems',
 };
 const icon = SERVICE_ICONS[service.id] ?? 'ph:wrench';
 ---
@@ -30,8 +27,8 @@ const icon = SERVICE_ICONS[service.id] ?? 'ph:wrench';
     class="group reveal block border border-[var(--color-sand)] p-8 transition-colors duration-300 hover:border-[var(--color-terracotta)]"
     style={`transition-delay: ${delay}s`}
 >
-    <span class="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-terracotta-dark)] transition-colors duration-300 group-hover:bg-[var(--color-terracotta-dark)] group-hover:text-white">
-        <Icon name={icon} class="h-7 w-7" />
+    <span class="flex h-24 w-24 items-center justify-center rounded-[2px] border border-[var(--color-terracotta)]/30 bg-[var(--color-terracotta)]/[0.08] text-[var(--color-terracotta)] transition-colors duration-300 group-hover:border-transparent group-hover:bg-[var(--color-terracotta-dark)] group-hover:text-white">
+        <Icon name={icon} class="h-18 w-18" />
     </span>
     <h3 class="mt-6 text-lg font-semibold text-[var(--color-fg)] group-hover:text-[var(--color-terracotta)]">
         {title}
