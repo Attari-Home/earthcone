@@ -108,9 +108,40 @@
 
     /* MDX body copy (service/portfolio-category descriptions). Not the @tailwindcss/typography
        plugin — this repo doesn't pull it in for one class — just enough to stop Tailwind's
-       preflight (which zeroes every element's margin) from running paragraphs together. */
+       preflight (which zeroes every element's margin and list marker) from running paragraphs
+       together and flattening scope lists into unreadable text blocks. */
     .prose p + p {
         @apply mt-4;
+    }
+
+    .prose h2 {
+        @apply mt-12 mb-4 text-2xl font-semibold text-[var(--color-fg)];
+    }
+
+    .prose h3 {
+        @apply mt-8 mb-3 text-lg font-semibold text-[var(--color-fg)];
+    }
+
+    .prose ul {
+        @apply mt-4 space-y-2 pl-5;
+        list-style: disc;
+    }
+
+    .prose ol {
+        @apply mt-4 space-y-2 pl-5;
+        list-style: decimal;
+    }
+
+    .prose li::marker {
+        color: var(--color-terracotta);
+    }
+
+    .prose :is(ul, ol) + p {
+        @apply mt-6;
+    }
+
+    .prose strong {
+        @apply font-semibold text-[var(--color-fg)];
     }
 
     /* Small tracked-out label used above section headings (Hero, portfolio, service intros). */

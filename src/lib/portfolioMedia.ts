@@ -15,6 +15,10 @@ const rawVideoPaths = Object.keys(import.meta.glob('/src/images/*/*.mp4', { eage
 // Reference/mood-board images, not photos of completed Earth Cone work — excluded
 // from the public portfolio pending client confirmation (see CLAUDE.md/plan notes).
 const EXCLUDED_BASENAMES = new Set([
+    // Phone-gallery screenshot: the source file includes the photo app's own UI (close
+    // button, "Save", "New Stylized Photo" caption) baked into the image. Needs a clean
+    // re-export or a crop from the client before it can go in the portfolio.
+    'villa-construction-03',
     'interior-design-reference-01',
     'interior-design-reference-02',
     'interior-design-reference-03',
@@ -70,12 +74,13 @@ const SUBJECT_PHRASES: Record<string, string> = {
     'wood-staircase-detail': 'Wood staircase detail',
     'custom-kitchen': 'Custom kitchen cabinetry installation',
     'ceiling-electrical-installation': 'Ceiling electrical conduit installation',
-    'floor-electrical-conduits': 'Floor electrical conduit installation',
+    'floor-tiling': 'Large-format floor tile installation',
     'plumbing-installation': 'Plumbing installation',
     'plumbing-manifold': 'Plumbing manifold installation',
     'rooftop-piping-installation': 'Rooftop piping installation',
     'rooftop-water-tank': 'Rooftop water tank installation',
     'water-pump-installation': 'Water pump installation',
+    'water-meter-manifold': 'Water meter and manifold installation',
     'wardrobe-installation': 'Wardrobe installation',
     'bookshelf-cabinetry': 'Custom bookshelf cabinetry',
     'marble-shower-wall': 'Marble shower wall finish',
