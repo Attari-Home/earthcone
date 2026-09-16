@@ -4,11 +4,19 @@ import { site, primaryPhone, primaryEmail, LICENSE_PLACEHOLDER } from '../../dat
 interface Props {
     title: string;
     description: string;
+    /**
+     * Text for og:description / twitter:description when it should read differently from the
+     * <meta name="description"> SERP snippet — e.g. the homepage keeps `description` tight
+     * (~155 chars, avoids Google truncating it) but wants a fuller summary of the company and
+     * its trades on the link-preview card social apps render when the URL is shared.
+     * Falls back to `description` when omitted.
+     */
+    ogDescription?: string;
     /** Absolute or root-relative path to a social preview image. */
     image?: string;
 }
 
-const { title, description, image = '/og-default.jpg' } = Astro.props;
+const { title, description, ogDescription = description, image = '/og-default.jpg' } = Astro.props;
 
 const pageTitle = title === site.shortName ? title : `${title} | ${site.shortName}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -63,13 +71,14 @@ const jsonLd = {
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content={pageTitle} />
-<meta property="og:description" content={description} />
+<meta property="og:description" content={ogDescription} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:image" content={ogImageURL} />
+<meta property="og:site_name" content={site.name} />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={pageTitle} />
-<meta name="twitter:description" content={description} />
+<meta name="twitter:description" content={ogDescription} />
 <meta name="twitter:image" content={ogImageURL} />
 
 <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline></script>
