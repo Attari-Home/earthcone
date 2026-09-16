@@ -151,6 +151,7 @@ Rules to hit that budget:
 - Squash-merge PRs into `main` to keep history linear and readable.
 - The GitHub ruleset enforced on `main` (configured at the repo/org level, not in code):
     - Require a pull request before merging.
+    - Require at least 1 approving review from someone with write access. GitHub never lets a PR's author approve their own PR, so every merge needs a second account to approve it — plan for that wait, it can't be bypassed from the author's account.
     - Block force-pushes and branch deletion.
     - Require the CI status check to pass before merging (once `ci.yml` exists — see below).
     - See the repo's Settings → Rules → Rulesets for the live configuration.
