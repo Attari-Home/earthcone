@@ -23,7 +23,7 @@ This repo follows the same proven stack as the sibling project [`lailonahar-webs
 
 | Layer      | Choice                                                   | Why                                                                                                                                                                              |
 | ---------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Framework  | [Astro 5](https://astro.build/) (static output)          | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals                                                                      |
+| Framework  | [Astro 7](https://astro.build/) (static output)          | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals                                                                      |
 | Styling    | Tailwind CSS v4 (`@tailwindcss/vite`)                    | Utility-first, small final CSS, fast iteration                                                                                                                                   |
 | Icons      | `astro-icon` + an Iconify set (e.g. `@iconify-json/ph`)  | Inlined SVG, no icon font                                                                                                                                                        |
 | Images     | `astro:assets` + `sharp`                                 | Automatic AVIF/WebP + responsive `srcset`                                                                                                                                        |
@@ -42,8 +42,15 @@ Scaffolded and current as of the premium redesign:
 
 ```
 public/                 Static files served as-is (robots.txt, favicon, llms.txt, videos/)
+  favicon.svg            Source favicon — a simplified vector of the logo-mark.png towers-and-roof mark, legible
+                          at 16px. favicon-16x16/32x32.png are rasterized from it; apple-touch-icon.png is the
+                          full logo on opaque white (iOS renders transparency as black). Bump the ?v= on the icon
+                          links in BaseLayout.astro whenever these change, or browsers keep the cached old icon.
   videos/<folder>/       Compressed MP4s (see §6) — never the raw src/images/ sources
 src/
+  icons/services/        Custom duotone scope illustrations used by ServiceCard (astro-icon local icons, iconDir
+                          src/icons). Drawn on a 48px grid, 1.25 stroke, currentColor + 18% fill accents, so hover
+                          color changes need no per-icon CSS
   images/                Categorized media library (see docs/project-memory.md) — do not rename paths once referenced
   images/video-posters/  Poster-frame JPEGs for portfolio video tiles, one subfolder per category
   components/            One folder per component (Header, Footer, Hero, ServiceCard, ServiceGrid,
@@ -85,6 +92,7 @@ Keep one component per directory with its `.astro` file; colocate component-spec
 
 - **Structured data**: `GeneralContractor` (or `HomeAndConstructionBusiness`) JSON-LD on every page via a shared `<SEO>` component, including `areaServed` for all licensed Emirates. Add `Service` schema on service pages and `BreadcrumbList` site-wide.
 - **Location strategy**: do not mass-generate thin "service in [city]" doorway pages with duplicate content — that gets penalized. Instead, ship one substantial, unique `/service-areas` (or `/locations`) page naming every Emirate served, and only build a dedicated location landing page for an Emirate once there is genuinely unique content (project photos, testimonials) to put on it.
+- **Services vs Portfolio are deliberately separate, and must stay visually distinct.** Both are standard on contractor sites and do different jobs: a per-service page is what ranks for intent searches ("villa construction Dubai") and carries the `Service` schema, while the portfolio is the proof-of-work/trust surface. Do not merge or delete either. They _did_ read as duplicates once, because both rendered the same photo-tile card over the same five categories in the same order — the fix is differentiation, not removal: service cards are icon-led capability cards (`ServiceCard`), portfolio tiles are photo-led (`PortfolioCard`), and a service page shows only a short gallery teaser (`GALLERY_TEASER_COUNT` in `services/[slug].astro`) that links out to the full category gallery.
 - **On-page basics**: unique `<title>` and meta description per page, canonical URLs, Open Graph + Twitter Card images, semantic HTML (`<h1>` once per page, proper heading order, `<nav>`/`<main>`/`<footer>` landmarks).
 - **Technical SEO**: `@astrojs/sitemap`, `robots.txt`, trailing-slash consistency, no orphan pages — every page reachable from a nav or sitemap link.
 - **Local SEO**: register/verify a Google Business Profile per operating Emirate where feasible (outside this repo's scope, but the site must support it — consistent NAP (name/address/phone) in footer and JSON-LD).
@@ -143,6 +151,7 @@ Rules to hit that budget:
 - Squash-merge PRs into `main` to keep history linear and readable.
 - The GitHub ruleset enforced on `main` (configured at the repo/org level, not in code):
     - Require a pull request before merging.
+    - Require at least 1 approving review from someone with write access. GitHub never lets a PR's author approve their own PR, so every merge needs a second account to approve it — plan for that wait, it can't be bypassed from the author's account.
     - Block force-pushes and branch deletion.
     - Require the CI status check to pass before merging (once `ci.yml` exists — see below).
     - See the repo's Settings → Rules → Rulesets for the live configuration.
@@ -207,3 +216,4 @@ When adding a new interactive/visual feature, add a targeted assertion here rath
 - Whether to pursue dedicated per-Emirate landing pages now or defer until there's real project content per Emirate (see §4).
 - A handful of `src/images/interiors/` files (`interior-design-reference-*.jpeg`, `office-interior-render-*.jpeg`) look like mood-board/render references rather than photos of completed Earth Cone work — currently excluded from the `/portfolio` grid by `src/lib/portfolioMedia.ts`'s `EXCLUDED_BASENAMES` list pending client confirmation either way.
 - Portfolio photo quality varies — some source photos are dim, blurry, or read as work-in-progress site snapshots rather than polished finished-work shots. Worth a client review pass (or professional reshoot) before launch, since the portfolio is the site's main trust-building surface.
+- **Asset filenames are not trustworthy — verify by looking at the photo before writing copy or alt text against it.** A spot-check of ~20 files found three wrong: two `electrical/floor-electrical-conduits-*` photos were actually large-format floor tiling (moved to `interiors/floor-tiling-*`), `construction-exteriors/foundation-construction-02` was a water-meter manifold (moved to `water-systems/water-meter-manifold-01`), and `villa-construction-03` is a phone screenshot with the gallery app's own UI baked in (excluded via `EXCLUDED_BASENAMES` pending a clean re-export from the client). The remaining ~180 files have not been reviewed one by one — assume more mislabels until they have.

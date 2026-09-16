@@ -34,11 +34,26 @@ const seoTitles: Record<string, string> = {
 const pageTitle = seoTitles[service.id] ?? title;
 
 // The projects collection holds the portfolio media for each service (matched via
-// serviceSlug) — pull the same gallery in here so completed-work photos show on both
-// the service page and its /portfolio/[category] counterpart, not just one or the other.
+// serviceSlug). Only a short teaser runs here — the full set (46 photos for kitchens)
+// belongs on /portfolio/[category], and printing it on both pages made the service page a
+// visual duplicate of the portfolio page rather than a page about the service.
+const GALLERY_TEASER_COUNT = 6;
 const projectCategories = await getCollection('projects');
 const matchingProject = projectCategories.find((p) => p.data.serviceSlug === service.id);
-const galleryItems = matchingProject ? getMediaForFolder(matchingProject.data.folder) : [];
+const allGalleryItems = matchingProject ? getMediaForFolder(matchingProject.data.folder) : [];
+// One tile per subject (basename minus its trailing sequence number): taking the first six
+// items outright lands on six near-identical shots of the same job, since the media sorts
+// by basename and most subjects have several numbered variants.
+const seenSubjects = new Set<string>();
+const galleryItems = allGalleryItems
+    .filter((item) => {
+        const subject = item.basename.replace(/-\d+$/, '');
+        if (seenSubjects.has(subject)) return false;
+        seenSubjects.add(subject);
+        return true;
+    })
+    .slice(0, GALLERY_TEASER_COUNT);
+const hasMoreGalleryItems = allGalleryItems.length > galleryItems.length;
 
 const serviceJsonLd = {
     '@context': 'https://schema.org',
@@ -104,7 +119,10 @@ const serviceJsonLd = {
                             href={withBase(`/portfolio/${matchingProject.id}`)}
                             class="btn-ghost text-[var(--color-terracotta-dark)]"
                         >
-                            View full gallery <span class="arrow">&rarr;</span>
+                            {hasMoreGalleryItems
+                                ? `See all ${allGalleryItems.length} projects`
+                                : 'View full gallery'}
+                            <span class="arrow">&rarr;</span>
                         </a>
                     )}
                 </div>

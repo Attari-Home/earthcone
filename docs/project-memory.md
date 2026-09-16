@@ -83,8 +83,8 @@ Use these paths directly in website components. The number distinguishes related
 
 - `branding`: brand collateral only; appropriate for About, Contact, and brand-story sections. Not wired into any `projects` content-collection entry, so nothing in this folder appears in the public `/portfolio` grid — safe home for internal/promotional assets (awards, certificates, signboard, company vehicle) that aren't "completed project" shots.
 - `construction-exteriors`: exterior construction progress and completed villa façades, plus raw stone material stockyard photos; appropriate for portfolio or construction-services sections.
-- `electrical`: installation-process images and videos (conduits, ceiling runs, distribution panels); appropriate for electrical-services sections.
-- `interiors`: interior finish work and video showcases. Subjects include herringbone flooring, TV feature walls, doors, bathroom vanities, marble shower walls, staircase details, wardrobes, custom bookshelf cabinetry, elevator lobbies, and general flooring finishes.
+- `electrical`: installation-process images and videos (commercial ceiling lighting and containment, distribution panels); appropriate for electrical-services sections.
+- `interiors`: interior finish work and video showcases. Subjects include herringbone flooring, large-format floor tiling, TV feature walls, doors, bathroom vanities, marble shower walls, staircase details, wardrobes, custom bookshelf cabinetry, elevator lobbies, and general flooring finishes.
 - `kitchens`: completed custom kitchens; suitable for a kitchen gallery or service page.
 - `water-systems`: rooftop water tanks, plumbing manifolds, piping, pumps, general plumbing installation, and mosque/majlis-style ablution (wudu) area fixtures; suitable for plumbing or water-system services.
 
@@ -100,6 +100,16 @@ Added to `SUBJECT_PHRASES` in `src/lib/portfolioMedia.ts` so alt text stays desc
 - `ablution-area-installation` (water-systems) — mosque/majlis-style wudu (ablution) washroom fixture rows.
 - `electrical-panel-installation` (electrical) — distribution panel/wiring installs.
 
+### Mislabeled assets corrected (2026-09-16)
+
+While writing service-page copy against the photos, a spot-check (~20 files, opened and looked at one by one) found filenames describing something other than what the image shows. Corrected with `git mv` and matching `SUBJECT_PHRASES` updates so alt text stays accurate:
+
+- `electrical/floor-electrical-conduits-01.jpeg`, `-02.jpeg` → `interiors/floor-tiling-01.jpeg`, `-02.jpeg` — large-format porcelain floor tiles being laid on levelling clips; no conduit visible. The `floor-electrical-conduits` phrase was removed; `floor-tiling` added.
+- `construction-exteriors/foundation-construction-02.jpeg` → `water-systems/water-meter-manifold-01.jpeg` — a PPR manifold with per-outlet water meters and a pressure-reducing valve, not foundation work. `water-meter-manifold` phrase added. `foundation-construction-01` and `-03` are genuine and unchanged (the sequence gap is deliberate — see maintenance rule 3).
+- `construction-exteriors/villa-construction-03.jpeg` — a phone screenshot with the gallery app's own UI (close button, "Save", "New Stylized Photo" caption) baked into the image. Left in place but added to `EXCLUDED_BASENAMES` in `src/lib/portfolioMedia.ts` until the client supplies a clean export.
+
+Roughly 180 files have not had this check. Treat a filename as a claim to verify, not a description to trust.
+
 ### Duplicate detection
 
 The second export batch had the same content re-sent multiple times under different WhatsApp timestamps (e.g. the site signboard and awards were exported once around 8:40 PM and again around 8:42 PM). Before importing, every file was hashed with `md5sum`; byte-identical duplicates were dropped, keeping only the earliest-timestamped copy. If a future batch shows the same pattern, hash first — don't assume distinct filenames mean distinct content.
@@ -111,6 +121,7 @@ The second export batch had the same content re-sent multiple times under differ
 3. Continue a related asset sequence rather than renumbering existing files.
 4. Preserve the current extensions unless intentional media optimization is performed separately.
 5. If website code starts referencing an asset path, treat that path as stable and avoid renaming it without updating the reference.
+6. Open the image before naming it, filing it, or writing alt text or copy about it — the source exports carry no reliable labels, and three files were misfiled under names that matched the wrong trade.
 
 ## Verification performed
 
