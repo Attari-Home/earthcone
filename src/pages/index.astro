@@ -20,7 +20,7 @@ const heroPreload = await getImage({ src: heroSlides[0].src, ...HERO_IMAGE_OPTS 
 
 const stats = [
     { value: '7', countTo: 7, label: 'Emirates licensed' },
-    { value: '5', countTo: 5, label: 'Trades in-house' },
+    { value: '6', countTo: 6, label: 'Trades in-house' },
     { value: 'Dubai', countTo: null, label: 'Headquartered, UAE-wide' },
 ];
 
@@ -33,8 +33,8 @@ const teaserTiles = categories.map((category) => ({
 
 <BaseLayout
     title={`${site.shortName} | Building Contractor in Dubai & the UAE`}
-    description="Dubai-based contractor licensed across all 7 Emirates — construction, interior fit-out, custom kitchens, electrical installation & water systems."
-    ogDescription="Earth Cone Building Contracting L.L.C. builds and maintains villas and properties across the UAE — construction, interior fit-out, custom kitchens, electrical installation, and water systems, all handled by one licensed, in-house crew."
+    description="Dubai-based contractor licensed across all 7 Emirates — construction, interior fit-out, custom kitchens, Korean marble, electrical & water systems."
+    ogDescription="Earth Cone Building Contracting L.L.C. builds and maintains villas and properties across the UAE — construction, interior fit-out, custom kitchens, Korean marble countertops, electrical installation, and water systems, all handled by one licensed, in-house crew."
 >
     <Fragment slot="head">
         <link
@@ -139,9 +139,9 @@ const teaserTiles = categories.map((category) => ({
                     Built by a team that shows up
                 </h2>
                 <p class="mt-4 text-[var(--color-stone)]">
-                    {site.description} Construction, interior fit-out, custom kitchens, electrical,
-                    and water-systems work — one crew, one point of contact, from foundation to
-                    finish.
+                    {site.description} Construction, interior fit-out, custom kitchens, Korean
+                    marble, electrical, and water-systems work — one crew, one point of contact,
+                    from foundation to finish.
                 </p>
                 <a
                     href={withBase('/about')}

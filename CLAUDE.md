@@ -11,6 +11,7 @@ Service lines evidenced by the current asset library (`src/images/`, see `docs/p
 - Construction (villas, foundations, exteriors, paving, decking)
 - Interior fit-out (flooring, staircases, feature walls, doors, vanities)
 - Custom kitchens
+- Korean artificial marble (acrylic solid-surface countertops, vanity tops, commercial counters)
 - Electrical installation
 - Water systems (plumbing, rooftop tanks, manifolds, pumps)
 - General maintenance (implied by "construction and maintenance" positioning — confirm scope with the client before building a Maintenance service page)
@@ -56,10 +57,16 @@ src/
                           color changes need no per-icon CSS
   images/                Categorized media library (see docs/project-memory.md) — do not rename paths once referenced
   images/video-posters/  Poster-frame JPEGs for portfolio video tiles, one subfolder per category
+  images/stock/<service>/ Licensed stock photography (Unsplash License) used on service pages. Nested one level
+                          deeper on purpose: portfolioMedia.ts only globs src/images/*/*, so nothing here can leak
+                          into the portfolio. Sources and credits are logged in docs/project-memory.md
   components/            One folder per component (Header, Footer, Hero, ServiceCard, ServiceGrid,
                           PortfolioCard, Breadcrumbs, CtaBand, ContactForm, SEO, ...)
   content/
-    services/            One entry per service line (construction, interiors, kitchens, electrical, water-systems)
+    services/            One entry per service line (construction, interiors, kitchens, korean-marble, electrical, water-systems).
+                          Optional `applications` (licensed stock photos of typical uses, rendered in their own
+                          labelled section, never mixed into the portfolio) and `heroAlt` (required whenever the
+                          hero is stock, so alt text never claims it as Earth Cone work)
     projects/            One entry per portfolio category, schema {title, summary, order, folder, serviceSlug?}
                           — `folder` maps the category slug to its src/images/ directory name
   data/
@@ -126,7 +133,7 @@ Rules to hit that budget:
 
 - No render-blocking JS; interactivity is progressive enhancement only.
 - All images through `astro:assets` (auto AVIF/WebP, explicit `width`/`height` to avoid CLS, `loading="lazy"` below the fold).
-- **Video**: `src/images/` holds the raw, uncompressed WhatsApp-export MP4 sources (~184 MB, some 30–40 MB each) — these are never served directly. Compressed copies live in `public/videos/<folder>/`, produced with `ffmpeg`, `libx264`, `-preset slow -crf 28`, **native resolution preserved (no downscale — the client explicitly wants quality/resolution kept)**, `-movflags +faststart`. This roughly halves file size (~184 MB → ~89 MB) at unchanged resolution; do not downscale to 720p even though that would compress further. Poster frames live in `src/images/video-posters/<folder>/` and flow through the normal `astro:assets` pipeline. `<video preload="none" poster={...} controls muted playsinline>` — never autoplay. See `docs/project-memory.md` for the full pipeline and re-run instructions when new clips are added.
+- **Video**: `src/images/` holds the raw, uncompressed WhatsApp-export MP4 sources (~184 MB, some 30–40 MB each) — these are never served directly. Compressed copies live in `public/videos/<folder>/`, produced with `ffmpeg`, `libx264`, `-preset slow -crf 28`, `-an` (**no audio in any video, raw sources included — client request**), **native resolution preserved (no downscale — the client explicitly wants quality/resolution kept)**, `-movflags +faststart`. This roughly halves file size (~184 MB → ~89 MB) at unchanged resolution; do not downscale to 720p even though that would compress further. Poster frames live in `src/images/video-posters/<folder>/` and flow through the normal `astro:assets` pipeline. `<video preload="none" poster={...} controls muted playsinline>` — never autoplay. See `docs/project-memory.md` for the full pipeline and re-run instructions when new clips are added.
     - **Still open**: the original raw MP4 blobs remain permanently in `.git` history from the commit that added them (~170 MB). Purging them requires a destructive history rewrite (BFG/`git-filter-repo`, force-push) — flagged to the client as a separate explicit sign-off, not done as part of routine builds.
 - Self-host fonts (or use `font-display: swap`), subset where practical.
 

@@ -9,6 +9,7 @@ Dubai, licensed to operate across all seven Emirates of the United Arab Emirates
 - Construction — /services/construction
 - Interior fit-out — /services/interiors
 - Custom kitchens — /services/kitchens
+- Korean artificial marble (acrylic solid-surface countertops, vanity tops, and counters) — /services/korean-marble
 - Electrical — /services/electrical
 - Water systems (plumbing, tanks, pumps) — /services/water-systems
 
@@ -19,6 +20,7 @@ Photo and video galleries of completed work, organized by category:
 - Construction — /portfolio/construction
 - Interiors — /portfolio/interiors
 - Kitchens — /portfolio/kitchens
+- Korean marble — /portfolio/korean-marble
 - Electrical — /portfolio/electrical
 - Water systems — /portfolio/water-systems
 

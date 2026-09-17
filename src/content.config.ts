@@ -9,7 +9,19 @@ const services = defineCollection({
             title: z.string(),
             summary: z.string(),
             order: z.number(),
+            // How the service reads mid-sentence ("Completed ___ work"). Defaults to the
+            // lowercased title — set it when that would lowercase a proper noun ("Korean").
+            inlineName: z.string().optional(),
             heroImage: image().optional(),
+            // Defaults to "completed Earth Cone project work" — override it whenever the hero
+            // is stock photography, so the alt text never claims someone else's photo as ours.
+            heroAlt: z.string().optional(),
+            // Licensed stock photos illustrating where a material is typically used. Rendered
+            // in their own labelled section, never mixed into the portfolio gallery (which is
+            // Earth Cone's own work only). Credits live in docs/project-memory.md.
+            applications: z
+                .array(z.object({ image: image(), title: z.string(), alt: z.string() }))
+                .optional(),
         }),
 });
 
