@@ -88,6 +88,13 @@ const SUBJECT_PHRASES: Record<string, string> = {
     'stone-material-supply': 'Natural stone material supply',
     'ablution-area-installation': 'Ablution area installation',
     'electrical-panel-installation': 'Electrical panel installation',
+    'induction-hob-counter': 'Korean marble counter with flush-set induction hobs',
+    'curved-counter-end': 'Curved Korean marble counter end',
+    'buffet-counter': 'Korean marble buffet counter',
+    'counter-edge-detail': 'Korean marble counter edge detail',
+    'serving-counter': 'Korean marble serving counter',
+    'curved-island-counter': 'Curved Korean marble island counter',
+    'solid-surface-counter-installation': 'Korean marble counter installation walkthrough',
 };
 
 // Short location/business context appended to every alt string for the folder's category.
@@ -95,6 +102,7 @@ const FOLDER_LOCATION_CONTEXT: Record<string, string> = {
     'construction-exteriors': 'Dubai villa construction site',
     interiors: 'Dubai villa interior fit-out',
     kitchens: 'Dubai villa',
+    'korean-marble': 'restaurant fit-out',
     electrical: 'UAE construction site',
     'water-systems': 'UAE building',
 };

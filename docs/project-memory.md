@@ -17,8 +17,9 @@ All original `WhatsApp Image ...` and `WhatsApp Video ...` filenames were replac
 | `src/images/electrical/` | 3 | 2 | Electrical conduit, ceiling installation, panel installation |
 | `src/images/interiors/` | 55 | 35 | Finished interiors, flooring, TV walls, stairs, doors, vanities, wardrobes, bookshelves, marble shower walls |
 | `src/images/kitchens/` | 46 | 0 | Custom kitchen projects |
+| `src/images/korean-marble/` | 8 | 2 | Korean marble (acrylic solid surface) restaurant counters: buffet runs, induction-hob cut-outs, curved counter ends |
 | `src/images/water-systems/` | 30 | 2 | Rooftop tanks, piping, manifolds, water pumps, ablution area, plumbing install |
-| **Total** | **163** | **47** | **210 media files** |
+| **Total** | **171** | **49** | **220 media files** |
 
 A second WhatsApp export batch (`new_images_Videos/`, 72 images + 31 videos) was categorized and merged into the library above on 2026-09-14. 7 exact-duplicate images and 9 exact-duplicate videos (identical bytes, re-sent under a different WhatsApp filename) were identified by hash and discarded rather than imported twice — see "Duplicate detection" below. One further duplicate (`earth-cone-business-cards-03.jpeg`, byte-identical to the pre-existing `earth-cone-business-cards-02.jpeg`) slipped through that pass because it was only hashed against other new-batch files, not the full existing library — caught and removed the same day; **hash new imports against the full library, not just against each other, next time.**
 
@@ -60,6 +61,34 @@ Two other free candidates were shortlisted and not used: Etienne Girardet's "two
 | `brian-zajac-ynVu56fpbN8-unsplash.jpg` | High-quality white+gold kitchen (overhead angle) — very similar to `n8wF-38dASg`; use as a replacement if a slightly different kitchen composition is preferred |
 | `franco-debartolo-3x365ToKOK8-unsplash.jpg` | Dark, moody kitchen counter close-up with decorative vessels — dramatic atmosphere but portrait and too abstract for a hero |
 | `marina-nazina-bhV15497Nr8-unsplash.jpg` | All-black kitchen with marble backsplash (portrait) — striking but orientation and extreme darkness work against the hero overlay text |
+
+## Korean marble service (2026-09-17)
+
+The client asked for a new service line, Korean artificial marble (acrylic solid surface, often called Corian after the best-known brand), with its own work category. They supplied two WhatsApp videos and asked for stills taken from them plus free stock photos.
+
+### Client videos and extracted stills
+
+- Raw videos: `src/images/korean-marble/solid-surface-counter-installation-01.mp4` (56 s) and `-02.mp4` (25 s). Both are 478×850 portrait WhatsApp exports of the same restaurant/buffet counter install. Their hashes were checked against the full library first, and neither is a duplicate.
+- Compressed copies in `public/videos/korean-marble/` use the standard pipeline (CRF 28, native resolution, audio removed): 12.6 MB became 4.4 MB and 5.5 MB became 1.7 MB.
+- Eight stills in `src/images/korean-marble/`. Frames were extracted at 10 fps and scored by sharpness (Laplacian variance). The sharpest native frame near each good moment was kept, skipping frames with hands, faces, or bystanders in shot. Each still got a light `autocontrast` (0.5% cutoff) and a mild unsharp mask in Pillow. They are 478×850 because that is the source video's resolution, so they look soft at large tile sizes. Better photos from the client would help.
+- Posters for the two videos are separate frames, not reused stills, so a video tile never looks like a duplicate of a photo next to it.
+- New `SUBJECT_PHRASES`: `induction-hob-counter`, `curved-counter-end`, `buffet-counter`, `counter-edge-detail`, `serving-counter`, `curved-island-counter`, `solid-surface-counter-installation`. Folder context: "restaurant fit-out". No city is named because the video does not show where the job is.
+
+### Stock photos (service page only)
+
+These are stored in `src/images/stock/korean-marble/` and used only on `/services/korean-marble`: the hero, plus the "Where Korean marble is used" section, which is labelled as reference photography. They are deliberately not in the portfolio, which shows only Earth Cone's own work. Every photo was checked through Unsplash's API as `premium: false, plus: false`, so all are under the standard Unsplash License: free for commercial use, no attribution required. Unsplash+ images were excluded. Each was viewed at full size to check for visible logos or brand labels.
+
+| File | Unsplash photo | Photographer | Used as |
+| --- | --- | --- | --- |
+| `intenzafitness-ORecYn0PCdU-unsplash.jpg` | `ORecYn0PCdU` | Intenza Fitness | Hero — angular white reception counter with LED strip |
+| `alextyson195-YWxpCIqfDKs-unsplash.jpg` | `YWxpCIqfDKs` | Alex Tyson | Kitchen worktops and islands |
+| `sanibell-6BV9b7LRXPo-unsplash.jpg` | `6BV9b7LRXPo` | Sanibell BV | Vanity top with built-in trough basin |
+| `sanibell-XhQ0vUA40ng-unsplash.jpg` | `XhQ0vUA40ng` | Sanibell BV | Wall-hung double vanity |
+| `alken-zHWdhQ0Jubg-unsplash.jpg` | `zHWdhQ0Jubg` | Alfred Kenneally | Seamless integrated sink close-up |
+| `kasiade-mttfw1ihj6k-unsplash.jpg` | `mttfw1ihj6k` | Kaptured by Kasia | Multi-basin washroom counter (Munch Museum, Oslo) |
+| `heqinglan0602_tianya-ECBg5FQkBXI-unsplash.jpg` | `ECBg5FQkBXI` | 何青蓝 | Curved reception desk |
+
+Rejected: `26Qw6xsC8hY` (a white worktop with a flush induction hob, which would have been a good fit, but a Compagnie de Provence soap bottle label is legible in the frame) and `x5wbZZE0aIw` (a clearly CG-rendered vanity).
 
 ## Homepage v2 (2026-09-14 follow-up)
 
@@ -144,9 +173,10 @@ The second export batch had the same content re-sent multiple times under differ
 
 All 25 source MP4s in `src/images/` are raw, uncompressed WhatsApp exports (~184MB total) and stay untouched there — they are never served directly. A separate compression pass produces the web-served copies:
 
-- Compressed video: `public/videos/<folder>/<same-basename>.mp4` — `ffmpeg`, `libx264`, `-preset slow -crf 28`, native resolution preserved (no downscale), `-movflags +faststart`, audio re-encoded to AAC 80kbps where present. Result: ~184MB → ~89MB (~52% smaller) at unchanged resolution.
+- Compressed video: `public/videos/<folder>/<same-basename>.mp4` — `ffmpeg`, `libx264`, `-preset slow -crf 28`, native resolution preserved (no downscale), `-movflags +faststart`, no audio track (`-an`, see below). Result: ~184MB → ~89MB (~52% smaller) at unchanged resolution.
 - Poster frames: `src/images/video-posters/<folder>/<same-basename>.jpeg` — a new category folder, flows through the normal `astro:assets`/`sharp` pipeline like any other photo (unlike `public/videos/`, which is a plain static passthrough). Extracted via `ffmpeg -ss 00:00:01 -frames:v 1`.
 - `src/lib/portfolioMedia.ts` discovers videos from the raw `src/images/<folder>/*.mp4` filenames, then points playback at the corresponding `public/videos/` path and poster at the corresponding `video-posters/` image — so re-running the compression script for a newly added clip is enough to make it appear in the portfolio grid, no code change needed.
+- **No audio anywhere (2026-09-17):** the client asked for every video in the repo to be silent. The audio track was removed from all 47 files that had one: 45 raw sources in `src/images/` and the 2 Korean marble copies in `public/videos/`. It was a stream copy (`ffmpeg -map 0:v -c copy -an -movflags +faststart`), so the video bitstream is untouched. Codec, resolution, frame count, and rotation were compared before and after each file. New clips must be stripped the same way before they are committed, both the raw source and the compressed copy.
 - If a new video is added to `src/images/<folder>/`, re-run the compression pipeline (documented in the redesign plan) to produce its `public/videos/` and `video-posters/` counterparts before it will render on the site.
 - The original raw MP4 blobs remain permanently in `.git` history from the commit that first added them — this was flagged to the client as a separate, explicit sign-off item (history rewrite is destructive and out of scope for routine asset maintenance).
 

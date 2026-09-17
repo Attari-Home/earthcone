@@ -33,7 +33,15 @@ const slides = heroSlides;
         />
     ))}
     <div
-        class="absolute inset-0 bg-gradient-to-t from-[var(--color-ink)] via-[var(--color-ink)]/55 to-[var(--color-ink)]/10"
+        class="absolute inset-0 bg-gradient-to-t from-[var(--color-ink)] via-[var(--color-ink)]/60 to-[var(--color-ink)]/30"
+        aria-hidden="true"
+    ></div>
+    {/* Second tint concentrated behind the text column (the left side on desktop, the full
+        width on mobile where the text spans the screen). The bottom-up gradient alone left
+        the eyebrow and the top of the headline sitting on near-white photo on the bright
+        slides — the client reported the text as hard to read. */}
+    <div
+        class="absolute inset-0 bg-gradient-to-r from-[var(--color-ink)]/70 via-[var(--color-ink)]/45 to-[var(--color-ink)]/20 lg:via-[var(--color-ink)]/35 lg:to-transparent"
         aria-hidden="true"
     ></div>
 
