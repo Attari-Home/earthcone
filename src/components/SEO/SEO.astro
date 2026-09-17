@@ -1,5 +1,6 @@
 ---
 import { site, primaryPhone, primaryEmail, LICENSE_PLACEHOLDER } from '../../data/site';
+import { withBase } from '../../lib/url';
 
 interface Props {
     title: string;
@@ -33,7 +34,14 @@ const isDefaultImage = image === DEFAULT_OG_IMAGE.src;
 
 const pageTitle = title.includes(site.shortName) ? title : `${title} | ${site.shortName}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImageURL = new URL(image, Astro.site);
+// The GitHub Pages staging site is public and byte-identical to production, so search
+// engines must be told to keep it out of the index — otherwise it competes with the real
+// domain for the same queries. Canonical stays self-referential on purpose: pointing it at
+// production while also sending noindex risks that signal carrying over to the real page.
+const isStaging = import.meta.env.PUBLIC_DEPLOY_TARGET === 'staging';
+// Root-relative image paths need the base prefix before they are resolved against the
+// origin — on staging (served from /earthcone/) a bare `/og-image.jpg` would 404.
+const ogImageURL = new URL(image.startsWith('http') ? image : withBase(image), Astro.site);
 
 const jsonLd = {
     '@context': 'https://schema.org',
@@ -81,6 +89,7 @@ const jsonLd = {
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalURL} />
+{isStaging && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content={pageTitle} />
