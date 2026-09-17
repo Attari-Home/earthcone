@@ -1,0 +1,73 @@
+name: Deploy staging to GitHub Pages
+
+# The staging environment: every push to `staging` publishes to
+# https://attari-home.github.io/earthcone/ for review before the change is promoted to
+# `main`, which is what Cloudflare deploys to the live domain (see CLAUDE.md §10).
+#
+# The build sets DEPLOY_TARGET so Astro emits the repo-subpath `base` and the github.io
+# origin, and PUBLIC_DEPLOY_TARGET so the pages themselves render noindex and a
+# disallow-all robots.txt. Never deploy a production build here: it would publish an
+# indexable duplicate of the real site.
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; a queued one supersedes an older still-running one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build staging site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (staging base path, noindex)
+        run: npm run build
+        env:
+          DEPLOY_TARGET: staging
+          PUBLIC_DEPLOY_TARGET: staging
+
+      - name: Fail if the staging build is indexable
+        # A production build deployed here would be an indexable copy of the live site.
+        # Cheap guard against the env vars above being dropped or renamed.
+        run: |
+          grep -q 'Disallow: /' dist/robots.txt || { echo "robots.txt is not disallow-all"; exit 1; }
+          grep -q 'name="robots" content="noindex' dist/index.html || { echo "homepage is missing the noindex meta tag"; exit 1; }
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

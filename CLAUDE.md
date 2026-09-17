@@ -155,11 +155,13 @@ Rules to hit that budget:
 ## 9. Git workflow & branch protection
 
 - `main` is the production branch, deployed automatically to Cloudflare (custom domain `https://earthconecontracting.com`) — see §10. **`main` is protected: no direct pushes, all changes land via pull request.**
+- `staging` is the review branch, deployed automatically to GitHub Pages at `https://attari-home.github.io/earthcone/` — see §10. It is **protected with the same ruleset as `main`** (PR required, 1 approval, no force-push, no deletion, CI must pass), so nothing reaches the staging site unreviewed either.
+- Promotion flow: `feature/*` → PR into `staging` → check the deployed staging site → PR `staging` into `main` → Cloudflare publishes to the live domain. Going straight from a feature branch to `main` is still allowed for an urgent fix, but then open the matching PR into `staging` too, or the two branches drift.
 - Feature branches: `feature/<short-name>`, `fix/<short-name>`, `content/<short-name>`.
 - Commit messages: concise, imperative mood, explain _why_ not _what_ (e.g. `Fix hero LCP by preloading hero image`, not `update code`).
 - PRs use `.github/PULL_REQUEST_TEMPLATE.md` (add one mirroring the sibling project: summary, type of change, build/test checklist, screenshots for visual changes).
-- Squash-merge PRs into `main` to keep history linear and readable.
-- The GitHub ruleset enforced on `main` (configured at the repo/org level, not in code):
+- Squash-merge PRs into `main` to keep history linear and readable. Merge `staging` into `main` with a **merge commit, not a squash** — squashing rewrites the commits and leaves the two branches permanently diverged, so every later PR shows phantom conflicts.
+- The GitHub ruleset enforced on `main` **and `staging`** (configured at the repo/org level, not in code):
     - Require a pull request before merging.
     - Require at least 1 approving review from someone with write access. GitHub never lets a PR's author approve their own PR, so every merge needs a second account to approve it — plan for that wait, it can't be bypassed from the author's account.
     - Block force-pushes and branch deletion.
@@ -168,14 +170,19 @@ Rules to hit that budget:
 
 ## 10. CI/CD
 
-Add these GitHub Actions workflows (mirroring the sibling project) once the app is scaffolded:
+GitHub Actions workflows in this repo (mirroring the sibling project):
 
-- `.github/workflows/ci.yml` — on PR to `main`: install, `astro check`, `astro build`, `prettier --check`. This is the required status check for the branch ruleset.
-- `.github/workflows/lighthouse.yml` — on PR to `main`: build, run Lighthouse CI against the thresholds in §6.
+- `.github/workflows/ci.yml` — on PR to `main` or `staging`: install, `astro check`, `astro build`, `prettier --check`. This is the required status check for both branch rulesets.
+- `.github/workflows/lighthouse.yml` — on PR to `main` or `staging`: build, run Lighthouse CI against the thresholds in §6.
+- `.github/workflows/staging-pages.yml` — on push to `staging` (plus manual `workflow_dispatch`): builds with `DEPLOY_TARGET=staging PUBLIC_DEPLOY_TARGET=staging` and publishes to GitHub Pages. **The staging build is deliberately different from production, and both halves matter:**
+    - `DEPLOY_TARGET` switches `astro.config.mjs` to `site: https://attari-home.github.io` + `base: /earthcone`, because a Pages project site is served from a repo subpath. Hand-written links must keep going through `withBase()` (`src/lib/url.ts`) or they 404 on staging while working fine in production.
+    - `PUBLIC_DEPLOY_TARGET` is what page code reads (`import.meta.env`): it makes `SEO.astro` emit `noindex, nofollow` and `robots.txt.ts` emit disallow-all. **Staging is a public, byte-identical copy of the live site — if it gets indexed it competes with the real domain for the same searches.** The workflow greps the built output for both and fails the deploy if either is missing, so a production build can never be published to Pages by accident.
+    - Repo settings this depends on (Settings → Pages → Source: **GitHub Actions**; Settings → Environments → `github-pages` limited to the `staging` branch). Those live in the GitHub UI, not in this repo — step-by-step in `docs/staging-environment-setup.md`, which also covers gating `staging` with the same ruleset as `main`.
 - **Deployment is not a GitHub Actions workflow.** The domain `earthconecontracting.com` was purchased through Cloudflare and the repo is connected directly to a Cloudflare Workers/Pages project via Cloudflare's own Git integration — Cloudflare builds (`npm run build`) and deploys (`npx wrangler deploy`) on every push to `main` from its own side, independent of anything in `.github/workflows/`. There is nothing to configure in this repo for that (no `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` secrets needed); changes to the build happen in the Cloudflare dashboard for that project.
 - `wrangler.jsonc` at the repo root is required for that deploy to actually work: Cloudflare's Workers platform (unlike its older Pages product) has no framework-preset auto-detection, so without an explicit `assets.directory` pointing at `dist`, `wrangler deploy` uploads only a near-empty Worker shell — none of the actual site (images, videos, fonts included) goes with it. Do not delete this file.
 - Pushes to `main` auto-trigger a Cloudflare build via its GitHub App integration. If this ever stops firing again, check that the `cloudflare-workers-and-pages` GitHub App still has this repo in its "Repository access" list under the org's installed Apps (`github.com/organizations/<org>/settings/installations/<id>`) — that App defaults to "selected repositories," and `earthcone` was silently left out of it once already, which is why deploys briefly needed manual triggering from the dashboard (Deployments → Builds → Retry build).
-- **Retired**: GitHub Pages (`gh-pages.yml`) was the temporary deploy target before a domain existed. Removed once Cloudflare + the custom domain went live, to avoid two different live URLs for the same site.
+- **History**: GitHub Pages (`gh-pages.yml`, deploying `main`) was the temporary *production* target before a domain existed, and was removed when Cloudflare went live so there would not be two live URLs for the same site. Pages came back in 2026-09 in a different role — the `staging` branch only, noindexed — which is why the duplicate-URL concern no longer applies: it is a review environment, not a second front door.
+- Cloudflare only publishes `main`. If the Cloudflare project is ever set to build every branch, turn preview deployments off for `staging`, otherwise the same commit is live on two Cloudflare URLs as well as Pages.
 
 ## 11. Environment & secrets
 
