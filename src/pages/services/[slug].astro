@@ -8,6 +8,7 @@ import PortfolioCard from '../../components/PortfolioCard/PortfolioCard.astro';
 import { getMediaForFolder } from '../../lib/portfolioMedia';
 import { withBase } from '../../lib/url';
 import { site } from '../../data/site';
+import { socialImage } from '../../lib/ogImage';
 
 export async function getStaticPaths() {
     const services = await getCollection('services');
@@ -21,6 +22,11 @@ const { service } = Astro.props;
 const { title, summary, heroImage, heroAlt, applications } = service.data;
 const inlineName = service.data.inlineName ?? title.toLowerCase();
 const { Content } = await render(service);
+
+// Each service shares its own hero photo, so a link pasted into WhatsApp/Facebook/LinkedIn
+// shows that service instead of the site-wide default image.
+const ogImage = heroImage ? await socialImage(heroImage, Astro.site) : undefined;
+const ogImageAlt = heroAlt ?? `${title} by ${site.shortName}`;
 
 // Service-plus-location phrasing for the <title>/OG tag (what people actually search —
 // "kitchen installation Dubai", not just "kitchens") without cluttering the on-page <h1>,
@@ -75,7 +81,12 @@ const serviceJsonLd = {
 };
 ---
 
-<BaseLayout title={pageTitle} description={summary}>
+<BaseLayout
+    title={pageTitle}
+    description={summary}
+    image={ogImage}
+    imageAlt={ogImage ? ogImageAlt : undefined}
+>
     <script type="application/ld+json" set:html={JSON.stringify(serviceJsonLd)} is:inline></script>
     <Breadcrumbs
         items={[
