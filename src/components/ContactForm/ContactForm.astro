@@ -59,4 +59,21 @@ const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
     </button>
 </form>
 
-<script src="https://web3forms.com/client/script.js" async defer is:inline></script>
+<script>
+    // Load the Web3Forms/hCaptcha client only once the visitor engages with the form.
+    // hCaptcha sets third-party cookies and logs deprecation warnings on load, which
+    // costs Best Practices points and third-party JS on every /contact/ view — most
+    // visitors never touch the form. The script renders the widget into .h-captcha
+    // when it runs, so loading it late is enough.
+    const form = document.querySelector<HTMLFormElement>('form:has(.h-captcha)');
+    if (form) {
+        const load = () => {
+            const s = document.createElement('script');
+            s.src = 'https://web3forms.com/client/script.js';
+            s.async = true;
+            document.head.appendChild(s);
+        };
+        form.addEventListener('focusin', load, { once: true });
+        form.addEventListener('pointerdown', load, { once: true });
+    }
+</script>
