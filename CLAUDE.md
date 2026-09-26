@@ -22,18 +22,18 @@ Non-negotiable quality bar for every page shipped: **fast, responsive, accessibl
 
 This repo follows the same proven stack as the sibling project [`lailonahar-website`](https://github.com/Attari-Home) (also UAE-wide, also lead-gen, already tuned to near-perfect Lighthouse scores) for consistency across the portfolio and to reuse conventions:
 
-| Layer      | Choice                                                   | Why                                                                                                                                                                              |
-| ---------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Framework  | [Astro 7](https://astro.build/) (static output)          | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals                                                                      |
-| Styling    | Tailwind CSS v4 (`@tailwindcss/vite`)                    | Utility-first, small final CSS, fast iteration                                                                                                                                   |
-| Icons      | `astro-icon` + an Iconify set (e.g. `@iconify-json/ph`)  | Inlined SVG, no icon font                                                                                                                                                        |
-| Images     | `astro:assets` + `sharp`                                 | Automatic AVIF/WebP + responsive `srcset`                                                                                                                                        |
-| Content    | Astro Content Collections (MDX)                          | Type-safe service/project/testimonial entries                                                                                                                                    |
-| Routing    | Astro View Transitions                                   | SPA-like feel without a JS framework                                                                                                                                             |
-| Forms      | Web3Forms (or equivalent)                                | No backend needed for a static site                                                                                                                                              |
-| Hosting    | Cloudflare (Workers/Pages, Git-connected)            | `earthconecontracting.com`, purchased and hosted on Cloudflare — deploys straight from the Cloudflare dashboard's own Git integration, not GitHub Actions — see §9/§10     |
-| Language   | TypeScript (strict)                                      | Type-safe content schemas and utilities                                                                                                                                          |
-| Formatting | Prettier + `prettier-plugin-astro`                       | One canonical format, enforced in CI                                                                                                                                             |
+| Layer      | Choice                                                  | Why                                                                                                                                                                    |
+| ---------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework  | [Astro 7](https://astro.build/) (static output)         | Ships zero JS by default; ideal for a mostly-static marketing/lead-gen site; best-in-class Core Web Vitals                                                             |
+| Styling    | Tailwind CSS v4 (`@tailwindcss/vite`)                   | Utility-first, small final CSS, fast iteration                                                                                                                         |
+| Icons      | `astro-icon` + an Iconify set (e.g. `@iconify-json/ph`) | Inlined SVG, no icon font                                                                                                                                              |
+| Images     | `astro:assets` + `sharp`                                | Automatic AVIF/WebP + responsive `srcset`                                                                                                                              |
+| Content    | Astro Content Collections (MDX)                         | Type-safe service/project/testimonial entries                                                                                                                          |
+| Routing    | Astro View Transitions                                  | SPA-like feel without a JS framework                                                                                                                                   |
+| Forms      | Web3Forms (or equivalent)                               | No backend needed for a static site                                                                                                                                    |
+| Hosting    | Cloudflare (Workers/Pages, Git-connected)               | `earthconecontracting.com`, purchased and hosted on Cloudflare — deploys straight from the Cloudflare dashboard's own Git integration, not GitHub Actions — see §9/§10 |
+| Language   | TypeScript (strict)                                     | Type-safe content schemas and utilities                                                                                                                                |
+| Formatting | Prettier + `prettier-plugin-astro`                      | One canonical format, enforced in CI                                                                                                                                   |
 
 Do not introduce a second frontend framework (React/Vue/etc.) unless a specific interactive feature genuinely requires it — and then use an Astro island, not a full SPA rewrite.
 
@@ -155,11 +155,13 @@ Rules to hit that budget:
 ## 9. Git workflow & branch protection
 
 - `main` is the production branch, deployed automatically to Cloudflare (custom domain `https://earthconecontracting.com`) — see §10. **`main` is protected: no direct pushes, all changes land via pull request.**
+- `staging` is the review branch, deployed automatically to GitHub Pages at `https://attari-home.github.io/earthcone/` — see §10. It is **protected with the same ruleset as `main`** (PR required, 1 approval, no force-push, no deletion, CI must pass), so nothing reaches the staging site unreviewed either.
+- Promotion flow: `feature/*` → PR into `staging` → check the deployed staging site → PR `staging` into `main` → Cloudflare publishes to the live domain. Going straight from a feature branch to `main` is still allowed for an urgent fix, but then open the matching PR into `staging` too, or the two branches drift.
 - Feature branches: `feature/<short-name>`, `fix/<short-name>`, `content/<short-name>`.
 - Commit messages: concise, imperative mood, explain _why_ not _what_ (e.g. `Fix hero LCP by preloading hero image`, not `update code`).
 - PRs use `.github/PULL_REQUEST_TEMPLATE.md` (add one mirroring the sibling project: summary, type of change, build/test checklist, screenshots for visual changes).
-- Squash-merge PRs into `main` to keep history linear and readable.
-- The GitHub ruleset enforced on `main` (configured at the repo/org level, not in code):
+- Squash-merge PRs into `main` to keep history linear and readable. Merge `staging` into `main` with a **merge commit, not a squash** — squashing rewrites the commits and leaves the two branches permanently diverged, so every later PR shows phantom conflicts.
+- The GitHub ruleset enforced on `main` **and `staging`** (configured at the repo/org level, not in code):
     - Require a pull request before merging.
     - Require at least 1 approving review from someone with write access. GitHub never lets a PR's author approve their own PR, so every merge needs a second account to approve it — plan for that wait, it can't be bypassed from the author's account.
     - Block force-pushes and branch deletion.
@@ -168,19 +170,29 @@ Rules to hit that budget:
 
 ## 10. CI/CD
 
-Add these GitHub Actions workflows (mirroring the sibling project) once the app is scaffolded:
+GitHub Actions workflows in this repo (mirroring the sibling project):
 
-- `.github/workflows/ci.yml` — on PR to `main`: install, `astro check`, `astro build`, `prettier --check`. This is the required status check for the branch ruleset.
-- `.github/workflows/lighthouse.yml` — on PR to `main`: build, run Lighthouse CI against the thresholds in §6.
+- `.github/workflows/ci.yml` — on PR to `main` or `staging`: install, `astro check`, `astro build`, `prettier --check`. This is the required status check for both branch rulesets.
+- `.github/workflows/lighthouse.yml` — on PR to `main` or `staging`: build, run Lighthouse CI against the thresholds in §6.
+- `.github/workflows/staging-pages.yml` — on push to `staging` (plus manual `workflow_dispatch`): builds with `DEPLOY_TARGET=staging PUBLIC_DEPLOY_TARGET=staging` and publishes to GitHub Pages. **The staging build is deliberately different from production, and both halves matter:**
+    - `DEPLOY_TARGET` switches `astro.config.mjs` to `site: https://attari-home.github.io` + `base: /earthcone`, because a Pages project site is served from a repo subpath. Hand-written links must keep going through `withBase()` (`src/lib/url.ts`) or they 404 on staging while working fine in production.
+    - `PUBLIC_DEPLOY_TARGET` is what page code reads (`import.meta.env`): it makes `SEO.astro` emit `noindex, nofollow` and `robots.txt.ts` emit disallow-all. **Staging is a public, byte-identical copy of the live site — if it gets indexed it competes with the real domain for the same searches.** The workflow greps the built output for both and fails the deploy if either is missing, so a production build can never be published to Pages by accident.
+    - Repo settings this depends on (Settings → Pages → Source: **GitHub Actions**; Settings → Environments → `github-pages` limited to the `staging` branch). Those live in the GitHub UI, not in this repo — step-by-step in `docs/staging-environment-setup.md`, which also covers gating `staging` with the same ruleset as `main`.
 - **Deployment is not a GitHub Actions workflow.** The domain `earthconecontracting.com` was purchased through Cloudflare and the repo is connected directly to a Cloudflare Workers/Pages project via Cloudflare's own Git integration — Cloudflare builds (`npm run build`) and deploys (`npx wrangler deploy`) on every push to `main` from its own side, independent of anything in `.github/workflows/`. There is nothing to configure in this repo for that (no `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` secrets needed); changes to the build happen in the Cloudflare dashboard for that project.
 - `wrangler.jsonc` at the repo root is required for that deploy to actually work: Cloudflare's Workers platform (unlike its older Pages product) has no framework-preset auto-detection, so without an explicit `assets.directory` pointing at `dist`, `wrangler deploy` uploads only a near-empty Worker shell — none of the actual site (images, videos, fonts included) goes with it. Do not delete this file.
 - Pushes to `main` auto-trigger a Cloudflare build via its GitHub App integration. If this ever stops firing again, check that the `cloudflare-workers-and-pages` GitHub App still has this repo in its "Repository access" list under the org's installed Apps (`github.com/organizations/<org>/settings/installations/<id>`) — that App defaults to "selected repositories," and `earthcone` was silently left out of it once already, which is why deploys briefly needed manual triggering from the dashboard (Deployments → Builds → Retry build).
-- **Retired**: GitHub Pages (`gh-pages.yml`) was the temporary deploy target before a domain existed. Removed once Cloudflare + the custom domain went live, to avoid two different live URLs for the same site.
+- **History**: GitHub Pages (`gh-pages.yml`, deploying `main`) was the temporary *production* target before a domain existed, and was removed when Cloudflare went live so there would not be two live URLs for the same site. Pages came back in 2026-09 in a different role — the `staging` branch only, noindexed — which is why the duplicate-URL concern no longer applies: it is a review environment, not a second front door.
+- Cloudflare only publishes `main`. If the Cloudflare project is ever set to build every branch, turn preview deployments off for `staging`, otherwise the same commit is live on two Cloudflare URLs as well as Pages.
 
 ## 11. Environment & secrets
 
 - Never commit real secrets. Provide `.env.example` documenting required variables (form endpoint key, analytics token) once those integrations are chosen.
 - Cloudflare deploys need no repo secrets — Cloudflare's own Git-connected build handles it (see §10). Repository secrets in GitHub are only for things GitHub Actions itself needs (currently none beyond the built-in `GITHUB_TOKEN`).
+- **Web3Forms: two separate forms, staging and production.** A single `WEB3FORMS_KEY` env var feeds `ContactForm.astro`, but its _value_ differs by environment — never share one form/key across dev and the live site:
+    - **Staging** form's access key → local `.env` for dev/testing, so test submissions never reach the real leads inbox.
+    - **Production** form's access key → set as `WEB3FORMS_KEY` in the Cloudflare project's build environment variables (dashboard-only, per §10 — nothing to configure in this repo). Created and managed at `app.web3forms.com` (account required; Claude Code on the web cannot log into or drive a human's browser session there, so a human has to create it — see the request that added this line for the exact settings used).
+    - The production form must have **hCaptcha spam protection** enabled (Settings → Spam Protection in the Web3Forms dashboard) — Web3Forms' free/zero-config hCaptcha integration, not a paid reCAPTCHA/Turnstile plan. `ContactForm.astro` already ships the required markup (`<div class="h-captcha" data-captcha="true">` + `web3forms.com/client/script.js`) so it activates automatically once that dashboard toggle is on for the production key; it's a silent no-op otherwise. The existing honeypot checkbox (`botcheck`) stays as a second, JS-free layer.
+    - Recommended production-only settings (dashboard, not code): restrict "Allowed Domains" to `earthconecontracting.com` so the key can't be reused from a copied page (**Pro-only on Web3Forms — not available on the free plan the production form `EarthCone-Production` currently uses, so hCaptcha + the honeypot are the only spam layers until it is upgraded**), keep the staging form domain-unrestricted (or restricted to preview URLs) for testing, and set the notification "From Name"/auto-response to match Earth Cone branding.
 
 ## 12. Getting started (once scaffolded)
 

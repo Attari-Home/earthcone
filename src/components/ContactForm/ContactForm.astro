@@ -1,7 +1,11 @@
 ﻿---
-// Submits directly to Web3Forms â€” no backend required. Set WEB3FORMS_KEY in .env
+// Submits directly to Web3Forms — no backend required. Set WEB3FORMS_KEY in .env
 // and it will be inlined at build time; the form still renders without it, it just
-// won't submit until a key is configured.
+// won't submit until a key is configured. Use the production access key in the
+// Cloudflare build env and a separate staging key for local/.env dev testing, so
+// test submissions never land in the real leads inbox (see CLAUDE.md §11).
+// hCaptcha below is enabled per-form in the Web3Forms dashboard (Settings >
+// Spam Protection); it is a no-op until that toggle is on for this access key.
 const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
 ---
 
@@ -48,7 +52,28 @@ const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
         ></textarea>
     </div>
 
+    <div class="h-captcha" data-captcha="true"></div>
+
     <button type="submit" class="btn-primary w-full sm:w-auto">
         Send Request
     </button>
 </form>
+
+<script>
+    // Load the Web3Forms/hCaptcha client only once the visitor engages with the form.
+    // hCaptcha sets third-party cookies and logs deprecation warnings on load, which
+    // costs Best Practices points and third-party JS on every /contact/ view — most
+    // visitors never touch the form. The script renders the widget into .h-captcha
+    // when it runs, so loading it late is enough.
+    const form = document.querySelector<HTMLFormElement>('form:has(.h-captcha)');
+    if (form) {
+        const load = () => {
+            const s = document.createElement('script');
+            s.src = 'https://web3forms.com/client/script.js';
+            s.async = true;
+            document.head.appendChild(s);
+        };
+        form.addEventListener('focusin', load, { once: true });
+        form.addEventListener('pointerdown', load, { once: true });
+    }
+</script>
