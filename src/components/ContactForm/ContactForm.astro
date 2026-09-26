@@ -9,7 +9,7 @@
 const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
 ---
 
-<form action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
+<form action="https://api.web3forms.com/submit" method="POST" class="space-y-4" data-contact-form>
     <input type="hidden" name="access_key" value={accessKey} />
     <input type="checkbox" name="botcheck" class="hidden" style="display: none" />
 
@@ -57,16 +57,31 @@ const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
     <button type="submit" class="btn-primary w-full sm:w-auto">
         Send Request
     </button>
+
+    <p
+        data-form-status
+        role="status"
+        aria-live="polite"
+        tabindex="-1"
+        class="text-sm font-medium text-[var(--color-fg)] empty:hidden"
+    ></p>
 </form>
 
 <script>
-    // Load the Web3Forms/hCaptcha client only once the visitor engages with the form.
-    // hCaptcha sets third-party cookies and logs deprecation warnings on load, which
-    // costs Best Practices points and third-party JS on every /contact/ view — most
-    // visitors never touch the form. The script renders the widget into .h-captcha
-    // when it runs, so loading it late is enough.
-    const form = document.querySelector<HTMLFormElement>('form:has(.h-captcha)');
+    // Progressive enhancement: without JS the form still does a plain POST to Web3Forms
+    // (which shows its own result page). With JS we submit in the background so the
+    // visitor stays on the page: on success the form is cleared, the captcha reset and a
+    // confirmation shown; on failure their input is kept and an error is shown.
+    const form = document.querySelector<HTMLFormElement>('form[data-contact-form]');
     if (form) {
+        const status = form.querySelector<HTMLElement>('[data-form-status]')!;
+        const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+        // Load the Web3Forms/hCaptcha client only once the visitor engages with the form.
+        // hCaptcha sets third-party cookies and logs deprecation warnings on load, which
+        // costs Best Practices points and third-party JS on every /contact/ view — most
+        // visitors never touch the form. The script renders the widget into .h-captcha
+        // when it runs, so loading it late is enough.
         const load = () => {
             const s = document.createElement('script');
             s.src = 'https://web3forms.com/client/script.js';
@@ -75,5 +90,46 @@ const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
         };
         form.addEventListener('focusin', load, { once: true });
         form.addEventListener('pointerdown', load, { once: true });
+
+        const show = (message: string, isError: boolean) => {
+            status.textContent = message;
+            status.setAttribute('role', isError ? 'alert' : 'status');
+            status.style.color = isError ? '#b42318' : '';
+            status.focus();
+        };
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const label = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Sending…';
+            status.textContent = '';
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { Accept: 'application/json' },
+                    body: new FormData(form),
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message ?? 'Submission failed');
+                }
+                form.reset();
+                // Each hCaptcha token is single-use; clear it so the next message is verified.
+                (window as { hcaptcha?: { reset(): void } }).hcaptcha?.reset();
+                show(
+                    'Thank you — your request has been sent. We will get back to you shortly.',
+                    false,
+                );
+            } catch {
+                show(
+                    'Sorry, we could not send your request. Please check the captcha and try again, or call or WhatsApp us.',
+                    true,
+                );
+            } finally {
+                button.disabled = false;
+                button.textContent = label;
+            }
+        });
     }
 </script>
