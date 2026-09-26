@@ -17,9 +17,10 @@ interface Props {
     /** See SEO.astro — richer og:description/twitter:description for link-preview cards. */
     ogDescription?: string;
     image?: string;
+    imageAlt?: string;
 }
 
-const { title, description, ogDescription, image } = Astro.props;
+const { title, description, ogDescription, image, imageAlt } = Astro.props;
 ---
 
 <!doctype html>
@@ -52,7 +53,13 @@ const { title, description, ogDescription, image } = Astro.props;
         <link rel="icon" type="image/png" sizes="16x16" href={withBase('/favicon-16x16.png?v=2')} />
         <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png?v=2')} />
         <meta name="theme-color" content="#191512" />
-        <SEO title={title} description={description} ogDescription={ogDescription} image={image} />
+        <SEO
+            title={title}
+            description={description}
+            ogDescription={ogDescription}
+            image={image}
+            imageAlt={imageAlt}
+        />
         <ClientRouter />
     </head>
     <body class="flex min-h-screen flex-col">
