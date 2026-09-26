@@ -1,7 +1,11 @@
 ﻿---
-// Submits directly to Web3Forms â€” no backend required. Set WEB3FORMS_KEY in .env
+// Submits directly to Web3Forms — no backend required. Set WEB3FORMS_KEY in .env
 // and it will be inlined at build time; the form still renders without it, it just
-// won't submit until a key is configured.
+// won't submit until a key is configured. Use the production access key in the
+// Cloudflare build env and a separate staging key for local/.env dev testing, so
+// test submissions never land in the real leads inbox (see CLAUDE.md §11).
+// hCaptcha below is enabled per-form in the Web3Forms dashboard (Settings >
+// Spam Protection); it is a no-op until that toggle is on for this access key.
 const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
 ---
 
@@ -48,7 +52,11 @@ const accessKey = import.meta.env.WEB3FORMS_KEY ?? '';
         ></textarea>
     </div>
 
+    <div class="h-captcha" data-captcha="true"></div>
+
     <button type="submit" class="btn-primary w-full sm:w-auto">
         Send Request
     </button>
 </form>
+
+<script src="https://web3forms.com/client/script.js" async defer is:inline></script>
