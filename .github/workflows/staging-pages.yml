@@ -44,6 +44,10 @@ jobs:
         env:
           DEPLOY_TARGET: staging
           PUBLIC_DEPLOY_TARGET: staging
+          # The STAGING Web3Forms form's access key (a public key, safe as a plain
+          # variable). Astro inlines it at build time; without it the contact form
+          # posts an empty access_key. Never use the production key here (CLAUDE.md §11).
+          WEB3FORMS_KEY: ${{ vars.WEB3FORMS_KEY }}
 
       - name: Fail if the staging build is indexable
         # A production build deployed here would be an indexable copy of the live site.
