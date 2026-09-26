@@ -17,7 +17,7 @@ test('each service page has its own reachable social preview image', async ({ re
         const html = await (await request.get(`/services/${slug}/`)).text();
         const og = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
         expect(og, `${slug} has an og:image`).toBeTruthy();
-        expect(og, `${slug} does not use the site-wide default`).not.toMatch(/og-image\.jpg$/);
+        expect(og, `${slug} does not use the site-wide default`).not.toMatch(/og-services\.jpg$/);
         expect(og, `${slug} uses an absolute URL`).toMatch(/^https?:\/\//);
         expect(html).toMatch(new RegExp(`<meta name="twitter:image" content="${og}"`));
         seen.add(og!);

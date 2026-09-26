@@ -20,10 +20,10 @@ interface Props {
 }
 
 const DEFAULT_OG_IMAGE = {
-    src: '/og-image.jpg',
+    src: '/og-services.jpg',
     width: 1200,
     height: 630,
-    alt: 'Tower cranes silhouetted against a warm sunset sky over a building under construction',
+    alt: 'Earth Cone construction and maintenance contractor: photos of villa construction, interior fit-out, custom kitchens, Korean marble, electrical and water systems work',
 };
 
 const {
@@ -43,7 +43,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 // production while also sending noindex risks that signal carrying over to the real page.
 const isStaging = import.meta.env.PUBLIC_DEPLOY_TARGET === 'staging';
 // Root-relative image paths need the base prefix before they are resolved against the
-// origin — on staging (served from /earthcone/) a bare `/og-image.jpg` would 404.
+// origin — on staging (served from /earthcone/) a bare `/og-services.jpg` would 404.
 const ogImageURL = new URL(image.startsWith('http') ? image : withBase(image), Astro.site);
 
 const jsonLd = {

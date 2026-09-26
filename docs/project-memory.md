@@ -41,7 +41,11 @@ Replaced all 5 original phone-camera hero images with professional high-resoluti
 | 3 | Electrical | `pexels-ranamatloob567-35189704.jpg` | Pexels — Rana Matloob | Contemporary luxury kitchen with dramatic multi-ring gold LED chandelier, champagne gloss cabinetry, marble floor — showcases premium lighting/electrical design |
 | 4 | Water systems | `shoham-avisrur-Kskxj4M8jmI-unsplash.jpg` | Unsplash — Shoham Avisrur | Modern taupe matte kitchen with integrated plumbing fixtures, concrete-look island, pendant lights — sleek, understated, plumbing-adjacent |
 
-### Social share image (2026-09-16)
+### Social share image, current default (2026-09-26)
+
+`public/og-services.jpg` (1200×630, ~114 KB) replaced the tower-crane image below as the default link preview: the client wanted it to show the main work, services and maintenance, not a high-rise site. It is a Pillow collage (dark brand panel with logo, headline "Construction & Maintenance Contractor", and a 3×2 grid of real Earth Cone photos with service labels). Photos used: `construction-exteriors/villa-facade-01`, `interiors/living-room-tv-wall-01`, `kitchens/custom-kitchen-12`, `korean-marble/induction-hob-counter-01`, `electrical/ceiling-electrical-installation-01`, `water-systems/plumbing-manifold-01` (all `.jpeg`). Swap photos by rebuilding the collage under a new filename. Each service page and portfolio category additionally uses its own photo as its preview image (`src/lib/ogImage.ts`).
+
+### Social share image, previous default (2026-09-16)
 
 `public/og-image.jpg` (1200×630, ~91 KB) is the link-preview thumbnail WhatsApp, Facebook, LinkedIn, and X show when the site is shared. It replaced `og-default.jpg`, a phone photo of a finished yellow villa that the client felt undercut the site's premium look. The client asked for "attractive and industrial construction work" instead.
 
