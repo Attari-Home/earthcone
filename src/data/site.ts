@@ -70,6 +70,13 @@ export const site = {
         'Umm Al Quwain',
     ],
 
+    // Agency that built and maintains the site — credited in the footer on every page.
+    developer: {
+        name: 'Attari Tech',
+        descriptor: 'A Software House',
+        url: 'https://shakoorattari.com',
+    },
+
     socials: {
         instagram: '',
         facebook: '',
