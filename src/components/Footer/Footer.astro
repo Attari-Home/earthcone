@@ -85,11 +85,10 @@ const year = new Date().getFullYear();
     <div class="border-t border-white/10 py-4 text-xs text-white/70">
         <div class="container-wide flex flex-col items-center justify-between gap-2 text-center sm:flex-row sm:text-left">
             <p>
-                &copy; <span id="footer-year">{year}</span>
-                {site.name}. All rights reserved.
+                &copy; <span id="footer-year">{year}</span>&nbsp;{site.name} All rights reserved.
             </p>
             <p>
-                Designed, developed &amp; maintained by
+                Designed, developed &amp; maintained by&nbsp;
                 <a
                     href={site.developer.url}
                     target="_blank"
@@ -98,7 +97,7 @@ const year = new Date().getFullYear();
                 >
                     {site.developer.name}
                 </a>
-                &mdash; {site.developer.descriptor}.
+                &nbsp;&mdash; {site.developer.descriptor}.
             </p>
         </div>
     </div>
